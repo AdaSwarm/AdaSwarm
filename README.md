@@ -80,13 +80,13 @@ Therefore, in order to better underatand, and devleop the theory and tools for c
     - paradigms (RIL, Active Learning, Supervised Learning etc..)
     - etc..
 
-3. Provide insighhts into the workings of *AdaSwarm* by
+3. Provide insights into the workings of *AdaSwarm* by
     - analyzing the workings of the optimizers
     - visualizating the path trajectories
     - etc..
 
 4. Most importantly, be community driven
-    - there is lot of enthusism and interest in the recent graduates and undegraduates, that want to learn ML/AI technologies. Instead of fiddling with MNIST datasets, and predicting Cats and Dogs, do something foundational and meaninful.
+    - there is lot of enthusism and interest in the recent graduates and undegraduates, that want to learn ML/AI technologies. Instead of fiddling with MNIST datasets, and predicting Cats and Dogs, do something foundational and meaningful. If you take offence to statement, you are not ready for this project.
     - turn this into a truely community-driven effort to offer a useable, useful, foundational building block to the deep learning ecosystem
 
 
