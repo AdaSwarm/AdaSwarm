@@ -22,11 +22,11 @@ AdaSwarm is based on "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Lea
 ## Why AdaSwarm:
 Said  et  al.  [[1]](#1)  postulated  that  swarms behaviour is similar to  that of classical  and  quantum  particles.  In  fact, their analogy is so striking that one may think that the social and  individual  intelligence  components  in  Swarms  are,  after  all, nice useful metaphors, and that there is a neat underlying dynamical system at play. This dynamical system perspective was indeed useful in unifying two almost parallel streams, namely, optimization  and  Markov  Chain  Monte  Carlo  sampling. 
 
-In a seminal paper, Wellington and Teh [[2]](#2), showed that a  stochastic  gradient  descent  (SGD)  optimization  techniquecan  be  turned  into  a  sampling  technique  by  just  adding noise,  governed  by  Langevin  dynamics.  Recently,  Soma  and Sato [[3]](#3) provided further insights into this connection based on  an  underlying  dynamical  system  governed  by  stochastic differential equations (SDEs). 
+In a seminal paper, Wellington and Teh [[2]](#2), showed that a  stochastic  gradient  descent  (SGD)  optimization  technique can  be  turned  into  a  sampling  technique  by  just  adding noise,  governed  by  Langevin  dynamics.  Recently,  Soma  and Sato [[3]](#3) provided further insights into this connection based on  an  underlying  dynamical  system  governed  by  stochastic differential equations (SDEs). 
 
-While these results are new, the connections  between  derivative-free  optimization  techniquesbased on Stochastic Approximation and Finite Differences are well documented [[4]](#4). Such strong connections between these seemingly  different  subfields  of  optimization  and  sampling made  us  wonder:  Is  there  a  larger,  more  general  template of which  the  aforementioned  approaches  are  special  cases. AdawSwarm is a result of that deliberation.
+While these results are new, the connections  between  derivative-free  optimization  techniques based on Stochastic Approximation and Finite Differences are well documented [[4]](#4). Such strong connections between these seemingly  different  subfields  of  optimization  and  sampling made  us  wonder:  Is  there  a  larger,  more  general  template, of which  the  aforementioned  approaches  are  special  cases, exist? AdawSwarm is a result of that deliberation.
 
-We believe that, it is just a beginning of a new breed of **composable optimizers**
+We believe that it is just a beginning of a new breed of **composable optimizers**
 
 ## What is AdaSwarm in simple terms, in the context Deep Learning:
 1. Setup
@@ -36,30 +36,32 @@ We believe that, it is just a beginning of a new breed of **composable optimizer
     - ``L(.)`` is loss, to drive the optimization
 
 2. Approximate gradiants of ``L(.)`` w.r.t ``f(.)``
-    - run an independent Sawrm optimizer over L with particlae dimension equal to the size of the network's output layer
+    - run an independent Sawrm optimizer over ``L(.)`` with particle dimension equal to the size of the network's output layer
     - using swarm particle parameters, approximate the gradiant of  ``L(.)`` w.r.t ``f(.)``
 
 3. Get gradiants of ``f(.)`` w.r.t ``w``
     - using standard ``AutoDiff``, via chain rule, get the approximate gradiant of ``f(.)`` w.r.t ``w``
 
-4. Approximate gradiants of ``L(.)`` w.r.t ``w``
+4. Approximate gradiants of ``L(.)`` w.r.t ``w`` via Chain Rule
     - take the product of gradiants in steps (2) and (3)
 
 5. Updates the network weigths via standard Back Propagation
 
-## Why does it work? Changes are very negligible!
+## Why does it work? Changes seem very minor!
 
-At this time, we only have huch that, Swarm, by being a meta-hueristic algorithm, has less tendency to trap in local minimal or has better exploration capabilities, is helping the problem overall. Secondly, entire information about the "learning" comes from the loss, and the function ``f(.)`` only specifies the relationship between input and output. 
+At this time, we only have huch that, Swarm, by being a meta-hueristic algorithm, has less tendency to get trapped in local minimal or has better exploration capabilities, is helping the problem overall. Secondly, entire information about the "learning" comes from the loss, and the function ``f(.)`` only specifies the structural relationship between input and output. 
 
-So, having better "optimization" capabilities at the loss, in general, are going to be helpfu. We have ample empirical evidence to support this claim. We dont have rich theory, however. In contrast, to the best of our knowledge, all current optmization techniues, only harvest information coming from a single paradigm. AdaSwarm combines different perspectives, like in an ensemble. More of an ensemble, it is a composition -- where different perspectives get chained. 
+So, having better "optimization" capabilities at the loss, in general, are going to be helpful. While we have ample empirical evidence that shows that *AdaSwarm* is working well, we dont have rich theory, however. We only have few speculations like the one stated earlier.
+
+Another speculation, speculation at this time, is that, to the best of our knowledge, all current optmization techniues only harvest information coming from a single paradigm. Whereas, *AdaSwarm* combines different perspectives, like in an ensemble. More of an ensemble, it is a composition -- where different perspectives get chained. That is one fundamental difference beteen AdaSwarm and other population-based technqiues.
 
 In someways, just like an neural network archicture is compsoed of several layers, AdaSwarm is a composition of optmizers. That composition eventually fits into the chain rule.
 
-The changes are very small. Same is the case with Adam and RMSProp, right? Other notable examples, where we see prnounced differences in speed/convergance, with very simple changes in the maps aere:
+As a result, the changes are very small. Same is the case with Adam and RMSProp, right? Other notable examples, where we see prnounced differences in speed/convergance, with very simple changes in the maps aere:
 - _Proximal gradient descent_ vs _Accelerated Proximal gradiant descent_
 - _Euler_ vs _LeapFrog_ ...
 
-We have to develop both theoreical and computational tools to understand why and where AdaSwarm works.
+Therefore, in order to better underatand, and devleop the theory and tools for composable optimziers, we have to develop both theoreical and computational tools to understand why and where AdaSwarm works. Make such optimizers accessible to the community.
 
 ## Objectives:
 
