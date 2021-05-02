@@ -87,9 +87,14 @@ We have to develop both theoreical and computational tools to understand why and
     - turn this into a truely community-driven effort to offer a useable, useful, foundational building block to the deep learning ecosystem
 
 
-
 ## Contributing:
-While we are yet to establish the policty to contribute, we will follow how any Apcahe open source project works. For example, see airflow project's [contribution](https://github.com/apache/airflow/blob/master/CONTRIBUTING.rst) guidelines. 
+
+1. While we are yet to establish the policty to contribute, we will follow how any Apcahe open source project works. For example, see airflow project's [contribution](https://github.com/apache/airflow/blob/master/CONTRIBUTING.rst) guidelines. 
+ 
+2. There are no short-term rewards. 
+    - Research is bloody hardwork. There will not be any insant gratifcation or recognition for the work. Expect lot of negative results, and set backs
+    - Optimization problems are generally hard, and writing an Engineering level framework that works on _any_ problem is even harder.
+    - So take a plunge only if you are willing to endure the pain, w/o worrying about the end result.
 
 
 ## References
