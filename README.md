@@ -49,19 +49,23 @@ We believe that, it is just a beginning of a new breed of **composable optimizer
 
 ## Why does it work? Changes are very negligible
 
-At this time, we only have huch that, Swarm, by being a meta-hueristic algorithm, has less tendency to trap in local minimal or has better exploration capabilities, is helping the problem overall. Secondly, entire information about the "learning" comes from the loss, and the function ``f(.)`` only specifies the relationship between input and output. So, having better "optimization" capabilities at the loss, in general, are going to be helpfu. We have ample empirical evidence to support this claim. We dont have rich theory, however. In contrast, to the best of our knowledge, all current optmization techniues, only harvest information coming from a single paradigm. AdaSwarm combines different perspectives, like in an ensemble. More of an ensemble, it is a composition -- where different perspectives get added. In someways, just like an neural network archicture is compsoed of several layers, AdaSwarm is a composition of optmizers. That composition eventually fits into the chain rule.
+At this time, we only have huch that, Swarm, by being a meta-hueristic algorithm, has less tendency to trap in local minimal or has better exploration capabilities, is helping the problem overall. Secondly, entire information about the "learning" comes from the loss, and the function ``f(.)`` only specifies the relationship between input and output. 
+
+So, having better "optimization" capabilities at the loss, in general, are going to be helpfu. We have ample empirical evidence to support this claim. We dont have rich theory, however. In contrast, to the best of our knowledge, all current optmization techniues, only harvest information coming from a single paradigm. AdaSwarm combines different perspectives, like in an ensemble. More of an ensemble, it is a composition -- where different perspectives get added. 
+
+In someways, just like an neural network archicture is compsoed of several layers, AdaSwarm is a composition of optmizers. That composition eventually fits into the chain rule.
 
 The changes are very small. Same is the case with Adam and RMSProp, right? Other notable examples, where we see prnounced differences in speed/convergance, with very simple changes in the maps aere:
-- "Proximal gradient descent" vs "Accelerated Proximal gradiant descent"
-- "Adam" vs "RMSProp"
-- "Euler" vs "LeapFrog" ...
+- _Proximal gradient descent_ vs _Accelerated Proximal gradiant descent_
+- _Adam_ vs _RMSProp_
+- _Euler_ vs _LeapFrog_ ...
 
 We have to develop both theoreical and computational tools to understand why and where AdaSwarm works.
 
 ## Objectives:
 
 1. Develop a plug-and-play optimizer that works with
-    - other optimizers in the PyTorch ecosystem, along side the likes of "Adam", "RMSProp", "SGD"
+    - other optimizers in the PyTorch ecosystem, along side the likes of ``Adam``, ``RMSProp``, ``SGD``
     - any archictecure 
     - any dataset
     - with the same api as others, i.e., "optim.AdaSwarm()"
@@ -92,10 +96,13 @@ While we are yet to establish the policty to contribute, we will follow how any 
 ## References
 <a id="1">[1]</a> 
 S. M. Mikki and A. A. Kishk,Particle Swarm Optimizaton: A Physics-Based Approach.    Morgan & Claypool, 2008.
+
 <a id="2">[2]</a> 
 M.  Welling  and  Y.  W.  Teh,  “Bayesian  learning  via  stochastic  gradientlangevin dynamics,”In Proceedings of the 28th International Conferenceon Machine Learning, p. 681–688, 2011.
+
 <a id="3">[3]</a> 
 Y.-A. Ma, Y. Chen, C. Jin, N. Flammarion, and M. I. Jordan, “Samplingcan be faster than optimization,”Proceedings of the National Academyof   Sciences,   vol.   116,   no.   42,   pp.   20 881–20 885,   2019.   [Online].Available: https://www.pnas.org/content/116/42/20881[21]  S.  Yokoi  and  I.  Sato,  “Bayesian  interpretation  of  sgd  as  ito  process,”ArXiv, vol. abs/1911.09011, 201.
+
 <a id="3">[4]</a> 
 J.  Spall, Introduction  to  stochastic  search  and  optimization.Wiley-Interscience, 2003
 
