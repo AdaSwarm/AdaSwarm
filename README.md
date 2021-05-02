@@ -16,7 +16,7 @@ limitations under the License.
 
 This repo purportedly implements *AdaSwarm*, an optimizer, that combines Gradient Descent and Particle Swarms. 
 
-*AdaSwarm* is based on "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence, _Rohan Mohapatra, Snehanshu Saha, Carlos A. Coello Coello, Anwesh Bhattacharya Soma S. Dhavala, and Sriparna Saha_", to appear in IEEE Transactions on Computational Intelligence. An arXive version can be found [here](https://arxiv.org/abs/2006.09875). [This](https://github.com/rohanmohapatra/pytorch-cifar) repo contains implementation used the paper.
+*AdaSwarm* is based on "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence, _Rohan Mohapatra, Snehanshu Saha, Carlos A. Coello Coello, Anwesh Bhattacharya Soma S. Dhavala, and Sriparna Saha_", to appear in IEEE Transactions on Emerging Topics in Computational Intelligence. An arXiv version can be found [here](https://arxiv.org/abs/2006.09875). [This](https://github.com/rohanmohapatra/pytorch-cifar) repo contains implementation used the paper.
 
 
 ## Why *AdaSwarm*:
@@ -51,7 +51,7 @@ We believe that it is just a beginning of a new breed of **composable optimizers
 
 At this time, we could embellish the fact that Swarm, by being a meta-heuristic algorithm, has less tendency to get trapped in local minimal or has better exploration capabilities. It is helping the problem overall. Secondly, entire information about the "learning" the task comes from the loss, and the function ``f(.)`` only specifies the structural relationship between input and output. Moreover, the ability of EMPSO, the first step toward AdaSwarm facilitates explorationa nd exploitation equally by using a modified formulation leveraging exponentially averaged velocities and by not ignoring past velocities. It is these velocities (which are different at different stages in the search space) that make the difference at local minima successfully by being able to differentiate between stagnating regions/saddle points and true local minima. Particular objects of interest are the equivalence theorems, such as the following:
 
-![image](https://user-images.githubusercontent.com/32681282/116822638-7f5dc900-ab9d-11eb-9540-76cee298ffc2.png)
+"partial deriv of the loss wrt the weights" can be expressed in terms of Swarm parameters thus keeping tight control over the hyper-parameters and not tuning those at all for convergence. This addresses a common complant about metaheuristics.
 
 
 So, having better "optimization" capabilities at the loss, in general, are going to be helpful. While we have ample empirical evidence that shows that *AdaSwarm* is working well, we also have some theory (not comlete but enough to offer the convergence insights, particularly from the point of robust loss functions such as MAE and irregular losses used to solve PDEs/PDEs such as the Schrodinger Equation). 
@@ -123,7 +123,7 @@ J.  Spall, Introduction  to  stochastic  search  and  optimization. Wiley-Inters
 @inproceedings{adaswarm,
     title = "daSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence",
     author = "Rohan Mohapatra, Snehanshu Saha, Carlos A. Coello Coello, Anwesh Bhattacharya Soma S. Dhavala, and Sriparna Saha",
-    booktitle = "IEEE Transaction on Computational Intelligence",
+    booktitle = "IEEE Transaction on Emerging Topics in Computational Intelligence",
     month = tbd,
     year = "2021",
     address = "Online",
