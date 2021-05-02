@@ -14,7 +14,7 @@ limitations under the License.
 
 # AdaSwarm
 
-This repo implements AdaSwarm, an optimizer, that combines Gradiant Descent and Particile Swarms. 
+This repo purportedly implements AdaSwarm, an optimizer, that combines Gradiant Descent and Particile Swarms. 
 
 AdaSwarm is based on "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence, _Rohan Mohapatra, Snehanshu Saha, Carlos A. Coello Coello, Anwesh Bhattacharya Soma S. Dhavala, and Sriparna Saha_", to appear in IEEE Transactions on Computational Intelligence. An arXive version can be found [here](https://arxiv.org/abs/2006.09875). [This](https://github.com/rohanmohapatra/pytorch-cifar) repo containes implemenation used the paper.
 
@@ -47,17 +47,16 @@ We believe that, it is just a beginning of a new breed of **composable optimizer
 
 5. Updates the network weigths via standard Back Propagation
 
-## Why does it work? Changes are very negligible
+## Why does it work? Changes are very negligible!
 
 At this time, we only have huch that, Swarm, by being a meta-hueristic algorithm, has less tendency to trap in local minimal or has better exploration capabilities, is helping the problem overall. Secondly, entire information about the "learning" comes from the loss, and the function ``f(.)`` only specifies the relationship between input and output. 
 
-So, having better "optimization" capabilities at the loss, in general, are going to be helpfu. We have ample empirical evidence to support this claim. We dont have rich theory, however. In contrast, to the best of our knowledge, all current optmization techniues, only harvest information coming from a single paradigm. AdaSwarm combines different perspectives, like in an ensemble. More of an ensemble, it is a composition -- where different perspectives get added. 
+So, having better "optimization" capabilities at the loss, in general, are going to be helpfu. We have ample empirical evidence to support this claim. We dont have rich theory, however. In contrast, to the best of our knowledge, all current optmization techniues, only harvest information coming from a single paradigm. AdaSwarm combines different perspectives, like in an ensemble. More of an ensemble, it is a composition -- where different perspectives get chained. 
 
 In someways, just like an neural network archicture is compsoed of several layers, AdaSwarm is a composition of optmizers. That composition eventually fits into the chain rule.
 
 The changes are very small. Same is the case with Adam and RMSProp, right? Other notable examples, where we see prnounced differences in speed/convergance, with very simple changes in the maps aere:
 - _Proximal gradient descent_ vs _Accelerated Proximal gradiant descent_
-- _Adam_ vs _RMSProp_
 - _Euler_ vs _LeapFrog_ ...
 
 We have to develop both theoreical and computational tools to understand why and where AdaSwarm works.
