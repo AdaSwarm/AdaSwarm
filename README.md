@@ -94,7 +94,7 @@ Therefore, in order to better understand, and develop the theory and tools for c
 
 1. While we are yet to establish the policy to contribute, we will follow how any Apache open source project works. For example, see airflow project's [contribution](https://github.com/apache/airflow/blob/master/CONTRIBUTING.rst) guidelines. 
  
-2. But be mindful. There may not be any no short-term rewards. 
+2. But be mindful. There may not be any short-term rewards. 
     - Research is bloody hard work. There will not be any instant gratification or recognition for the work. Expect lot of negative results, and set backs.
     - Optimization problems are generally hard, and writing an Engineering level framework that works on _any_ problem is even harder. It is scientific computing, not writing hello world examples.
     - So take a plunge only if you are willing to endure the pain, w/o worrying about the end result.
