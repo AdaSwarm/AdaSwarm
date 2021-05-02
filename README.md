@@ -83,7 +83,7 @@ We have to develop both theoreical and computational tools to understand why and
     - etc..
 
 4. Most importantly, be community driven
-    - there is lot of enthusism and interest in the recent graduates and undegraduates, that want to learn ML/AI technologies. Instead of fiddling with MNSIT datasets, and predicting Cats and Dogs, do something foundational and meaninful.
+    - there is lot of enthusism and interest in the recent graduates and undegraduates, that want to learn ML/AI technologies. Instead of fiddling with MNIST datasets, and predicting Cats and Dogs, do something foundational and meaninful.
     - turn this into a truely community-driven effort to offer a useable, useful, foundational building block to the deep learning ecosystem
 
 
@@ -100,7 +100,7 @@ S. M. Mikki and A. A. Kishk, Particle Swarm Optimizaton: A Physics-Based Approac
 M.  Welling  and  Y.  W.  Teh,  “Bayesian  learning  via  stochastic  gradientlangevin dynamics,”In Proceedings of the 28th International Conferenceon Machine Learning, p. 681–688, 2011.
 
 <a id="3">[3]</a> 
-S.  Yokoi  and  I.  Sato,  “Bayesian  interpretation  of  sgd  as  ito  process,”ArXiv, vol. abs/1911.09011, 201.
+S.  Yokoi  and  I.  Sato,  “Bayesian  interpretation  of  SGD  as  Ito  process,”ArXiv, vol. abs/1911.09011, 201.
 
 <a id="3">[4]</a> 
 J.  Spall, Introduction  to  stochastic  search  and  optimization.Wiley-Interscience, 2003
