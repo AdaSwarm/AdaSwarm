@@ -67,7 +67,7 @@ We have to develop both theoreical and computational tools to understand why and
     - other optimizers in the PyTorch ecosystem, along side the likes of ``Adam``, ``RMSProp``, ``SGD``
     - any archictecure 
     - any dataset
-    - with the same api as others, i.e., "optim.AdaSwarm()"
+    - with the same api as others, i.e., ``optim.AdaSwarm()``
 
 2. Battle test on variety of
     - test objectives functions
@@ -94,13 +94,13 @@ While we are yet to establish the policty to contribute, we will follow how any 
 
 ## References
 <a id="1">[1]</a> 
-S. M. Mikki and A. A. Kishk,Particle Swarm Optimizaton: A Physics-Based Approach.    Morgan & Claypool, 2008.
+S. M. Mikki and A. A. Kishk, Particle Swarm Optimizaton: A Physics-Based Approach.    Morgan & Claypool, 2008.
 
 <a id="2">[2]</a> 
 M.  Welling  and  Y.  W.  Teh,  “Bayesian  learning  via  stochastic  gradientlangevin dynamics,”In Proceedings of the 28th International Conferenceon Machine Learning, p. 681–688, 2011.
 
 <a id="3">[3]</a> 
-Y.-A. Ma, Y. Chen, C. Jin, N. Flammarion, and M. I. Jordan, “Samplingcan be faster than optimization,”Proceedings of the National Academyof   Sciences,   vol.   116,   no.   42,   pp.   20 881–20 885,   2019.   [Online].Available: https://www.pnas.org/content/116/42/20881[21]  S.  Yokoi  and  I.  Sato,  “Bayesian  interpretation  of  sgd  as  ito  process,”ArXiv, vol. abs/1911.09011, 201.
+S.  Yokoi  and  I.  Sato,  “Bayesian  interpretation  of  sgd  as  ito  process,”ArXiv, vol. abs/1911.09011, 201.
 
 <a id="3">[4]</a> 
 J.  Spall, Introduction  to  stochastic  search  and  optimization.Wiley-Interscience, 2003
