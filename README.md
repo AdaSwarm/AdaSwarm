@@ -16,7 +16,7 @@ limitations under the License.
 
 This repo purportedly implements *AdaSwarm*, an optimizer, that combines Gradient Descent and Particle Swarms. 
 
-*AdaSwarm* is based on "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence, _Rohan Mohapatra, Snehanshu Saha, Carlos A. Coello Coello, Anwesh Bhattacharya Soma S. Dhavala, and Sriparna Saha_", to appear in IEEE Transactions on Computational Intelligence. An arXive version can be found [here](https://arxiv.org/abs/2006.09875). [This](https://github.com/rohanmohapatra/pytorch-cifar) repo contains implemenation used the paper.
+*AdaSwarm* is based on "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence, _Rohan Mohapatra, Snehanshu Saha, Carlos A. Coello Coello, Anwesh Bhattacharya Soma S. Dhavala, and Sriparna Saha_", to appear in IEEE Transactions on Computational Intelligence. An arXive version can be found [here](https://arxiv.org/abs/2006.09875). [This](https://github.com/rohanmohapatra/pytorch-cifar) repo contains implementation used the paper.
 
 
 ## Why *AdaSwarm*:
@@ -68,7 +68,7 @@ Therefore, in order to better understand, and develop the theory and tools for c
 
 1. Develop a plug-and-play optimizer that works with
     - other optimizers in the PyTorch ecosystem, along side the likes of ``Adam``, ``RMSProp``, ``SGD``
-    - any archictecure 
+    - any architecture 
     - any dataset
     - with the same api as others, i.e., ``optim.AdaSwarm()``
 
@@ -92,7 +92,7 @@ Therefore, in order to better understand, and develop the theory and tools for c
 
 ## Contributing:
 
-1. While we are yet to establish the policty to contribute, we will follow how any Apache open source project works. For example, see airflow project's [contribution](https://github.com/apache/airflow/blob/master/CONTRIBUTING.rst) guidelines. 
+1. While we are yet to establish the policy to contribute, we will follow how any Apache open source project works. For example, see airflow project's [contribution](https://github.com/apache/airflow/blob/master/CONTRIBUTING.rst) guidelines. 
  
 2. But be mindful. There may not be any no short-term rewards. 
     - Research is bloody hard work. There will not be any instant gratification or recognition for the work. Expect lot of negative results, and set backs.
