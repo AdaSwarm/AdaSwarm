@@ -16,7 +16,7 @@ limitations under the License.
 
 This repo purportedly implements AdaSwarm, an optimizer, that combines Gradiant Descent and Particle Swarms. 
 
-AdaSwarm is based on "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence, _Rohan Mohapatra, Snehanshu Saha, Carlos A. Coello Coello, Anwesh Bhattacharya Soma S. Dhavala, and Sriparna Saha_", to appear in IEEE Transactions on Computational Intelligence. An arXive version can be found [here](https://arxiv.org/abs/2006.09875). [This](https://github.com/rohanmohapatra/pytorch-cifar) repo containes implemenation used the paper.
+AdaSwarm is based on "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence, _Rohan Mohapatra, Snehanshu Saha, Carlos A. Coello Coello, Anwesh Bhattacharya Soma S. Dhavala, and Sriparna Saha_", to appear in IEEE Transactions on Computational Intelligence. An arXive version can be found [here](https://arxiv.org/abs/2006.09875). [This](https://github.com/rohanmohapatra/pytorch-cifar) repo contains implemenation used the paper.
 
 
 ## Why AdaSwarm:
@@ -49,19 +49,19 @@ We believe that it is just a beginning of a new breed of **composable optimizers
 
 ## Why does it work? Changes seem very minor!
 
-At this time, we only have huch that, Swarm, by being a meta-hueristic algorithm, has less tendency to get trapped in local minimal or has better exploration capabilities, is helping the problem overall. Secondly, entire information about the "learning" comes from the loss, and the function ``f(.)`` only specifies the structural relationship between input and output. 
+At this time, we only have huch that, Swarm, by being a meta-hueristic algorithm, has less tendency to get trapped in local minimal or has better exploration capabilities. It is helping the problem overall. Secondly, entire information about the "learning" the task comes from the loss, and the function ``f(.)`` only specifies the structural relationship between input and output. 
 
 So, having better "optimization" capabilities at the loss, in general, are going to be helpful. While we have ample empirical evidence that shows that *AdaSwarm* is working well, we dont have rich theory, however. We only have few speculations like the one stated earlier.
 
-Another speculation, speculation at this time, is that, to the best of our knowledge, all current optmization techniues only harvest information coming from a single paradigm. Whereas, *AdaSwarm* combines different perspectives, like in an ensemble. More of an ensemble, it is a composition -- where different perspectives get chained. That is one fundamental difference beteen AdaSwarm and other population-based technqiues.
+Another speculation, speculation at this time, is that, to the best of our knowledge, all current optmization techniues only harvest information coming from a single paradigm. *AdaSwarm*, whereas, combines different perspectives, like in an ensemble. More than an ensemble, it is a composition -- where different perspectives get chained. That is one fundamental difference beteen AdaSwarm and other population-based technqiues.
 
 In someways, just like an neural network archicture is compsoed of several layers, AdaSwarm is a composition of optmizers. That composition eventually fits into the chain rule.
 
-As a result, the changes are very small. Same is the case with Adam and RMSProp, right? Other notable examples, where we see prnounced differences in speed/convergance, with very simple changes in the maps aere:
+As a result, the changes are very small. Same is the case with Adam and RMSProp, right? Other notable examples, where we see prnounced differences in speed/convergance, with very simple changes in the maps are:
 - _Proximal gradient descent_ vs _Accelerated Proximal gradiant descent_
 - _Euler_ vs _LeapFrog_ ...
 
-Therefore, in order to better underatand, and devleop the theory and tools for composable optimziers, we have to develop both theoreical and computational tools to understand why and where AdaSwarm works. Make such optimizers accessible to the community.
+Therefore, in order to better underatand, and devleop the theory and tools for composable optimziers, we have to develop both theoreical and computational tools to understand why and where AdaSwarm works. Along the way. make such optimizers accessible to the community.
 
 ## Objectives:
 
@@ -91,11 +91,11 @@ Therefore, in order to better underatand, and devleop the theory and tools for c
 
 ## Contributing:
 
-1. While we are yet to establish the policty to contribute, we will follow how any Apcahe open source project works. For example, see airflow project's [contribution](https://github.com/apache/airflow/blob/master/CONTRIBUTING.rst) guidelines. 
+1. While we are yet to establish the policty to contribute, we will follow how any Apache open source project works. For example, see airflow project's [contribution](https://github.com/apache/airflow/blob/master/CONTRIBUTING.rst) guidelines. 
  
-2. There are no short-term rewards. 
-    - Research is bloody hardwork. There will not be any insant gratifcation or recognition for the work. Expect lot of negative results, and set backs
-    - Optimization problems are generally hard, and writing an Engineering level framework that works on _any_ problem is even harder.
+2. But be mindful. There may not be any no short-term rewards. 
+    - Research is bloody hardwork. There will not be any insant gratifcation or recognition for the work. Expect lot of negative results, and set backs.
+    - Optimization problems are generally hard, and writing an Engineering level framework that works on _any_ problem is even harder. It is scientific computing, not writing hello world examples.
     - So take a plunge only if you are willing to endure the pain, w/o worrying about the end result.
 
 
