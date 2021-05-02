@@ -14,12 +14,12 @@ limitations under the License.
 
 # AdaSwarm
 
-This repo purportedly implements AdaSwarm, an optimizer, that combines Gradiant Descent and Particle Swarms. 
+This repo purportedly implements *AdaSwarm*, an optimizer, that combines Gradiant Descent and Particle Swarms. 
 
-AdaSwarm is based on "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence, _Rohan Mohapatra, Snehanshu Saha, Carlos A. Coello Coello, Anwesh Bhattacharya Soma S. Dhavala, and Sriparna Saha_", to appear in IEEE Transactions on Computational Intelligence. An arXive version can be found [here](https://arxiv.org/abs/2006.09875). [This](https://github.com/rohanmohapatra/pytorch-cifar) repo contains implemenation used the paper.
+*AdaSwarm* is based on "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence, _Rohan Mohapatra, Snehanshu Saha, Carlos A. Coello Coello, Anwesh Bhattacharya Soma S. Dhavala, and Sriparna Saha_", to appear in IEEE Transactions on Computational Intelligence. An arXive version can be found [here](https://arxiv.org/abs/2006.09875). [This](https://github.com/rohanmohapatra/pytorch-cifar) repo contains implemenation used the paper.
 
 
-## Why AdaSwarm:
+## Why *AdaSwarm*:
 Said  et  al.  [[1]](#1)  postulated  that  swarms behaviour is similar to  that of classical  and  quantum  particles.  In  fact, their analogy is so striking that one may think that the social and  individual  intelligence  components  in  Swarms  are,  after  all, nice useful metaphors, and that there is a neat underlying dynamical system at play. This dynamical system perspective was indeed useful in unifying two almost parallel streams, namely, optimization  and  Markov  Chain  Monte  Carlo  sampling. 
 
 In a seminal paper, Wellington and Teh [[2]](#2), showed that a  stochastic  gradient  descent  (SGD)  optimization  technique can  be  turned  into  a  sampling  technique  by  just  adding noise,  governed  by  Langevin  dynamics.  Recently,  Soma  and Sato [[3]](#3) provided further insights into this connection based on  an  underlying  dynamical  system  governed  by  stochastic differential equations (SDEs). 
@@ -28,7 +28,7 @@ While these results are new, the connections  between  derivative-free  optimiza
 
 We believe that it is just a beginning of a new breed of **composable optimizers**
 
-## What is AdaSwarm in simple terms, in the context Deep Learning:
+## What is *AdaSwarm* in simple terms, in the context Deep Learning:
 1. Setup
     - ``y``: responses
     - ``f(.)`` is a model specified by a network with parameters ``w``
@@ -53,15 +53,16 @@ At this time, we only have huch that, Swarm, by being a meta-hueristic algorithm
 
 So, having better "optimization" capabilities at the loss, in general, are going to be helpful. While we have ample empirical evidence that shows that *AdaSwarm* is working well, we dont have rich theory, however. We only have few speculations like the one stated earlier.
 
-Another speculation, speculation at this time, is that, to the best of our knowledge, all current optmization techniues only harvest information coming from a single paradigm. *AdaSwarm*, whereas, combines different perspectives, like in an ensemble. More than an ensemble, it is a composition -- where different perspectives get chained. That is one fundamental difference beteen AdaSwarm and other population-based technqiues.
+Another speculation, speculation at this time, is that, to the best of our knowledge, all current optmization techniues only harvest information coming from a single paradigm. *AdaSwarm*, whereas, combines different perspectives, like in an ensemble. More than an ensemble, it is a composition -- where different perspectives get chained. That is one fundamental difference beteen *AdaSwarm* and other population-based technqiues.
 
-In someways, just like an neural network archicture is compsoed of several layers, AdaSwarm is a composition of optmizers. That composition eventually fits into the chain rule.
+In someways, just like an neural network archicture is compsoed of several layers, *AdaSwarm* is a composition of optmizers. That composition eventually fits into the chain rule.
 
 As a result, the changes are very small. Same is the case with Adam and RMSProp, right? Other notable examples, where we see prnounced differences in speed/convergance, with very simple changes in the maps are:
 - _Proximal gradient descent_ vs _Accelerated Proximal gradiant descent_
-- _Euler_ vs _LeapFrog_ ...
+- _Euler_ vs _LeapFrog_ 
+_ ...
 
-Therefore, in order to better underatand, and devleop the theory and tools for composable optimziers, we have to develop both theoreical and computational tools to understand why and where AdaSwarm works. Along the way. make such optimizers accessible to the community.
+Therefore, in order to better underatand, and devleop the theory and tools for composable optimziers, we have to develop both theoreical and computational tools to understand why and where *AdaSwarm* works. Along the way, make such optimizers accessible to the community.
 
 ## Objectives:
 
@@ -79,7 +80,7 @@ Therefore, in order to better underatand, and devleop the theory and tools for c
     - paradigms (RIL, Active Learning, Supervised Learning etc..)
     - etc..
 
-3. Provide insighhts into the workings of AdaSwarm by
+3. Provide insighhts into the workings of *AdaSwarm* by
     - analyzing the workings of the optimizers
     - visualizating the path trajectories
     - etc..
@@ -114,7 +115,7 @@ J.  Spall, Introduction  to  stochastic  search  and  optimization.Wiley-Intersc
 
 ## Citation
 
-AdaSwarm will be appearing in the [paper](https://arxiv.org/abs/2006.09875) you can cite:
+*AdaSwarm* will be appearing in the [paper](https://arxiv.org/abs/2006.09875) you can cite:
 ```bibtex
 @inproceedings{adaswarm,
     title = "daSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence",
