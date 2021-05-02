@@ -47,11 +47,14 @@ We believe that it is just a beginning of a new breed of **composable optimizers
 
 5. Updates the network weights via standard Back Propagation
 
-## Why does it work? Changes seem very minor!
+## Why does it work? Minor changes are meaningful!
 
-At this time, we only have hunch that, Swarm, by being a meta-heuristic algorithm, has less tendency to get trapped in local minimal or has better exploration capabilities. It is helping the problem overall. Secondly, entire information about the "learning" the task comes from the loss, and the function ``f(.)`` only specifies the structural relationship between input and output. 
+At this time, we could embellish the fact that Swarm, by being a meta-heuristic algorithm, has less tendency to get trapped in local minimal or has better exploration capabilities. It is helping the problem overall. Secondly, entire information about the "learning" the task comes from the loss, and the function ``f(.)`` only specifies the structural relationship between input and output. Moreover, the ability of EMPSO, the first step toward AdaSwarm facilitates explorationa nd exploitation equally by using a modified formulation leveraging exponentially averaged velocities and by not ignoring past velocities. It is these velocities (which are different at different stages in the search space) that make the difference at local minima successfully by being able to differentiate between stagnating regions/saddle points and true local minima. Particular objects of interest are the equivalence theorems, such as the following:
 
-So, having better "optimization" capabilities at the loss, in general, are going to be helpful. While we have ample empirical evidence that shows that *AdaSwarm* is working well, we don't have rich theory, however. We only have few speculations like the one stated earlier.
+![image](https://user-images.githubusercontent.com/32681282/116822638-7f5dc900-ab9d-11eb-9540-76cee298ffc2.png)
+
+
+So, having better "optimization" capabilities at the loss, in general, are going to be helpful. While we have ample empirical evidence that shows that *AdaSwarm* is working well, we also have some theory (not comlete but enough to offer the convergence insights, particularly from the point of robust loss functions such as MAE and irregular losses used to solve PDEs/PDEs such as the Schrodinger Equation). 
 
 Another speculation, speculation at this time, is that, to the best of our knowledge, all current optimization techniques only harvest information coming from a single paradigm. *AdaSwarm*, whereas, combines different perspectives, like in an ensemble. More than an ensemble, it is a composition -- where different perspectives get chained. That is one fundamental difference between *AdaSwarm* and other population-based techniques.
 
@@ -94,7 +97,7 @@ Therefore, in order to better understand, and develop the theory and tools for c
 
 1. While we are yet to establish the policy to contribute, we will follow how any Apache open source project works. For example, see airflow project's [contribution](https://github.com/apache/airflow/blob/master/CONTRIBUTING.rst) guidelines. 
  
-2. But be mindful. There may not be any short-term rewards. 
+2. But be mindful. There may not be any no short-term rewards. 
     - Research is bloody hard work. There will not be any instant gratification or recognition for the work. Expect lot of negative results, and set backs.
     - Optimization problems are generally hard, and writing an Engineering level framework that works on _any_ problem is even harder. It is scientific computing, not writing hello world examples.
     - So take a plunge only if you are willing to endure the pain, w/o worrying about the end result.
