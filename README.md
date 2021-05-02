@@ -14,7 +14,7 @@ limitations under the License.
 
 # AdaSwarm
 
-This repo purportedly implements AdaSwarm, an optimizer, that combines Gradiant Descent and Particile Swarms. 
+This repo purportedly implements AdaSwarm, an optimizer, that combines Gradiant Descent and Particle Swarms. 
 
 AdaSwarm is based on "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence, _Rohan Mohapatra, Snehanshu Saha, Carlos A. Coello Coello, Anwesh Bhattacharya Soma S. Dhavala, and Sriparna Saha_", to appear in IEEE Transactions on Computational Intelligence. An arXive version can be found [here](https://arxiv.org/abs/2006.09875). [This](https://github.com/rohanmohapatra/pytorch-cifar) repo containes implemenation used the paper.
 
@@ -22,9 +22,9 @@ AdaSwarm is based on "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Lea
 ## Why AdaSwarm:
 Said  et  al.  [[1]](#1)  postulated  that  swarms behaviour is similar to  that of classical  and  quantum  particles.  In  fact, their analogy is so striking that one may think that the social and  individual  intelligence  components  in  Swarms  are,  after  all, nice useful metaphors, and that there is a neat underlying dynamical system at play. This dynamical system perspective was indeed useful in unifying two almost parallel streams, namely, optimization  and  Markov  Chain  Monte  Carlo  sampling. 
 
-In a seminal paper, Wellington and Teh [[2]](#2), showed that a  stochastic  gradient  descent  (SGD)  optimization  techniquecan  be  turned  into  a  sampling  technique  by  just  adding noise,  governed  by  Langevin  dynamics.  Recently,  Soma  andS ato [[3]](#3) provided further insights into this connection based on  an  underlying  dynamical  system  governed  by  stochastic differential equations (SDEs). 
+In a seminal paper, Wellington and Teh [[2]](#2), showed that a  stochastic  gradient  descent  (SGD)  optimization  techniquecan  be  turned  into  a  sampling  technique  by  just  adding noise,  governed  by  Langevin  dynamics.  Recently,  Soma  and Sato [[3]](#3) provided further insights into this connection based on  an  underlying  dynamical  system  governed  by  stochastic differential equations (SDEs). 
 
-While these results are new, the connections  between  derivative-free  optimization  techniquesbased on Stochastic Approximation and Finite Differences are well documented [[4]](#4). Such strong connections between these seemingly  different  subfields  of  optimization  and  sampling made  us  wonder:  Is  there  a  larger,  more  general  templateof  which  the  aforementioned  approaches  are  special  cases. AdawSwarm is a result of that deliberation. 
+While these results are new, the connections  between  derivative-free  optimization  techniquesbased on Stochastic Approximation and Finite Differences are well documented [[4]](#4). Such strong connections between these seemingly  different  subfields  of  optimization  and  sampling made  us  wonder:  Is  there  a  larger,  more  general  template of which  the  aforementioned  approaches  are  special  cases. AdawSwarm is a result of that deliberation.
 
 We believe that, it is just a beginning of a new breed of **composable optimizers**
 
