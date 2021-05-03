@@ -67,6 +67,12 @@ _ ...
 
 Therefore, in order to better understand, and develop the theory and tools for composable optimizers, we have to develop both theoretical and computational tools to understand why and where *AdaSwarm* works. Along the way, make such optimizers accessible to the community.
 
+## Adaswarm Equivalence of Gradients: Why is it happening?
+
+The equivalences are driven by the fllowing equations in the main text (cf. docs/papers folder): 
+
+Eqns (4)-(6), (15), (18) and the eqn below for non-differentiable loss and (20)-(24)
+
 ## Objectives:
 
 1. Develop a plug-and-play optimizer that works with
