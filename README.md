@@ -102,6 +102,11 @@ Eqns (4)-(6), (15), (18) and the eqn below for non-differentiable loss and (20)-
 ## Contributing:
 
 1. While we are yet to establish the policy to contribute, we will follow how any Apache open source project works. For example, see airflow project's [contribution](https://github.com/apache/airflow/blob/master/CONTRIBUTING.rst) guidelines. 
+
+2. [tbd] 
+    - developer slack channel will be coming soon
+    - we will hold weekly zoom/meet at specific times (off office hours, so anybody can join)
+ 
  
 2. But be mindful. There may not be any no short-term rewards. 
     - Research is bloody hard work. There will not be any instant gratification or recognition for the work. Expect lot of negative results, and set backs.
