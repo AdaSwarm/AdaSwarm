@@ -3,3 +3,5 @@
 
 # data folder
 ./data
+data/MNIST/raw/train-labels-idx1-ubyte.gz
+data/MNIST/raw/train-images-idx3-ubyte.gz
