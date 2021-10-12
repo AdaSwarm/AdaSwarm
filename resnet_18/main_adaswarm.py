@@ -13,7 +13,7 @@ import argparse
 import sys
 
 sys.path.append("..")
-from models import *
+from models import ResNet18
 from utils import progress_bar
 
 from torchswarm_gpu.rempso import RotatedEMParicleSwarmOptimizer
