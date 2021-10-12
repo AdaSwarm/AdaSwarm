@@ -5,6 +5,8 @@ import torch.optim as optim
 import torch.nn.functional as F
 import torch.backends.cudnn as cudnn
 
+import logging
+
 import torchvision
 import torchvision.transforms as transforms
 
@@ -17,7 +19,7 @@ from models import ResNet18
 from utils import progress_bar
 
 from torchswarm_gpu.rempso import RotatedEMParicleSwarmOptimizer
-from nn_utils import *
+from nn_utils import CELoss, CELossWithPSO
 
 parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
@@ -88,7 +90,7 @@ def train(epoch):
     total = 0
     for batch_idx, (inputs, targets) in enumerate(trainloader):
         inputs, targets = inputs.to(device), targets.to(device)
-        # print(targets)
+        logging.debug(f"targets: {targets}")
         targets.requires_grad = False
         print("PSO ran...")
         p = RotatedEMParicleSwarmOptimizer(batch_size, swarm_size, 10, targets)
@@ -97,7 +99,7 @@ def train(epoch):
             c1r1, c2r2, gbest = p.run_one_iter(verbosity=False)
         optimizer.zero_grad()
         outputs = net(inputs)
-        # print(gbest)
+        logging.debug(f"gbest: {gbest}")
         # gbest = torch.clamp(torch.exp(gbest), 0, 1)
         loss = approx_criterion(outputs, targets, c1r1+c2r2, 0.4, gbest)
         loss.backward()
@@ -135,17 +137,17 @@ def test(epoch):
 
     # Save checkpoint.
     acc = 100.*correct/total
-    if True:
-        print('Saving..')
-        state = {
-            'net': net.state_dict(),
-            'acc': acc,
-            'epoch': epoch,
-        }
-        if not os.path.isdir('checkpoint'):
-            os.mkdir('checkpoint')
-        torch.save(state, './checkpoint/ckpt.pth')
-        best_acc = acc
+
+    print('Saving..')
+    state = {
+        'net': net.state_dict(),
+        'acc': acc,
+        'epoch': epoch,
+    }
+    if not os.path.isdir('checkpoint'):
+        os.mkdir('checkpoint')
+    torch.save(state, './checkpoint/ckpt.pth')
+    best_acc = acc
 
 
 for epoch in range(start_epoch, start_epoch+200):
