@@ -9,3 +9,6 @@ notebooks/.ipynb_checkpoints/*ipynb
 *.code-workspace
 adaswarm.code-workspace
 data/*
+__pycache__/utils.cpython-39.pyc
+data/MNIST/raw/train-labels-idx1-ubyte.gz
+.gitignore
