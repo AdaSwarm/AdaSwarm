@@ -1,0 +1,24 @@
+package:
+  name: "adaswarm"
+  version: "0.1.0"
+
+build:
+  number: 0
+  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv "
+
+requirements:
+  host:
+    - pip
+    - python
+  run:
+    - python
+
+test:
+  imports:
+    - adaswarm
+
+about:
+  home: https://github.com/swhustla/AdaSwarm
+  license: BSD
+  license_family: BSD
+  summary: Composable command line interface toolkit
