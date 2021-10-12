@@ -95,7 +95,7 @@ def train(epoch):
         print("PSO ran...")
         p = RotatedEMParicleSwarmOptimizer(batch_size, swarm_size, 10, targets)
         p.optimize(CELoss(targets))
-        for i in range(5):
+        for _ in range(5):
             c1r1, c2r2, gbest = p.run_one_iter(verbosity=False)
         optimizer.zero_grad()
         outputs = net(inputs)
