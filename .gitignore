@@ -8,3 +8,4 @@ data/MNIST/raw/train-images-idx3-ubyte.gz
 notebooks/.ipynb_checkpoints/*ipynb
 *.code-workspace
 adaswarm.code-workspace
+data/*
