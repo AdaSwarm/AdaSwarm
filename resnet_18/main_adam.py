@@ -17,14 +17,14 @@ from models import ResNet18
 from utils import progress_bar
 
 
-parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
-parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
-parser.add_argument('--resume', '-r', action='store_true',
-                    help='resume from checkpoint')
-args = parser.parse_args()
 if torch.cuda.is_available():
     print("Using GPU...")
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = 'cuda' 
+else:
+    print("Using CPU...")
+    device = 'cpu'
+
+
 best_acc = 0  # best test accuracy
 
 def run():
@@ -32,6 +32,11 @@ def run():
     print('loop')
 
     start_epoch = 0  # start from epoch 0 or last checkpoint epoch
+
+    parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
+    parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
+    parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
+    args = parser.parse_args()
 
     # Data
     print('==> Preparing data..')
