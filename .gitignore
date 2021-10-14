@@ -3,12 +3,8 @@
 
 # data folder
 ./data
-data/MNIST/raw/train-labels-idx1-ubyte.gz
-data/MNIST/raw/train-images-idx3-ubyte.gz
 notebooks/.ipynb_checkpoints/*ipynb
 *.code-workspace
-adaswarm.code-workspace
 data/*
-__pycache__/utils.cpython-39.pyc
-data/MNIST/raw/train-labels-idx1-ubyte.gz
-
+*.pyc
+__pycache__/

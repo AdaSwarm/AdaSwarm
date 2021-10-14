@@ -1,6 +1,6 @@
 import torch 
 import time
-from torchswarm.particle import RotatedParticle
+from torchswarm_gpu.particle import RotatedParticle
 
 class RotatedParicleSwarmOptimizer:
     def __init__(self,dimensions = 4, swarm_size=100,classes=1, options=None):
@@ -15,7 +15,7 @@ class RotatedParicleSwarmOptimizer:
         self.gbest_position = None
         self.gbest_value = torch.Tensor([float("inf")])
 
-        for i in range(swarm_size):
+        for _ in range(swarm_size):
             self.swarm.append(RotatedParticle(dimensions, self.w, self.c1, self.c2, classes))
     
     def optimize(self, function):

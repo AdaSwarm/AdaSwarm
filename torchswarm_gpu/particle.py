@@ -1,7 +1,7 @@
 import torch
 import numpy as np
-from torchswarm_gpu.utils.rpso import *
-from keras.utils import to_categorical
+from torchswarm_gpu.utils.rpso import get_rotation_matrix, get_inverse_matrix, get_phi_matrix
+
 if torch.cuda.is_available():  
   dev = "cuda:0" 
 else:  
@@ -48,7 +48,7 @@ class RotatedParticle(Particle):
         r2 = torch.rand(1)
         a_matrix = get_rotation_matrix(self.dimensions, np.pi/5, 0.4)
         a_inverse_matrix = get_inverse_matrix(a_matrix)
-        x = a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix 
+        # x = a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix 
         self.velocity = self.w * self.velocity \
                         + torch.matmul((a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix).float().to(device),(self.pbest_position - self.position).float().to(device)) \
                         + torch.matmul((a_inverse_matrix * get_phi_matrix(self.dimensions, self.c2, r2) * a_matrix).float().to(device), (gbest_position - self.position).float().to(device))
@@ -90,7 +90,7 @@ class RotatedEMParticle(Particle):
         momentum_t = self.beta*self.momentum + (1 - self.beta)*self.velocity
         a_matrix = get_rotation_matrix(self.dimensions, np.pi/5, 0.4)
         a_inverse_matrix = get_inverse_matrix(a_matrix)
-        x = a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix 
+        # x = a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix 
         self.velocity = momentum_t \
                         + torch.matmul((a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix).float().to(device),(self.pbest_position - self.position).float().to(device)) \
                         + torch.matmul((a_inverse_matrix * get_phi_matrix(self.dimensions, self.c2, r2) * a_matrix).float().to(device), (gbest_position - self.position).float().to(device))
@@ -117,7 +117,7 @@ class RotatedEMParticleWithBounds(Particle):
         momentum_t = self.beta*self.momentum + (1 - self.beta)*self.velocity
         a_matrix = get_rotation_matrix(self.dimensions, np.pi/5, 0.4)
         a_inverse_matrix = get_inverse_matrix(a_matrix)
-        x = a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix 
+        # x = a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix 
         self.velocity = momentum_t \
                         + torch.matmul((a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix).float().to(device),(self.pbest_position - self.position).float().to(device)) \
                         + torch.matmul((a_inverse_matrix * get_phi_matrix(self.dimensions, self.c2, r2) * a_matrix).float().to(device), (gbest_position - self.position).float().to(device))
