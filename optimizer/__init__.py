@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
-from .optimizer import Optimizer
+from optimizer import Optimizer
 import torch 
 import time
 from torchswarm_gpu.particle import RotatedEMParticle, RotatedEMParticleWithBounds
