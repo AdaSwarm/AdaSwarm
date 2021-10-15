@@ -1,0 +1,25 @@
+name: GitHub Actions Demo
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+   steps:
+      - uses: actions/setup-python@v2
+      - name: Set up python 3.9
+        with:
+          python-version: '3.9'
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies 
+        run: |
+          poetry install
+          poetry shell
+        shell: bash
+
+      - name: Lint code
+        run: |
+          pylint **/*.py
