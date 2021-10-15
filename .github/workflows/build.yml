@@ -17,5 +17,9 @@ jobs:
         - name: Install dependencies 
           run: |
             poetry install
+          shell: bash
+
+        - name: Lint and verify python code
+          run: |
             poetry run pylint **/*.py
           shell: bash
