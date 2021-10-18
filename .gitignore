@@ -8,3 +8,4 @@ notebooks/.ipynb_checkpoints/*ipynb
 data/*
 *.pyc
 __pycache__/
+.vscode
