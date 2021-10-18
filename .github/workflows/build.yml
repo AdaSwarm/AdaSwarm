@@ -21,5 +21,5 @@ jobs:
 
         - name: Lint and verify python code
           run: |
-            poetry run pylint **/*.py
+            poetry run pylint resnet_18/main_ada*.py
           shell: bash
