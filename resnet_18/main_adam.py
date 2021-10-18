@@ -117,7 +117,7 @@ def run():
 
             progress_bar(batch_idx,
                 len(trainloader),
-                f"""Loss: {train_loss/(batch_idx+1):%.3f}
+                f"""Loss: {train_loss/(batch_idx+1):3f}
                 | Acc: {100.*correct/total}%% ({correct/total})""")
 
     def test(epoch):
@@ -139,7 +139,7 @@ def run():
 
                 progress_bar(batch_idx,
                     len(trainloader),
-                    f"""Loss: {test_loss/(batch_idx+1):%.3f}
+                    f"""Loss: {test_loss/(batch_idx+1):3f}
                     | Acc: {100.*correct/total}%% ({correct/total})""")
 
         # Save checkpoint.

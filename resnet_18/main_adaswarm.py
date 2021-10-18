@@ -115,7 +115,7 @@ def run():
             total += targets.size(0)
             correct += predicted.eq(targets).sum().item()
 
-            print_output = f"""Loss: {train_loss/(batch_idx+1):%.3f}
+            print_output = f"""Loss: {train_loss/(batch_idx+1):3f}
                     | Acc: {100.*correct/total}%% ({correct/total})"""
 
             print(batch_idx, len(trainloader), print_output)
@@ -139,7 +139,7 @@ def run():
 
                 progress_bar(batch_idx,
                     len(testloader),
-                    f"""Loss: {test_loss/(batch_idx+1):%.3f}
+                    f"""Loss: {test_loss/(batch_idx+1):3f}
                     | Acc: {100.*correct/total}%% ({correct/total})""")
 
         # Save checkpoint.
