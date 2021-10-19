@@ -1,6 +1,7 @@
 import torch 
 import time
 from torchswarm.particle import RotatedEMParticle, RotatedEMParticleWithBounds
+from nn_utils import CELoss
 if torch.cuda.is_available():  
   dev = "cuda:0" 
 else:  
@@ -23,8 +24,13 @@ class RotatedEMParicleSwarmOptimizer:
         for i in range(swarm_size):
             self.swarm.append(RotatedEMParticle(dimensions, self.beta, self.c1, self.c2, classes, self.true_y))
     
-    def optimize(self, function):
-        self.fitness_function = function
+    def assign_fitness_function(self, targets):
+        """Assigns fitness function to PSO instance with targets loaded
+
+        Args:
+            targets (pytorch.Tensor): targets or labels for the machine learning problem
+        """        
+        self.fitness_function = CELoss(targets)
 
     def run(self,verbosity = True):
         #--- Run 

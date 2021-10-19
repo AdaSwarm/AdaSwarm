@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 '''Train MNIST with PyTorch.'''
 
 import os
@@ -100,7 +102,7 @@ def run():
             print("PSO ran...")
             particle_swarm_optimizer = RotatedEMParicleSwarmOptimizer(batch_size,
                                                                       swarm_size, 10, targets)
-            particle_swarm_optimizer.optimize(CELoss(targets))
+            particle_swarm_optimizer.assign_fitness_function(targets)
             for _ in range(5):
                 c1r1, c2r2, gbest = particle_swarm_optimizer.run_one_iter(verbosity=False)
             optimizer.zero_grad()
