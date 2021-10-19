@@ -11,10 +11,10 @@ from torch import nn
 from torch import optim
 from torch.backends import cudnn
 
-from models import ResNet18
+from resnet import ResNet18
 from utils import progress_bar
 
-from torchswarm_gpu.rempso import RotatedEMParicleSwarmOptimizer
+from torchswarm.rempso import RotatedEMParicleSwarmOptimizer
 from nn_utils import CELoss, CELossWithPSO
 
 

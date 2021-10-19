@@ -1,6 +1,6 @@
 import torch 
 import time
-from torchswarm_gpu.particle import RotatedEMParticle, RotatedEMParticleWithBounds
+from torchswarm.particle import RotatedEMParticle, RotatedEMParticleWithBounds
 if torch.cuda.is_available():  
   dev = "cuda:0" 
 else:  
