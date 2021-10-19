@@ -17,7 +17,7 @@ from resnet import ResNet18
 from utils import progress_bar
 
 from torchswarm.rempso import RotatedEMParicleSwarmOptimizer
-from nn_utils import CELoss, CELossWithPSO
+from nn_utils import CELossWithPSO
 
 
 
