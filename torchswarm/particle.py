@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from torchswarm_gpu.utils.rpso import get_rotation_matrix, get_inverse_matrix, get_phi_matrix
+from torchswarm.utils.rpso import get_rotation_matrix, get_inverse_matrix, get_phi_matrix
 
 if torch.cuda.is_available():  
   dev = "cuda:0" 
