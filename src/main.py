@@ -16,7 +16,7 @@ from torch.backends import cudnn
 from resnet import ResNet18
 from utils import progress_bar
 
-from torchswarm.rempso import RotatedEMParicleSwarmOptimizer
+from torchswarm.rempso import RotatedEMParticleSwarmOptimizer
 from nn_utils import CELossWithPSO
 
 
@@ -100,7 +100,7 @@ def run():
             logging.debug("targets: %s", targets)
             targets.requires_grad = False
             print("PSO ran...")
-            particle_swarm_optimizer = RotatedEMParicleSwarmOptimizer(batch_size,
+            particle_swarm_optimizer = RotatedEMParticleSwarmOptimizer(batch_size,
                                                                       swarm_size, 10, targets)
             for _ in range(5):
                 c1r1, c2r2, gbest = particle_swarm_optimizer.run_one_iter(verbosity=False)

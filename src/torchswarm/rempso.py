@@ -34,17 +34,17 @@ class RotatedEMParticleSwarmOptimizer:
             tic = time.monotonic()
             #--- Set PBest
             for particle in self.swarm:
-                fitness_candidate = self.loss_function.fitness(particle.position, self.true_y)
-                # print("========: ", fitness_cadidate, particle.pbest_value)
+                fitness_candidate = self.loss_function(particle.position, self.true_y)
+                # print("========: ", fitness_candidate, particle.pbest_value)
                 if(particle.pbest_value > fitness_candidate):
                     particle.pbest_value = fitness_candidate
                     particle.pbest_position = particle.position.clone()
                 # print("========: ",particle.pbest_value)
             #--- Set GBest
             for particle in self.swarm:
-                best_fitness_cadidate = self.loss_function.evaluate(particle.position)
-                if(self.gbest_value > best_fitness_cadidate):
-                    self.gbest_value = best_fitness_cadidate
+                best_fitness_candidate = self.loss_function(particle.position, self.true_y)
+                if(self.gbest_value > best_fitness_candidate):
+                    self.gbest_value = best_fitness_candidate
                     self.gbest_position = particle.position.clone()
 
             #--- For Each Particle Update Velocity
@@ -65,17 +65,17 @@ class RotatedEMParticleSwarmOptimizer:
         tic = time.monotonic()
         #--- Set PBest
         for particle in self.swarm:
-            fitness_cadidate = self.loss_function.evaluate(particle.position).to(device)
-            # print("========: ", fitness_cadidate, particle.pbest_value)
-            if(particle.pbest_value > fitness_cadidate):
-                particle.pbest_value = fitness_cadidate
+            fitness_candidate = self.loss_function(particle.position, self.true_y).to(device)
+            # print("========: ", fitness_candidate, particle.pbest_value)
+            if(particle.pbest_value > fitness_candidate):
+                particle.pbest_value = fitness_candidate
                 particle.pbest_position = particle.position.clone()
             # print("========: ",particle.pbest_value)
         #--- Set GBest
         for particle in self.swarm:
-            best_fitness_cadidate = self.loss_function.evaluate(particle.position).to(device)
-            if(self.gbest_value > best_fitness_cadidate):
-                self.gbest_value = best_fitness_cadidate
+            best_fitness_candidate = self.loss_function(particle.position, self.true_y).to(device)
+            if(self.gbest_value > best_fitness_candidate):
+                self.gbest_value = best_fitness_candidate
                 self.gbest_position = particle.position.clone()
 
         c1r1s = []
@@ -120,17 +120,17 @@ class RotatedEMParticleSwarmOptimizerWithBounds:
             tic = time.monotonic()
             #--- Set PBest
             for particle in self.swarm:
-                fitness_cadidate = self.fitness_function.evaluate(particle.position)
-                # print("========: ", fitness_cadidate, particle.pbest_value)
-                if(particle.pbest_value > fitness_cadidate):
-                    particle.pbest_value = fitness_cadidate
+                fitness_candidate = self.fitness_function.fitness(particle.position, self.true_y)
+                # print("========: ", fitness_candidate, particle.pbest_value)
+                if(particle.pbest_value > fitness_candidate):
+                    particle.pbest_value = fitness_candidate
                     particle.pbest_position = particle.position.clone()
                 # print("========: ",particle.pbest_value)
             #--- Set GBest
             for particle in self.swarm:
-                best_fitness_cadidate = self.fitness_function.evaluate(particle.position)
-                if(self.gbest_value > best_fitness_cadidate):
-                    self.gbest_value = best_fitness_cadidate
+                best_fitness_candidate = self.fitness_function.fitness(particle.position, self.true_y)
+                if(self.gbest_value > best_fitness_candidate):
+                    self.gbest_value = best_fitness_candidate
                     self.gbest_position = particle.position.clone()
 
             #--- For Each Particle Update Velocity
@@ -152,17 +152,17 @@ class RotatedEMParticleSwarmOptimizerWithBounds:
         tic = time.monotonic()
         #--- Set PBest
         for particle in self.swarm:
-            fitness_cadidate = self.fitness_function.evaluate(particle.position)
-            # print("========: ", fitness_cadidate, particle.pbest_value)
-            if(particle.pbest_value > fitness_cadidate):
-                particle.pbest_value = fitness_cadidate
+            fitness_candidate = self.fitness_function.fitness(particle.position, self.true_y)
+            # print("========: ", fitness_candidate, particle.pbest_value)
+            if(particle.pbest_value > fitness_candidate):
+                particle.pbest_value = fitness_candidate
                 particle.pbest_position = particle.position.clone()
             # print("========: ",particle.pbest_value)
         #--- Set GBest
         for particle in self.swarm:
-            best_fitness_cadidate = self.fitness_function.evaluate(particle.position)
-            if(self.gbest_value > best_fitness_cadidate):
-                self.gbest_value = best_fitness_cadidate
+            best_fitness_candidate = self.fitness_function.fitness(particle.position, self.true_y)
+            if(self.gbest_value > best_fitness_candidate):
+                self.gbest_value = best_fitness_candidate
                 self.gbest_position = particle.position.clone()
 
         c1r1s = []

@@ -2,7 +2,7 @@ import torch
 import time
 from torchswarm.particle import Particle
 
-class ParicleSwarmOptimizer:
+class ParticleSwarmOptimizer:
     def __init__(self,dimensions = 4, swarm_size=100,classes=1, options=None):
         if (options == None):
             options = [0.9,0.8,0.5,100]
