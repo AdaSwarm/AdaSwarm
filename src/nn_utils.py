@@ -1,12 +1,5 @@
 import torch
 import torch.nn.functional as F
-class CELoss:
-    def __init__(self, y):
-        self.y = y
-        self.fitness = torch.nn.CrossEntropyLoss()
-    def evaluate(self, x):
-        # print(x, self.y)
-        return self.fitness(x, self.y)
 
 class CELossWithPSO(torch.autograd.Function):  
     @staticmethod
