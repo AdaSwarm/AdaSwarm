@@ -39,7 +39,7 @@ def run():
     args = parser.parse_args()
 
     start_epoch = 0  # start from epoch 0 or last checkpoint epoch
-    batch_size = 125
+    dimension = 125
     swarm_size = 10
 
     # Data
@@ -100,7 +100,7 @@ def run():
             logging.debug("targets: %s", targets)
             targets.requires_grad = False
             print("PSO ran...")
-            particle_swarm_optimizer = RotatedEMParticleSwarmOptimizer(batch_size,
+            particle_swarm_optimizer = RotatedEMParticleSwarmOptimizer(dimension,
                                                                       swarm_size, 10, targets)
             for _ in range(5):
                 c1r1, c2r2, gbest = particle_swarm_optimizer.run_one_iter(verbosity=False)

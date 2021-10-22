@@ -9,11 +9,15 @@ else:
   dev = "cpu"  
 device = torch.device(dev) 
 
+class ParticleSwarm():
+    def __init__(self, swarm_size: int = 100, dimension: int = 125, ):
+        self.swarm = [None] * swarm_size
+        
+
 class RotatedEMParticleSwarmOptimizer:
-    def __init__(self,dimensions = 4, swarm_size=100,classes=1, true_y=None, options=None):
+    def __init__(self, dimension = 4, swarm_size=100,classes=1, true_y=None, options=None):
         if (options == None):
             options = [2,2,0.1,100]
-        self.swarm_size = swarm_size
         self.c1 = options[0]
         self.c2 = options[1]
         self.beta = options[2]
@@ -25,7 +29,14 @@ class RotatedEMParticleSwarmOptimizer:
         self.loss_function = CrossEntropyLoss()
 
         for _ in range(swarm_size):
-            self.swarm.append(RotatedEMParticle(dimensions, self.beta, self.c1, self.c2, classes, self.true_y))
+            self.swarm.append(RotatedEMParticle(
+                dimension, 
+                self.beta, 
+                self.c1, 
+                self.c2, 
+                classes, 
+                self.true_y
+                ))
     
 
     def run(self,verbosity = True):
