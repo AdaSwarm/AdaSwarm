@@ -107,7 +107,9 @@ def run():
                 targets
                 )
             for _ in range(5):
-                c1r1, c2r2, gbest = particle_swarm_optimizer.run_one_iter(verbosity=False)
+                c1r1, c2r2, gbest = particle_swarm_optimizer.run_one_iter(
+                    verbosity=False
+                    )
             optimizer.zero_grad()
             outputs = net(inputs)
             logging.debug("gbest: %s", gbest)

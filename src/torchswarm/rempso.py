@@ -9,13 +9,11 @@ else:
   dev = "cpu"  
 device = torch.device(dev) 
 
-class ParticleSwarm():
-    def __init__(self, swarm_size: int = 100, dimension: int = 125, ):
-        self.swarm = [None] * swarm_size
+
         
 
 class RotatedEMParticleSwarmOptimizer:
-    def __init__(self, dimension = 4, swarm_size=100,classes=1, true_y=None, options=None):
+    def __init__(self, dimension = 4, swarm_size=100,number_of_classes=1, true_y=None, options=None):
         if (options == None):
             options = [2,2,0.1,100]
         self.c1 = options[0]
@@ -27,6 +25,7 @@ class RotatedEMParticleSwarmOptimizer:
         self.gbest_position = None
         self.gbest_value = torch.Tensor([float("inf")]).to(device)
         self.loss_function = CrossEntropyLoss()
+        self.swarm_size = swarm_size
 
         for _ in range(swarm_size):
             self.swarm.append(RotatedEMParticle(
@@ -34,7 +33,7 @@ class RotatedEMParticleSwarmOptimizer:
                 self.beta, 
                 self.c1, 
                 self.c2, 
-                classes, 
+                number_of_classes, 
                 self.true_y
                 ))
     
