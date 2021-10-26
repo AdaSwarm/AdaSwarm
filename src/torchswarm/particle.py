@@ -8,6 +8,45 @@ else:
   dev = "cpu"  
 device = torch.device(dev) 
 
+class ParticleSwarm(list):
+    def __init__(
+        self, 
+        dimension: int = 125, 
+        swarm_size: int = 100, 
+        number_of_classes: int=1, 
+        acceleration_coefficients: dict = {"c1":0.9, "c2":0.8},
+        inertial_weight_w: float = 0.5
+        ):
+        self.size = swarm_size
+        self.initialise_with_particles(
+            dimension=dimension, 
+            swarm_size=swarm_size, 
+            number_of_classes=number_of_classes,
+            acceleration_coefficients=acceleration_coefficients,
+            inertial_weight_w=inertial_weight_w,
+            )
+
+    def initialise_with_particles(
+        self, 
+        dimension: int, 
+        swarm_size: int, 
+        number_of_classes: int,
+        acceleration_coefficients: dict,
+        inertial_weight_w: float
+        ):
+        for _ in range(swarm_size):
+            self.append(
+                Particle(
+                    dimension, 
+                    inertial_weight_w, 
+                    acceleration_coefficients["c1"], 
+                    acceleration_coefficients["c2"], 
+                    number_of_classes
+                    )
+                )
+    
+
+
 class Particle:
     def __init__(self, dimensions, w, c1, c2, classes):
         self.dimensions = dimensions

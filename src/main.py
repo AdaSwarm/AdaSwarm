@@ -100,8 +100,12 @@ def run():
             logging.debug("targets: %s", targets)
             targets.requires_grad = False
             print("PSO ran...")
-            particle_swarm_optimizer = RotatedEMParticleSwarmOptimizer(dimension,
-                                                                      swarm_size, 10, targets)
+            particle_swarm_optimizer = RotatedEMParticleSwarmOptimizer(
+                dimension,
+                swarm_size, 
+                10, 
+                targets
+                )
             for _ in range(5):
                 c1r1, c2r2, gbest = particle_swarm_optimizer.run_one_iter(verbosity=False)
             optimizer.zero_grad()

@@ -1,22 +1,24 @@
 import torch 
 import time
-from torchswarm.particle import Particle
+from torchswarm.particle import Particle, ParticleSwarm
 
 class ParticleSwarmOptimizer:
-    def __init__(self,dimensions = 4, swarm_size=100,classes=1, options=None):
+    def __init__(self,dimension = 4, swarm_size=100, classes=1, options=None):
         if (options == None):
             options = [0.9,0.8,0.5,100]
         self.swarm_size = swarm_size
-        self.c1 = options[0]
-        self.c2 = options[1]
-        self.w = options[2]
         self.max_iterations = options[3]
-        self.swarm = []
+        self.swarm = ParticleSwarm(
+            dimension=dimension, 
+            swarm_size=swarm_size, 
+            number_of_classes=classes, 
+            acceleration_coefficients={"c1":options[0] , "c2":options[1]},
+            inertial_weight_w = options[2]
+        )
+
         self.gbest_position = None
         self.gbest_value = torch.Tensor([float("inf")])
 
-        for i in range(swarm_size):
-            self.swarm.append(Particle(dimensions, self.w, self.c1, self.c2, classes))
     
     def optimize(self, function):
         self.fitness_function = function
