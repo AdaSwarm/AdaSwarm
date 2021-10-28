@@ -1,5 +1,5 @@
 import unittest
-from torchswarm.particle import ParticleSwarm, Particle
+from torchswarm.particle import ParticleSwarm, RotatedEMParticle
 
 
 class TestParticleSwarm(unittest.TestCase):
@@ -9,7 +9,7 @@ class TestParticleSwarm(unittest.TestCase):
 
     def test_initialise_swarm(self):
         swarm = ParticleSwarm(swarm_size=2)
-        self.assertIsInstance(swarm[0], Particle)
+        self.assertIsInstance(swarm[0], RotatedEMParticle)
 
 
 if __name__ == "__main__":
