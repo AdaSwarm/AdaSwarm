@@ -3,11 +3,7 @@ import time
 from torchswarm.particle import RotatedEMParticle
 from torch.nn import CrossEntropyLoss
 
-if torch.cuda.is_available():
-    dev = "cuda:0"
-else:
-    dev = "cpu"
-device = torch.device(dev)
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class RotatedEMParticleSwarmOptimizer:
