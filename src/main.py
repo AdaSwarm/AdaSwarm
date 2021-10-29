@@ -67,6 +67,7 @@ def run():
     trainset = torchvision.datasets.MNIST(
         root="./data", train=True, download=True, transform=transform_train
     )
+
     trainloader = DataLoader(trainset, batch_size=125, shuffle=True, num_workers=2)
 
     testset = torchvision.datasets.MNIST(

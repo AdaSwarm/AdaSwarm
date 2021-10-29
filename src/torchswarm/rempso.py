@@ -1,6 +1,6 @@
 import torch
 import time
-from torchswarm.particle import RotatedEMParticle, RotatedEMParticleWithBounds
+from torchswarm.particle import RotatedEMParticle
 from torch.nn import CrossEntropyLoss
 
 if torch.cuda.is_available():
@@ -238,4 +238,3 @@ class RotatedEMParticleSwarmOptimizerWithBounds:
             sum(c2r2s) / self.swarm_size,
             self.gbest_position,
         )
-
