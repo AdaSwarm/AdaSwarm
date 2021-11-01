@@ -6,6 +6,9 @@ import os
 import argparse
 import logging
 
+LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
+logging.basicConfig(level=LOGLEVEL)
+
 import torchvision
 from torchvision import transforms
 import torch
@@ -38,6 +41,7 @@ def run():
     parser.add_argument(
         "--resume", "-r", action="store_true", help="resume from checkpoint"
     )
+    
     args = parser.parse_args()
 
     start_epoch = 0  # start from epoch 0 or last checkpoint epoch
