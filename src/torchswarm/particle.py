@@ -19,21 +19,29 @@ class ParticleSwarm(list):
         self,
         dimension: int = 125,
         swarm_size: int = 100,
-        number_of_classes: int = 1,
+        number_of_classes: int = 10,
         acceleration_coefficients: dict = {"c1": 0.9, "c2": 0.8},
         inertial_weight_beta: float = 0.5,
-        targets: torch.Tensor = torch.empty([125], dtype=torch.long),
+        targets: torch.Tensor = None,
     ):
         self.size = swarm_size
+        if targets is None:
+            targets = torch.randint(
+                low=0, 
+                high=number_of_classes,
+                size=( dimension, number_of_classes), 
+                device=device
+                ),
+
         for _ in range(swarm_size):
             self.append(
                 RotatedEMParticle(
-                    dimension,
-                    inertial_weight_beta,
-                    acceleration_coefficients["c1"],
-                    acceleration_coefficients["c2"],
-                    number_of_classes,
-                    targets,
+                    dimensions=dimension,
+                    beta=inertial_weight_beta,
+                    c1=acceleration_coefficients["c1"],
+                    c2=acceleration_coefficients["c2"],
+                    number_of_classes=number_of_classes,
+                    targets=targets,
                 )
             )
 
@@ -46,7 +54,7 @@ class RotatedEMParticle:
         self.c1 = c1
         self.c2 = c2
         self.position = self.initialize_position(
-            targets, dimensions, number_of_classes
+            targets=targets, dimensions=dimensions, number_of_classes=number_of_classes
         ).to(device)
         self.pbest_position = self.position
         self.momentum = torch.zeros((dimensions, 1)).to(device)
@@ -100,5 +108,6 @@ class RotatedEMParticle:
         const = -4
         position = torch.tensor([[const] * number_of_classes] * dimensions)
         for i in range(dimensions):
+            print(f"i: {i} targets[i]: {targets[i]}")
             position[i][targets[i]] = 1
         return position + torch.rand(dimensions, number_of_classes)
