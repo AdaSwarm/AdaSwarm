@@ -27,11 +27,11 @@ class ParticleSwarm(list):
         self.size = swarm_size
         if targets is None:
             targets = torch.randint(
-                low=0, 
+                low=0,
                 high=number_of_classes,
-                size=( dimension, number_of_classes), 
-                device=device
-                ),
+                size=(dimension, number_of_classes),
+                device=device,
+            )
 
         for _ in range(swarm_size):
             self.append(
@@ -108,6 +108,5 @@ class RotatedEMParticle:
         const = -4
         position = torch.tensor([[const] * number_of_classes] * dimensions)
         for i in range(dimensions):
-            print(f"i: {i} targets[i]: {targets[i]}")
             position[i][targets[i]] = 1
         return position + torch.rand(dimensions, number_of_classes)
