@@ -9,30 +9,31 @@ from resnet import ResNet18
 from torch.nn.parallel import DataParallel
 from torch.utils.data import DataLoader
 from torch.backends import cudnn
-from torch import nn, no_grad, optim, cuda, load as torch_load, save as torch_save
+
+# pylint: disable=E0611
+from torch import (
+    nn,
+    no_grad,
+    optim,
+    cuda,
+    load as torch_load,
+    save as torch_save,
+    device as torch_device,
+)
 from torchvision import transforms, datasets
 import os
 import argparse
 import logging
 
-LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
+LOGLEVEL = os.environ.get("LOGLEVEL", "WARNING").upper()
 logging.basicConfig(level=LOGLEVEL)
-
-
-
-
-if cuda.is_available():
-    print("Using GPU...")
-    DEVICE = "cuda"
-else:
-    print("Using CPU...")
-    DEVICE = "cpu"
 
 # pylint: disable=R0914,R0915,C0116,C0413
 
 
 def run():
     print("in run function")
+    device = torch_device("cuda:0" if cuda.is_available() else "cpu")
 
     parser = argparse.ArgumentParser(description="PyTorch MNIST Training")
     parser.add_argument("--lr", default=0.1, type=float, help="learning rate")
@@ -70,28 +71,25 @@ def run():
         root="./data", train=True, download=True, transform=transform_train
     )
 
-    trainloader = DataLoader(trainset, batch_size=125,
-                             shuffle=True, num_workers=2)
+    trainloader = DataLoader(trainset, batch_size=125, shuffle=True, num_workers=2)
 
     testset = datasets.MNIST(
         root="./data", train=False, download=True, transform=transform_test
     )
-    testloader = DataLoader(testset, batch_size=100,
-                            shuffle=False, num_workers=2)
+    testloader = DataLoader(testset, batch_size=100, shuffle=False, num_workers=2)
 
     # Model
     print("==> Building model..")
     net = ResNet18(1)
-    net = net.to(DEVICE)
-    if DEVICE == "cuda":
+    net = net.to(device)
+    if device == "cuda":
         net = DataParallel(net)
         cudnn.benchmark = True
 
     if args.resume:
         # Load checkpoint.
         print("==> Resuming from checkpoint..")
-        assert os.path.isdir(
-            "checkpoint"), "Error: no checkpoint directory found!"
+        assert os.path.isdir("checkpoint"), "Error: no checkpoint directory found!"
         checkpoint = torch_load("./checkpoint/ckpt.pth")
         net.load_state_dict(checkpoint["net"])
         start_epoch = checkpoint["epoch"]
@@ -108,7 +106,7 @@ def run():
         correct = 0
         total = 0
         for batch_idx, (inputs, targets) in enumerate(trainloader):
-            inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
+            inputs, targets = inputs.to(device), targets.to(device)
             logging.debug("targets: %s", targets)
             targets.requires_grad = False
             print("PSO ran...")
@@ -144,7 +142,7 @@ def run():
         total = 0
         with no_grad():
             for batch_idx, (inputs, targets) in enumerate(testloader):
-                inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
+                inputs, targets = inputs.to(device), targets.to(device)
                 outputs = net(inputs)
                 loss = criterion(outputs, targets)
 

@@ -1,18 +1,10 @@
 import torch
 import numpy as np
-from torch._C import dtype
 from torchswarm.utils.rpso import (
     get_rotation_matrix,
     get_inverse_matrix,
     get_phi_matrix,
 )
-
-# TODO: Pull this out to a common module
-if torch.cuda.is_available():
-    dev = "cuda:0"
-else:
-    dev = "cpu"
-device = torch.device(dev)
 
 
 class ParticleSwarm(list):
@@ -24,6 +16,7 @@ class ParticleSwarm(list):
         acceleration_coefficients: dict = {"c1": 0.9, "c2": 0.8},
         inertial_weight_beta: float = 0.5,
         targets: torch.Tensor = None,
+        device: str = "cuda:0" if torch.cuda.is_available() else "cpu"
     ):
         self.size = swarm_size
         if targets is None:
@@ -43,12 +36,14 @@ class ParticleSwarm(list):
                     c2=acceleration_coefficients["c2"],
                     number_of_classes=number_of_classes,
                     targets=targets,
+                    device=device
                 )
             )
 
 
 class RotatedEMParticle:
-    def __init__(self, dimensions, beta, c1, c2, number_of_classes, targets):
+    def __init__(self, dimensions, beta, c1, c2, number_of_classes, targets, device):
+        self.device = device
         self.dimensions = dimensions
         self.velocity = torch.zeros((dimensions, number_of_classes)).to(device)
         self.pbest_value = torch.Tensor([float("inf")]).to(device)
@@ -69,7 +64,8 @@ class RotatedEMParticle:
     def update_velocity(self, gbest_position):
         r1 = torch.rand(1)
         r2 = torch.rand(1)
-        momentum_t = self.beta * self.momentum + (1 - self.beta) * self.velocity
+        momentum_t = self.beta * self.momentum + \
+            (1 - self.beta) * self.velocity
         a_matrix = get_rotation_matrix(self.dimensions, np.pi / 5, 0.4)
         a_inverse_matrix = get_inverse_matrix(a_matrix)
         # x = a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix
@@ -82,8 +78,8 @@ class RotatedEMParticle:
                     * a_matrix
                 )
                 .float()
-                .to(device),
-                (self.pbest_position - self.position).float().to(device),
+                .to(self.device),
+                (self.pbest_position - self.position).float().to(self.device),
             )
             + torch.matmul(
                 (
@@ -92,8 +88,8 @@ class RotatedEMParticle:
                     * a_matrix
                 )
                 .float()
-                .to(device),
-                (gbest_position - self.position).float().to(device),
+                .to(self.device),
+                (gbest_position - self.position).float().to(self.device),
             )
         )
 
