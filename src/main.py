@@ -1,7 +1,16 @@
 #!/usr/bin/env python3
 
 """Train MNIST with PyTorch."""
-
+# pylint: disable=C0411
+from nn_utils import CELossWithPSO
+from torchswarm.rempso import RotatedEMParticleSwarmOptimizer
+from utils import progress_bar
+from resnet import ResNet18
+from torch.nn.parallel import DataParallel
+from torch.utils.data import DataLoader
+from torch.backends import cudnn
+from torch import nn, no_grad, optim, cuda, load as torch_load, save as torch_save
+from torchvision import transforms, datasets
 import os
 import argparse
 import logging
@@ -9,30 +18,19 @@ import logging
 LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
 logging.basicConfig(level=LOGLEVEL)
 
-import torchvision
-from torchvision import transforms
-import torch
-from torch import nn
-from torch import optim
-from torch.backends import cudnn
-from torch.utils.data import DataLoader
-from torch.nn.parallel import DataParallel
-
-from resnet import ResNet18
-from utils import progress_bar
-
-from torchswarm.rempso import RotatedEMParticleSwarmOptimizer
-from nn_utils import CELossWithPSO
 
 
-if torch.cuda.is_available():
+
+if cuda.is_available():
     print("Using GPU...")
     DEVICE = "cuda"
 else:
     print("Using CPU...")
     DEVICE = "cpu"
 
-# pylint: disable=R0914,R0915,C0116
+# pylint: disable=R0914,R0915,C0116,C0413
+
+
 def run():
     print("in run function")
 
@@ -41,7 +39,7 @@ def run():
     parser.add_argument(
         "--resume", "-r", action="store_true", help="resume from checkpoint"
     )
-    
+
     args = parser.parse_args()
 
     start_epoch = 0  # start from epoch 0 or last checkpoint epoch
@@ -68,16 +66,18 @@ def run():
         ]
     )
 
-    trainset = torchvision.datasets.MNIST(
+    trainset = datasets.MNIST(
         root="./data", train=True, download=True, transform=transform_train
     )
 
-    trainloader = DataLoader(trainset, batch_size=125, shuffle=True, num_workers=2)
+    trainloader = DataLoader(trainset, batch_size=125,
+                             shuffle=True, num_workers=2)
 
-    testset = torchvision.datasets.MNIST(
+    testset = datasets.MNIST(
         root="./data", train=False, download=True, transform=transform_test
     )
-    testloader = DataLoader(testset, batch_size=100, shuffle=False, num_workers=2)
+    testloader = DataLoader(testset, batch_size=100,
+                            shuffle=False, num_workers=2)
 
     # Model
     print("==> Building model..")
@@ -90,8 +90,9 @@ def run():
     if args.resume:
         # Load checkpoint.
         print("==> Resuming from checkpoint..")
-        assert os.path.isdir("checkpoint"), "Error: no checkpoint directory found!"
-        checkpoint = torch.load("./checkpoint/ckpt.pth")
+        assert os.path.isdir(
+            "checkpoint"), "Error: no checkpoint directory found!"
+        checkpoint = torch_load("./checkpoint/ckpt.pth")
         net.load_state_dict(checkpoint["net"])
         start_epoch = checkpoint["epoch"]
 
@@ -141,7 +142,7 @@ def run():
         test_loss = 0
         correct = 0
         total = 0
-        with torch.no_grad():
+        with no_grad():
             for batch_idx, (inputs, targets) in enumerate(testloader):
                 inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
                 outputs = net(inputs)
@@ -170,7 +171,7 @@ def run():
         }
         if not os.path.isdir("checkpoint"):
             os.mkdir("checkpoint")
-        torch.save(state, "./checkpoint/ckpt.pth")
+        torch_save(state, "./checkpoint/ckpt.pth")
 
     for epoch in range(start_epoch, start_epoch + 200):
         train(epoch)
