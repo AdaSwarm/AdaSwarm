@@ -2,7 +2,9 @@ import torch
 import time
 from torchswarm.particle import RotatedEMParticle
 from torch.nn import CrossEntropyLoss
+from torchswarm.particle import ParticleSwarm
 
+# TODO: Pull this out to a common location
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
@@ -12,33 +14,26 @@ class RotatedEMParticleSwarmOptimizer:
         dimension=4,
         swarm_size=100,
         number_of_classes=1,
-        true_y=None,
+        targets=None,
         options=None,
     ):
+        # TODO: This is unclear pass named options
         if options == None:
             options = [2, 2, 0.1, 100]
-        self.c1 = options[0]
-        self.c2 = options[1]
-        self.beta = options[2]
         self.max_iterations = options[3]
-        self.swarm = []
-        self.true_y = true_y
+        self.targets = targets
         self.gbest_position = None
         self.gbest_value = torch.Tensor([float("inf")]).to(device)
         self.loss_function = CrossEntropyLoss()
         self.swarm_size = swarm_size
-
-        for _ in range(swarm_size):
-            self.swarm.append(
-                RotatedEMParticle(
-                    dimension,
-                    self.beta,
-                    self.c1,
-                    self.c2,
-                    number_of_classes,
-                    self.true_y,
-                )
-            )
+        self.swarm = ParticleSwarm(
+            dimension=dimension,
+            number_of_classes=number_of_classes,
+            swarm_size=swarm_size,
+            acceleration_coefficients={"c1": options[0], "c2": options[1]},
+            inertial_weight_beta=options[2],
+            targets=targets,
+        )
 
     def run(self, verbosity=True):
         # --- Run
@@ -46,7 +41,7 @@ class RotatedEMParticleSwarmOptimizer:
             tic = time.monotonic()
             # --- Set PBest
             for particle in self.swarm:
-                fitness_candidate = self.loss_function(particle.position, self.true_y)
+                fitness_candidate = self.loss_function(particle.position, self.targets)
                 # print("========: ", fitness_candidate, particle.pbest_value)
                 if particle.pbest_value > fitness_candidate:
                     particle.pbest_value = fitness_candidate
@@ -55,7 +50,7 @@ class RotatedEMParticleSwarmOptimizer:
             # --- Set GBest
             for particle in self.swarm:
                 best_fitness_candidate = self.loss_function(
-                    particle.position, self.true_y
+                    particle.position, self.targets
                 )
                 if self.gbest_value > best_fitness_candidate:
                     self.gbest_value = best_fitness_candidate
@@ -82,7 +77,7 @@ class RotatedEMParticleSwarmOptimizer:
         tic = time.monotonic()
         # --- Set PBest
         for particle in self.swarm:
-            fitness_candidate = self.loss_function(particle.position, self.true_y).to(
+            fitness_candidate = self.loss_function(particle.position, self.targets).to(
                 device
             )
             # print("========: ", fitness_candidate, particle.pbest_value)
@@ -93,7 +88,7 @@ class RotatedEMParticleSwarmOptimizer:
         # --- Set GBest
         for particle in self.swarm:
             best_fitness_candidate = self.loss_function(
-                particle.position, self.true_y
+                particle.position, self.targets
             ).to(device)
             if self.gbest_value > best_fitness_candidate:
                 self.gbest_value = best_fitness_candidate

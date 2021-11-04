@@ -7,6 +7,7 @@ from torchswarm.utils.rpso import (
     get_phi_matrix,
 )
 
+# TODO: Pull this out to a common module
 if torch.cuda.is_available():
     dev = "cuda:0"
 else:
