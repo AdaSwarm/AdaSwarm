@@ -12,13 +12,13 @@ class RotatedEMParticleSwarmOptimizer:
         swarm_size=100,
         number_of_classes=1,
         targets=None,
-        options=None,
+        acceleration_coefficients: dict = {"c1": 2, "c2": 2},
+        inertial_weight_beta: float = 0.1,
+        max_iterations=100,
         device=torch_device("cuda:0" if cuda.is_available() else "cpu")
     ):
-        # TODO: This is unclear pass named options
-        if options == None:
-            options = [2, 2, 0.1, 100]
-        self.max_iterations = options[3]
+
+        self.max_iterations = max_iterations
         self.targets = targets
         self.gbest_position = None
         self.gbest_value = Tensor([float("inf")]).to(device)
@@ -29,8 +29,8 @@ class RotatedEMParticleSwarmOptimizer:
             dimension=dimension,
             number_of_classes=number_of_classes,
             swarm_size=swarm_size,
-            acceleration_coefficients={"c1": options[0], "c2": options[1]},
-            inertial_weight_beta=options[2],
+            acceleration_coefficients=acceleration_coefficients,
+            inertial_weight_beta=inertial_weight_beta,
             targets=targets,
         )
 
