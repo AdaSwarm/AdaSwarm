@@ -1,11 +1,8 @@
-import torch
+
 import time
-from torchswarm.particle import RotatedEMParticle
+from torch import device as torch_device, cuda, Tensor
 from torch.nn import CrossEntropyLoss
 from torchswarm.particle import ParticleSwarm
-
-# TODO: Pull this out to a common location
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class RotatedEMParticleSwarmOptimizer:
@@ -16,6 +13,7 @@ class RotatedEMParticleSwarmOptimizer:
         number_of_classes=1,
         targets=None,
         options=None,
+        device=torch_device("cuda:0" if cuda.is_available() else "cpu")
     ):
         # TODO: This is unclear pass named options
         if options == None:
@@ -23,9 +21,10 @@ class RotatedEMParticleSwarmOptimizer:
         self.max_iterations = options[3]
         self.targets = targets
         self.gbest_position = None
-        self.gbest_value = torch.Tensor([float("inf")]).to(device)
+        self.gbest_value = Tensor([float("inf")]).to(device)
         self.loss_function = CrossEntropyLoss()
         self.swarm_size = swarm_size
+        self.device = device
         self.swarm = ParticleSwarm(
             dimension=dimension,
             number_of_classes=number_of_classes,
@@ -78,7 +77,7 @@ class RotatedEMParticleSwarmOptimizer:
         # --- Set PBest
         for particle in self.swarm:
             fitness_candidate = self.loss_function(particle.position, self.targets).to(
-                device
+                self.device
             )
             # print("========: ", fitness_candidate, particle.pbest_value)
             if particle.pbest_value > fitness_candidate:
@@ -89,7 +88,7 @@ class RotatedEMParticleSwarmOptimizer:
         for particle in self.swarm:
             best_fitness_candidate = self.loss_function(
                 particle.position, self.targets
-            ).to(device)
+            ).to(self.device)
             if self.gbest_value > best_fitness_candidate:
                 self.gbest_value = best_fitness_candidate
                 self.gbest_position = particle.position.clone()
