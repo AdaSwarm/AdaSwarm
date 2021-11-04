@@ -9,6 +9,8 @@ from resnet import ResNet18
 from torch.nn.parallel import DataParallel
 from torch.utils.data import DataLoader
 from torch.backends import cudnn
+
+# pylint: disable=E0611
 from torch import (
     nn,
     no_grad,
