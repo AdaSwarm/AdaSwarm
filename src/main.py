@@ -9,13 +9,21 @@ from resnet import ResNet18
 from torch.nn.parallel import DataParallel
 from torch.utils.data import DataLoader
 from torch.backends import cudnn
-from torch import nn, no_grad, optim, cuda, load as torch_load, save as torch_save, device as torch_device
+from torch import (
+    nn,
+    no_grad,
+    optim,
+    cuda,
+    load as torch_load,
+    save as torch_save,
+    device as torch_device,
+)
 from torchvision import transforms, datasets
 import os
 import argparse
 import logging
 
-LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
+LOGLEVEL = os.environ.get("LOGLEVEL", "WARNING").upper()
 logging.basicConfig(level=LOGLEVEL)
 
 # pylint: disable=R0914,R0915,C0116,C0413
@@ -24,7 +32,6 @@ logging.basicConfig(level=LOGLEVEL)
 def run():
     print("in run function")
     device = torch_device("cuda:0" if cuda.is_available() else "cpu")
-
 
     parser = argparse.ArgumentParser(description="PyTorch MNIST Training")
     parser.add_argument("--lr", default=0.1, type=float, help="learning rate")
@@ -62,14 +69,12 @@ def run():
         root="./data", train=True, download=True, transform=transform_train
     )
 
-    trainloader = DataLoader(trainset, batch_size=125,
-                             shuffle=True, num_workers=2)
+    trainloader = DataLoader(trainset, batch_size=125, shuffle=True, num_workers=2)
 
     testset = datasets.MNIST(
         root="./data", train=False, download=True, transform=transform_test
     )
-    testloader = DataLoader(testset, batch_size=100,
-                            shuffle=False, num_workers=2)
+    testloader = DataLoader(testset, batch_size=100, shuffle=False, num_workers=2)
 
     # Model
     print("==> Building model..")
@@ -82,8 +87,7 @@ def run():
     if args.resume:
         # Load checkpoint.
         print("==> Resuming from checkpoint..")
-        assert os.path.isdir(
-            "checkpoint"), "Error: no checkpoint directory found!"
+        assert os.path.isdir("checkpoint"), "Error: no checkpoint directory found!"
         checkpoint = torch_load("./checkpoint/ckpt.pth")
         net.load_state_dict(checkpoint["net"])
         start_epoch = checkpoint["epoch"]
