@@ -1,5 +1,5 @@
 import time
-from torch import device as torch_device, cuda, Tensor
+from torch import device as torch_device, cuda, Tensor, randint
 from torch.nn import CrossEntropyLoss
 from torchswarm.particle import ParticleSwarm
 
@@ -7,10 +7,10 @@ from torchswarm.particle import ParticleSwarm
 class RotatedEMParticleSwarmOptimizer:
     def __init__(
         self,
-        dimension=4,
+        targets,
+        dimension,
+        number_of_classes,
         swarm_size=100,
-        number_of_classes=1,
-        targets=None,
         acceleration_coefficients: dict = {"c1": 2, "c2": 2},
         inertial_weight_beta: float = 0.1,
         max_iterations=100,
@@ -18,7 +18,6 @@ class RotatedEMParticleSwarmOptimizer:
     ):
 
         self.max_iterations = max_iterations
-        self.targets = targets
         self.gbest_position = None
         self.gbest_value = Tensor([float("inf")]).to(device)
         self.loss_function = CrossEntropyLoss()
@@ -32,6 +31,7 @@ class RotatedEMParticleSwarmOptimizer:
             inertial_weight_beta=inertial_weight_beta,
             targets=targets,
         )
+        self.targets = targets
 
     def run(self, verbosity=True):
         # --- Run
