@@ -111,7 +111,10 @@ def run():
             particle_swarm_optimizer = RotatedEMParticleSwarmOptimizer(
                 dimension=125, swarm_size=10, number_of_classes=10, targets=targets
             )
-            c1r1, c2r2, gbest = particle_swarm_optimizer.run_iteration(number=5)
+            for _ in range(5):
+                c1r1, c2r2, gbest = particle_swarm_optimizer.run_one_iter(
+                    verbosity=False
+                )
             optimizer.zero_grad()
             outputs = net(inputs)
             logging.debug("gbest: %s", gbest)

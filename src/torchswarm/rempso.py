@@ -1,3 +1,4 @@
+
 import time
 from torch import device as torch_device, cuda, Tensor
 from torch.nn import CrossEntropyLoss
@@ -14,7 +15,7 @@ class RotatedEMParticleSwarmOptimizer:
         acceleration_coefficients: dict = {"c1": 2, "c2": 2},
         inertial_weight_beta: float = 0.1,
         max_iterations=100,
-        device=torch_device("cuda:0" if cuda.is_available() else "cpu"),
+        device=torch_device("cuda:0" if cuda.is_available() else "cpu")
     ):
 
         self.max_iterations = max_iterations
@@ -71,7 +72,7 @@ class RotatedEMParticleSwarmOptimizer:
             if iteration + 1 == self.max_iterations:
                 print(self.gbest_position)
 
-    def __run_one_iter(self, verbosity=True):
+    def run_one_iter(self, verbosity=True):
         tic = time.monotonic()
         # --- Set PBest
         for particle in self.swarm:
@@ -115,9 +116,3 @@ class RotatedEMParticleSwarmOptimizer:
             sum(c2r2s) / self.swarm_size,
             self.gbest_position,
         )
-
-    def run_iteration(self, number=1, verbosity=False):
-        c1r1 = c2r2 = gbest = 0.0
-        for _ in range(number):
-            c1r1, c2r2, gbest = self.__run_one_iter(verbosity=verbosity)
-        return (c1r1, c2r2, gbest)
