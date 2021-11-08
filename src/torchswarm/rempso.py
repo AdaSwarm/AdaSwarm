@@ -39,7 +39,7 @@ class RotatedEMParticleSwarmOptimizer:
             tic = time.monotonic()
             # --- Set PBest
             for particle in self.swarm:
-                fitness_candidate = self.loss_function(particle.position, self.targets)
+                fitness_candidate = self.loss_function(particle.position, particle.targets)
                 # print("========: ", fitness_candidate, particle.pbest_value)
                 if particle.pbest_value > fitness_candidate:
                     particle.pbest_value = fitness_candidate
@@ -75,7 +75,7 @@ class RotatedEMParticleSwarmOptimizer:
         tic = time.monotonic()
         # --- Set PBest
         for particle in self.swarm:
-            fitness_candidate = self.loss_function(particle.position, self.targets).to(
+            fitness_candidate = self.loss_function(particle.position, particle.targets).to(
                 self.device
             )
             # print("========: ", fitness_candidate, particle.pbest_value)

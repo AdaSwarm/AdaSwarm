@@ -10,22 +10,15 @@ from torchswarm.utils.rpso import (
 class ParticleSwarm(list):
     def __init__(
         self,
-        dimension: int = 125,
+        targets,
+        dimension,
+        number_of_classes,
         swarm_size: int = 100,
-        number_of_classes: int = 10,
         acceleration_coefficients: dict = {"c1": 0.9, "c2": 0.8},
         inertial_weight_beta: float = 0.5,
-        targets: torch.Tensor = None,
         device: str = "cuda:0" if torch.cuda.is_available() else "cpu",
     ):
         self.size = swarm_size
-        if targets is None:
-            targets = torch.randint(
-                low=0,
-                high=number_of_classes,
-                size=(dimension, number_of_classes),
-                device=device,
-            )
 
         for _ in range(swarm_size):
             self.append(
@@ -55,6 +48,7 @@ class RotatedEMParticle:
         self.pbest_position = self.position
         self.momentum = torch.zeros((dimensions, 1)).to(device)
         self.beta = beta
+        self.targets=targets
 
     def __str__(self):
         return "Particle >> pbest {:.3f}  | pbest_position {}".format(
