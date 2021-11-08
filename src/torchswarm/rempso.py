@@ -2,6 +2,7 @@ import time
 from torch import device as torch_device, cuda, Tensor, randint
 from torch.nn import CrossEntropyLoss
 from torchswarm.particle import ParticleSwarm
+import numpy as np
 
 
 class RotatedEMParticleSwarmOptimizer:
@@ -31,7 +32,7 @@ class RotatedEMParticleSwarmOptimizer:
             inertial_weight_beta=inertial_weight_beta,
             targets=targets,
         )
-        self.targets = targets
+        self.targets = np.argmax(targets,axis=1)
 
     def run(self, verbosity=True):
         # --- Run
@@ -39,7 +40,7 @@ class RotatedEMParticleSwarmOptimizer:
             tic = time.monotonic()
             # --- Set PBest
             for particle in self.swarm:
-                fitness_candidate = self.loss_function(particle.position, particle.targets)
+                fitness_candidate = self.loss_function(particle.position, self.targets)
                 # print("========: ", fitness_candidate, particle.pbest_value)
                 if particle.pbest_value > fitness_candidate:
                     particle.pbest_value = fitness_candidate
@@ -75,7 +76,7 @@ class RotatedEMParticleSwarmOptimizer:
         tic = time.monotonic()
         # --- Set PBest
         for particle in self.swarm:
-            fitness_candidate = self.loss_function(particle.position, particle.targets).to(
+            fitness_candidate = self.loss_function(particle.position, self.targets).to(
                 self.device
             )
             # print("========: ", fitness_candidate, particle.pbest_value)
