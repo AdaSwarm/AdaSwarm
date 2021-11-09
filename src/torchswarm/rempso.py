@@ -71,7 +71,7 @@ class RotatedEMParticleSwarmOptimizer:
             if iteration + 1 == self.max_iterations:
                 print(self.gbest_position)
 
-    def __run_one_iter(self, verbosity=True):
+    def __run_one_iteration(self, verbosity=True):
         tic = time.monotonic()
         # --- Set PBest
         for particle in self.swarm:
@@ -119,5 +119,5 @@ class RotatedEMParticleSwarmOptimizer:
     def run_iteration(self, number=1, verbosity=False):
         c1r1 = c2r2 = gbest = 0.0
         for _ in range(number):
-            c1r1, c2r2, gbest = self.__run_one_iter(verbosity=verbosity)
+            c1r1, c2r2, gbest = self.__run_one_iteration(verbosity=verbosity)
         return (c1r1, c2r2, gbest)
