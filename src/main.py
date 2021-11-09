@@ -3,7 +3,6 @@
 """Train MNIST with PyTorch."""
 # pylint: disable=C0411
 from nn_utils import CELossWithPSO
-from torchswarm.rempso import RotatedEMParticleSwarmOptimizer
 from utils import progress_bar
 from resnet import ResNet18
 from torch.nn.parallel import DataParallel
@@ -103,22 +102,24 @@ def run():
         train_loss = 0
         correct = 0
         total = 0
+        learning_rate = 0.4
+
         for batch_idx, (inputs, targets) in enumerate(trainloader):
             inputs, targets = inputs.to(device), targets.to(device)
             logging.debug("targets: %s", targets)
             targets.requires_grad = False
-            print("PSO ran...")
-            particle_swarm_optimizer = RotatedEMParticleSwarmOptimizer(
-                dimension=125, swarm_size=10, number_of_classes=10, targets=targets
-            )
-            c1r1, c2r2, gbest = particle_swarm_optimizer.run_iteration(number=5)
             optimizer.zero_grad()
             outputs = net(inputs)
-            logging.debug("gbest: %s", gbest)
-            loss = approx_criterion(outputs, targets, c1r1 + c2r2, 0.4, gbest)
+
+            loss = approx_criterion(
+                outputs,
+                targets,
+                learning_rate
+            )
+
             loss.backward()
             optimizer.step()
-            print(loss.item(), c1r1 + c2r2)
+
             train_loss += loss.item()
             _, predicted = outputs.max(1)
             total += targets.size(0)
