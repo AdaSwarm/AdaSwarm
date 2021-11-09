@@ -3,7 +3,7 @@ name: GitHub Actions Demo
 on: [push, pull_request]
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
 
     steps:
