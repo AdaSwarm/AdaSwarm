@@ -102,20 +102,24 @@ def run():
         train_loss = 0
         correct = 0
         total = 0
+        learning_rate = 0.4
+
         for batch_idx, (inputs, targets) in enumerate(trainloader):
             inputs, targets = inputs.to(device), targets.to(device)
             logging.debug("targets: %s", targets)
             targets.requires_grad = False
-            print("PSO ran...")
             optimizer.zero_grad()
             outputs = net(inputs)
+
             loss = approx_criterion(
                 outputs,
                 targets,
-                0.4,
+                learning_rate
             )
+
             loss.backward()
             optimizer.step()
+
             train_loss += loss.item()
             _, predicted = outputs.max(1)
             total += targets.size(0)
