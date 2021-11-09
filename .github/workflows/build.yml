@@ -23,3 +23,9 @@ jobs:
           run: |
             poetry run pylint -d duplicate-code src/main.py
           shell: bash
+
+        - name: Run unit tests
+          run: |
+            cd src
+            poetry run python -m unittest discover
+          shell: bash
