@@ -2,7 +2,6 @@ import time
 from torch import device as torch_device, cuda, Tensor, randint
 from torch.nn import CrossEntropyLoss
 from torchswarm.particle import ParticleSwarm
-import numpy as np
 
 
 class RotatedEMParticleSwarmOptimizer:
@@ -32,7 +31,7 @@ class RotatedEMParticleSwarmOptimizer:
             inertial_weight_beta=inertial_weight_beta,
             targets=targets,
         )
-        self.targets = np.argmax(targets,axis=1)
+        self.targets = targets
 
     def run(self, verbosity=True):
         # --- Run
