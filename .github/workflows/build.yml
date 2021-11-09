@@ -3,7 +3,7 @@ name: GitHub Actions Demo
 on: [push, pull_request]
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,4 +22,10 @@ jobs:
         - name: Lint and verify python code
           run: |
             poetry run pylint -d duplicate-code src/main.py
+          shell: bash
+
+        - name: Run unit tests
+          run: |
+            cd src
+            poetry run python -m unittest discover
           shell: bash
