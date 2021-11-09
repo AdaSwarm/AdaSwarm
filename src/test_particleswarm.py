@@ -4,7 +4,7 @@ from torchswarm.particle import ParticleSwarm, RotatedEMParticle
 
 
 class TestParticleSwarm(unittest.TestCase):
-    def test_default_values(self):
+    def test_swarm_size(self):
         number_of_classes = 10
         dimension=125
         targets = randint(
