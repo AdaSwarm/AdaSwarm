@@ -10,22 +10,15 @@ from torchswarm.utils.rpso import (
 class ParticleSwarm(list):
     def __init__(
         self,
-        dimension: int = 125,
+        targets,
+        dimension,
+        number_of_classes,
         swarm_size: int = 100,
-        number_of_classes: int = 10,
         acceleration_coefficients: dict = {"c1": 0.9, "c2": 0.8},
         inertial_weight_beta: float = 0.5,
-        targets: torch.Tensor = None,
-        device: str = "cuda:0" if torch.cuda.is_available() else "cpu"
+        device: str = "cuda:0" if torch.cuda.is_available() else "cpu",
     ):
         self.size = swarm_size
-        if targets is None:
-            targets = torch.randint(
-                low=0,
-                high=number_of_classes,
-                size=(dimension, number_of_classes),
-                device=device,
-            )
 
         for _ in range(swarm_size):
             self.append(
@@ -36,7 +29,7 @@ class ParticleSwarm(list):
                     c2=acceleration_coefficients["c2"],
                     number_of_classes=number_of_classes,
                     targets=targets,
-                    device=device
+                    device=device,
                 )
             )
 
@@ -55,6 +48,7 @@ class RotatedEMParticle:
         self.pbest_position = self.position
         self.momentum = torch.zeros((dimensions, 1)).to(device)
         self.beta = beta
+        self.targets=targets
 
     def __str__(self):
         return "Particle >> pbest {:.3f}  | pbest_position {}".format(
@@ -64,8 +58,7 @@ class RotatedEMParticle:
     def update_velocity(self, gbest_position):
         r1 = torch.rand(1)
         r2 = torch.rand(1)
-        momentum_t = self.beta * self.momentum + \
-            (1 - self.beta) * self.velocity
+        momentum_t = self.beta * self.momentum + (1 - self.beta) * self.velocity
         a_matrix = get_rotation_matrix(self.dimensions, np.pi / 5, 0.4)
         a_inverse_matrix = get_inverse_matrix(a_matrix)
         # x = a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix
