@@ -53,7 +53,8 @@ def run():
             transforms.RandomAffine(degrees=20, translate=(0.1,0.1), scale=(0.9, 1.1)),
             transforms.ColorJitter(brightness=0.2, contrast=0.2),
             transforms.ToTensor(),
-            transforms.Normalize((0.1307,), (0.3081,)),# Mean and Std deviation values of MNIST dataset
+            # Mean and Std deviation values of MNIST dataset
+            transforms.Normalize((0.1307,), (0.3081,)),
         ]
     )
 
@@ -102,7 +103,6 @@ def run():
         train_loss = 0
         correct = 0
         total = 0
-        learning_rate = 0.4
 
         for batch_idx, (inputs, targets) in enumerate(trainloader):
             inputs, targets = inputs.to(device), targets.to(device)
@@ -113,8 +113,7 @@ def run():
 
             loss = approx_criterion(
                 outputs,
-                targets,
-                learning_rate
+                targets
             )
 
             loss.backward()
