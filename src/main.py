@@ -35,7 +35,7 @@ def run():
     device = torch_device("cuda:0" if cuda.is_available() else "cpu")
 
     parser = argparse.ArgumentParser(description="PyTorch MNIST Training")
-    parser.add_argument("--lr", default=0.1, type=float, help="learning rate")
+    parser.add_argument("--lr", default=0.001, type=float, help="learning rate")
     parser.add_argument(
         "--resume", "-r", action="store_true", help="resume from checkpoint"
     )
@@ -52,9 +52,8 @@ def run():
             transforms.RandomRotation(30),
             transforms.RandomAffine(degrees=20, translate=(0.1,0.1), scale=(0.9, 1.1)),
             transforms.ColorJitter(brightness=0.2, contrast=0.2),
-            transforms.ToTensor(), 
-            # Mean and Std deviation values of MNIST dataset 
-            transforms.Normalize((0.1307,), (0.3081,)),
+            transforms.ToTensor(),
+            transforms.Normalize((0.1307,), (0.3081,)),# Mean and Std deviation values of MNIST dataset
         ]
     )
 
