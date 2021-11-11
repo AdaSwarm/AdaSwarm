@@ -2,12 +2,6 @@ import os
 import sys
 import time
 
-_, term_width = os.popen("stty size", "r").read().split()
-term_width = int(term_width)
-
-TOTAL_BAR_LENGTH = 65.0
-last_time = time.time()
-begin_time = last_time
 
 def format_time(seconds):
     days = int(seconds / 3600 / 24)
@@ -43,8 +37,14 @@ def format_time(seconds):
 
 
 def progress_bar(current, total, msg=None):
+    _, term_width = os.popen("stty size", "r").read().split()
+    term_width = int(term_width)
+
+    TOTAL_BAR_LENGTH = 65.0
+    last_time = time.time()
+    begin_time = last_time
+
     """- progress_bar: progress bar mimic xlua.progress."""
-    global last_time, begin_time
     if current == 0:
         begin_time = time.time()  # Reset for new bar.
 
@@ -85,3 +85,4 @@ def progress_bar(current, total, msg=None):
     else:
         sys.stdout.write("\n")
     sys.stdout.flush()
+
