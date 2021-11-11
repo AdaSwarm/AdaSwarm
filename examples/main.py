@@ -1,34 +1,31 @@
 #!/usr/bin/env python3
 
-import sys
-import os
+"""An example that uses AdaSwarm on MNIST dataset"""
 
-dirname = os.path.dirname(os.path.abspath(__file__))
-filename = sys.path.append(os.path.join(dirname, ".."))
-
-"""Train MNIST with PyTorch."""
-# pylint: disable=C0411
-from adaswarm.nn_utils import CELossWithPSO
-from adaswarm.utils import progress_bar
-from adaswarm.resnet import ResNet18
-from torch.nn.parallel import DataParallel
-from torch.utils.data import DataLoader
-from torch.backends import cudnn
-
-# pylint: disable=E0611
-from torch import (
-    nn,
-    no_grad,
-    optim,
-    cuda,
-    load as torch_load,
-    save as torch_save,
-    device as torch_device,
-)
-from torchvision import transforms, datasets
-import os
 import argparse
 import logging
+import os
+import sys
+
+# pylint: disable=E0611
+from torch import cuda
+from torch import device as torch_device
+from torch import load as torch_load
+from torch import nn, optim
+from torch.autograd.grad_mode import no_grad
+from torch import save as torch_save
+from torch.backends import cudnn
+from torch.nn.parallel import DataParallel
+from torch.utils.data import DataLoader
+from torchvision import datasets, transforms
+
+dirname = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(dirname, ".."))
+
+# pylint: disable=C0411, E0401, C0413
+from adaswarm.nn_utils import CELossWithPSO
+from adaswarm.resnet import ResNet18
+from adaswarm.utils import progress_bar
 
 LOGLEVEL = os.environ.get("LOGLEVEL", "WARNING").upper()
 logging.basicConfig(level=LOGLEVEL)
@@ -56,7 +53,7 @@ def run():
         [
             # Image Transformations suitable for MNIST dataset(handwritten digits)
             transforms.RandomRotation(30),
-            transforms.RandomAffine(degrees=20, translate=(0.1,0.1), scale=(0.9, 1.1)),
+            transforms.RandomAffine(degrees=20, translate=(0.1, 0.1), scale=(0.9, 1.1)),
             transforms.ColorJitter(brightness=0.2, contrast=0.2),
             transforms.ToTensor(),
             # Mean and Std deviation values of MNIST dataset
@@ -117,10 +114,7 @@ def run():
             optimizer.zero_grad()
             outputs = net(inputs)
 
-            loss = approx_criterion(
-                outputs,
-                targets
-            )
+            loss = approx_criterion(outputs, targets)
 
             loss.backward()
             optimizer.step()
