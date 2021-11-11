@@ -26,6 +26,5 @@ jobs:
 
         - name: Run unit tests
           run: |
-            cd adaswarm
-            poetry run python -m unittest discover
+            poetry run python -m unittest tests/unit/*
           shell: bash
