@@ -1,6 +1,13 @@
+import os
+import sys
 import unittest
 from torch import device as torch_device, randint
+
+dirname = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(dirname, "../.."))
+
 from adaswarm.particle import ParticleSwarm, RotatedEMParticle
+
 
 
 class TestParticleSwarm(unittest.TestCase):
