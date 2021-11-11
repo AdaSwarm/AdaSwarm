@@ -26,5 +26,5 @@ jobs:
 
         - name: Run unit tests
           run: |
-            poetry run python -m unittest tests/unit/*
+            poetry run python -m unittest tests/unit/test*
           shell: bash
