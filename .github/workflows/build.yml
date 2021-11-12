@@ -21,11 +21,10 @@ jobs:
 
         - name: Lint and verify python code
           run: |
-            poetry run pylint -d duplicate-code src/main.py
+            poetry run pylint -d duplicate-code examples/main.py
           shell: bash
 
         - name: Run unit tests
           run: |
-            cd src
-            poetry run python -m unittest discover
+            poetry run python -m unittest tests/unit/test*
           shell: bash
