@@ -1,7 +1,7 @@
 import time
 from torch import device as torch_device, cuda, Tensor, randint
 from torch.nn import CrossEntropyLoss
-from adaswarm.particle import ParticleSwarm
+from adaswarm.particle import ParticleSwarm, AccelerationCoefficients
 
 
 class RotatedEMParticleSwarmOptimizer:
@@ -11,7 +11,7 @@ class RotatedEMParticleSwarmOptimizer:
         dimension,
         number_of_classes,
         swarm_size=100,
-        acceleration_coefficients: dict = {"c1": 2, "c2": 2},
+        acceleration_coefficients=AccelerationCoefficients(c_1=0.2, c_2=0.8),
         inertial_weight_beta: float = 0.1,
         max_iterations=100,
         device=torch_device("cuda:0" if cuda.is_available() else "cpu"),
@@ -39,7 +39,8 @@ class RotatedEMParticleSwarmOptimizer:
             tic = time.monotonic()
             # --- Set PBest
             for particle in self.swarm:
-                fitness_candidate = self.loss_function(particle.position, self.targets)
+                fitness_candidate = self.loss_function(
+                    particle.position, self.targets)
                 # print("========: ", fitness_candidate, particle.pbest_value)
                 if particle.pbest_value > fitness_candidate:
                     particle.pbest_value = fitness_candidate
@@ -90,6 +91,7 @@ class RotatedEMParticleSwarmOptimizer:
                 self.gbest_value = best_fitness_candidate
                 self.gbest_position = particle.position.clone()
 
+        #TODO: use acceleration coefficient object
         c1r1s = []
         c2r2s = []
         # --- For Each Particle Update Velocity
