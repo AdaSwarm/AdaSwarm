@@ -1,12 +1,5 @@
-import sys
-import os
-
 import unittest
 from torch import randint, device as torch_device, Tensor
-
-dirname = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(dirname, "../.."))
-
 from adaswarm.rempso import RotatedEMParticleSwarmOptimizer
 import numpy as np
 
