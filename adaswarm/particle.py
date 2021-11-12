@@ -6,7 +6,6 @@ nothing but a population of particles. The swarm, guided by characteristic
 equations, attempt to converge to an optima [Ebenhart and Shi, 1995].
 """
 
-from numpy.typing import _96Bit
 import torch
 import numpy as np
 from adaswarm.utils.matrix import (
@@ -61,6 +60,7 @@ class ParticleSwarm(list):
 
 class RotatedEMParticle:
     """Exponentially weighted Momentum Particle"""
+
     # pylint: disable=R0902, R0913
 
     def __init__(
@@ -93,8 +93,7 @@ class RotatedEMParticle:
     def update_velocity(self, gbest_position):
         r1 = torch.rand(1)
         r2 = torch.rand(1)
-        momentum_t = self.beta * self.momentum + \
-            (1 - self.beta) * self.velocity
+        momentum_t = self.beta * self.momentum + (1 - self.beta) * self.velocity
         a_matrix = get_rotation_matrix(self.dimensions, np.pi / 5, 0.4)
         a_inverse_matrix = get_inverse_matrix(a_matrix)
         # pylint: disable=W0511
@@ -117,7 +116,9 @@ class RotatedEMParticle:
             + torch.matmul(
                 (
                     a_inverse_matrix
-                    * get_phi_matrix(self.dimensions, self.c2, r2)
+                    * get_phi_matrix(
+                        self.dimensions, self.acceleration_coefficients.c_2, r2
+                    )
                     * a_matrix
                 )
                 .float()
