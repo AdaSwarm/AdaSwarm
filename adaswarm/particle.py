@@ -77,7 +77,7 @@ class RotatedEMParticle:
         self.velocity = torch.zeros((dimensions, number_of_classes)).to(device)
         self.pbest_value = torch.Tensor([float("inf")]).to(device)
         self.acceleration_coefficients = acceleration_coefficients
-        self.position = __initialize_position(
+        self.position = _initialize_position(
             targets=targets, dimensions=dimensions, number_of_classes=number_of_classes
         ).to(device)
         self.pbest_position = self.position
@@ -150,7 +150,7 @@ class RotatedEMParticle:
             # print("After Update: ",self.position[i], self.velocity[i])
 
 
-def __initialize_position(targets, dimensions, number_of_classes):
+def _initialize_position(targets, dimensions, number_of_classes):
     const = -4
     position = torch.tensor([[const] * number_of_classes] * dimensions)
     for i in range(dimensions):
