@@ -94,8 +94,10 @@ class RotatedEMParticleSwarmOptimizer:
         #TODO: use acceleration coefficient object
         c1r1s = []
         c2r2s = []
+        #TODO: Perform this within the swarm as a single call
         # --- For Each Particle Update Velocity
         for particle in self.swarm:
+            #TODO: use acceleration coefficient class object instead of list
             c1r1, c2r2 = particle.update_velocity(self.gbest_position)
             particle.move()
             c1r1s.append(c1r1)
