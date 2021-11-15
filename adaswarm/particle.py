@@ -57,6 +57,17 @@ class ParticleSwarm(list):
                 )
             )
 
+    def update_velocities(self, gbest_position):
+        c1r1s = []
+        c2r2s = []
+        for particle in self:
+            # TODO: use acceleration coefficient class object instead of list
+            c1r1, c2r2 = particle.update_velocity(gbest_position)
+            particle.move()
+            c1r1s.append(c1r1)
+            c2r2s.append(c2r2)
+        return c1r1s, c2r2s
+
 
 class RotatedEMParticle:
     """Exponentially weighted Momentum Particle"""
@@ -101,7 +112,8 @@ class RotatedEMParticle:
         """
         r_1 = torch.rand(1)
         r_2 = torch.rand(1)
-        momentum_t = self.beta * self.momentum + (1 - self.beta) * self.velocity
+        momentum_t = self.beta * self.momentum + \
+            (1 - self.beta) * self.velocity
         a_matrix = get_rotation_matrix(self.dimensions, np.pi / 5, 0.4)
         a_inverse_matrix = get_inverse_matrix(a_matrix)
         # TODO: check paper

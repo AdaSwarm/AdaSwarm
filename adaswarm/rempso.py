@@ -2,6 +2,7 @@ import time
 from torch import device as torch_device, cuda, Tensor, randint
 from torch.nn import CrossEntropyLoss
 from adaswarm.particle import ParticleSwarm, AccelerationCoefficients
+import logging
 
 
 class RotatedEMParticleSwarmOptimizer:
@@ -39,7 +40,8 @@ class RotatedEMParticleSwarmOptimizer:
             tic = time.monotonic()
             # --- Set PBest
             for particle in self.swarm:
-                fitness_candidate = self.loss_function(particle.position, self.targets)
+                fitness_candidate = self.loss_function(
+                    particle.position, self.targets)
                 # print("========: ", fitness_candidate, particle.pbest_value)
                 if particle.pbest_value > fitness_candidate:
                     particle.pbest_value = fitness_candidate
@@ -91,16 +93,9 @@ class RotatedEMParticleSwarmOptimizer:
                 self.gbest_position = particle.position.clone()
 
         # TODO: use acceleration coefficient object
-        c1r1s = []
-        c2r2s = []
-        # TODO: Perform this within the swarm as a single call
-        # --- For Each Particle Update Velocity
-        for particle in self.swarm:
-            # TODO: use acceleration coefficient class object instead of list
-            c1r1, c2r2 = particle.update_velocity(self.gbest_position)
-            particle.move()
-            c1r1s.append(c1r1)
-            c2r2s.append(c2r2)
+        c1r1_list, c2r2_list = self.swarm.update_velocities(
+            self.gbest_position)
+        # TODO: use acceleration coefficient class object instead of list
 
         toc = time.monotonic()
         if verbosity is True:
@@ -110,8 +105,8 @@ class RotatedEMParticleSwarmOptimizer:
                 )
             )
         return (
-            sum(c1r1s) / self.swarm_size,
-            sum(c2r2s) / self.swarm_size,
+            sum(c1r1_list) / self.swarm_size,
+            sum(c2r2_list) / self.swarm_size,
             self.gbest_position,
         )
 
