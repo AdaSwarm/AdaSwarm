@@ -58,15 +58,27 @@ class ParticleSwarm(list):
             )
 
     def update_velocities(self, gbest_position):
-        c1r1s = []
-        c2r2s = []
+        """Compute new velocities to enable calculation of the next position of
+        each particle.
+
+        Args:
+            gbest_position (torch.Tensor): Input tensor containing the global best
+            known value of all particles of the swarm.
+
+        Returns:
+            [list of floats, list of floats]: Two lists containing the c1r1 and c2r2
+            float values for the entire swarm (these are acceleration coefficients c1
+            and c2 scaled by a random number; r1 and r2 respectively).
+        """
+        c1r1_list = []
+        c2r2_list = []
         for particle in self:
             # TODO: use acceleration coefficient class object instead of list
             c1r1, c2r2 = particle.update_velocity(gbest_position)
             particle.move()
-            c1r1s.append(c1r1)
-            c2r2s.append(c2r2)
-        return c1r1s, c2r2s
+            c1r1_list.append(c1r1)
+            c2r2_list.append(c2r2)
+        return c1r1_list, c2r2_list
 
 
 class RotatedEMParticle:
