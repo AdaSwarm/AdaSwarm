@@ -12,7 +12,7 @@ class RotatedEMParticleSwarmOptimizer:
         number_of_classes,
         swarm_size=100,
         acceleration_coefficients=AccelerationCoefficients(c_1=0.2, c_2=0.8),
-        inertial_weight_beta: float = 0.1,
+        inertial_weight_beta: float = 0.9,
         max_iterations=100,
         device=torch_device("cuda:0" if cuda.is_available() else "cpu"),
     ):
@@ -39,8 +39,7 @@ class RotatedEMParticleSwarmOptimizer:
             tic = time.monotonic()
             # --- Set PBest
             for particle in self.swarm:
-                fitness_candidate = self.loss_function(
-                    particle.position, self.targets)
+                fitness_candidate = self.loss_function(particle.position, self.targets)
                 # print("========: ", fitness_candidate, particle.pbest_value)
                 if particle.pbest_value > fitness_candidate:
                     particle.pbest_value = fitness_candidate
@@ -91,20 +90,20 @@ class RotatedEMParticleSwarmOptimizer:
                 self.gbest_value = best_fitness_candidate
                 self.gbest_position = particle.position.clone()
 
-        #TODO: use acceleration coefficient object
+        # TODO: use acceleration coefficient object
         c1r1s = []
         c2r2s = []
-        #TODO: Perform this within the swarm as a single call
+        # TODO: Perform this within the swarm as a single call
         # --- For Each Particle Update Velocity
         for particle in self.swarm:
-            #TODO: use acceleration coefficient class object instead of list
+            # TODO: use acceleration coefficient class object instead of list
             c1r1, c2r2 = particle.update_velocity(self.gbest_position)
             particle.move()
             c1r1s.append(c1r1)
             c2r2s.append(c2r2)
 
         toc = time.monotonic()
-        if verbosity == True:
+        if verbosity is True:
             print(
                 " >> global best fitness {:.3f}  | iteration time {:.3f}".format(
                     self.gbest_value, toc - tic

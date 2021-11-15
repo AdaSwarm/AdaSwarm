@@ -5,7 +5,7 @@ from adaswarm.rempso import RotatedEMParticleSwarmOptimizer
 
 class CELossWithPSO(torch.autograd.Function):
     @staticmethod
-    def forward(ctx, y, y_pred, swarm_learning_rate=0.4):
+    def forward(ctx, y, y_pred, swarm_learning_rate=0.1):
         particle_swarm_optimizer = RotatedEMParticleSwarmOptimizer(
             dimension=125, swarm_size=10, number_of_classes=10, targets=y_pred
         )
@@ -51,4 +51,3 @@ class L1LossWithPSO(torch.autograd.Function):
         eta = ctx.eta
         grad_input = torch.neg((sum_cr / eta) * (ctx.gbest - yy))
         return grad_input, grad_output, None, None, None
-

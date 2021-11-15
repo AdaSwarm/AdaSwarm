@@ -101,8 +101,7 @@ class RotatedEMParticle:
         """
         r_1 = torch.rand(1)
         r_2 = torch.rand(1)
-        momentum_t = self.beta * self.momentum + \
-            (1 - self.beta) * self.velocity
+        momentum_t = self.beta * self.momentum + (1 - self.beta) * self.velocity
         a_matrix = get_rotation_matrix(self.dimensions, np.pi / 5, 0.4)
         a_inverse_matrix = get_inverse_matrix(a_matrix)
         # TODO: check paper
@@ -141,8 +140,7 @@ class RotatedEMParticle:
         )
 
     def move(self):
-        """This evolves the position of the particle by the amount set in the velocity
-        """
+        """This evolves the position of the particle by the amount set in the velocity"""
         # TODO: tidy up loop and use of indexes
         for i in range(0, self.dimensions):
             # print("Before Update: ",self.position[i])
