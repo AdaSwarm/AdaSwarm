@@ -165,13 +165,12 @@ class ParticleSwarm(list[RotatedEMParticle]):
         particle_c2r2_list = []
         for particle in self:
             # TODO: use acceleration coefficient class object instead of list
-            particle_c1r1, particle_c2r2 = particle.update_velocity(gbest_position)
+            particle_c1r1, particle_c2r2 = particle.update_velocity(
+                gbest_position)
             particle.move()
             particle_c1r1_list.append(particle_c1r1)
             particle_c2r2_list.append(particle_c2r2)
         return particle_c1r1_list, particle_c2r2_list
-
-
 
 
 def _initialize_position(targets, dimensions, number_of_classes):
