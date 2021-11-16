@@ -70,15 +70,15 @@ class ParticleSwarm(list):
             float values for the entire swarm (these are acceleration coefficients c1
             and c2 scaled by a random number; r1 and r2 respectively).
         """
-        c1r1_list = []
-        c2r2_list = []
+        particle_c1r1_list = []
+        particle_c2r2_list = []
         for particle in self:
             # TODO: use acceleration coefficient class object instead of list
-            c1r1, c2r2 = particle.update_velocity(gbest_position)
+            particle_c1r1, particle_c2r2 = particle.update_velocity(gbest_position)
             particle.move()
-            c1r1_list.append(c1r1)
-            c2r2_list.append(c2r2)
-        return c1r1_list, c2r2_list
+            particle_c1r1_list.append(particle_c1r1)
+            particle_c2r2_list.append(particle_c2r2)
+        return particle_c1r1_list, particle_c2r2_list
 
 
 class RotatedEMParticle:
