@@ -24,9 +24,8 @@ class TestRotatedEMParticleSwarmOptimizer(unittest.TestCase):
             acceleration_coefficients=AccelerationCoefficients(c_1=0.8, c_2=0.9),
         )
 
-        c1r1, c2r2, gbest = optimizer.run_iteration(number=5)
-        self.assertAlmostEqual(c1r1, 0.4, places=0)
-        self.assertAlmostEqual(c2r2, 0.5, places=0)
+        c1r1_c2r2_sum, gbest = optimizer.run_iteration(number=5)
+        self.assertAlmostEqual(c1r1_c2r2_sum, 0.9, places=0)
         self.assertTrue(type(gbest), Tensor)
 
 
