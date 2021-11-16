@@ -34,43 +34,6 @@ class RotatedEMParticleSwarmOptimizer:
         )
         self.targets = targets
 
-    def run(self, verbosity=True):
-        # --- Run
-        for iteration in range(self.max_iterations):
-            tic = time.monotonic()
-            # --- Set PBest
-            for particle in self.swarm:
-                fitness_candidate = self.loss_function(
-                    particle.position, self.targets)
-                # print("========: ", fitness_candidate, particle.pbest_value)
-                if particle.pbest_value > fitness_candidate:
-                    particle.pbest_value = fitness_candidate
-                    particle.pbest_position = particle.position.clone()
-                # print("========: ",particle.pbest_value)
-            # --- Set GBest
-            for particle in self.swarm:
-                best_fitness_candidate = self.loss_function(
-                    particle.position, self.targets
-                )
-                if self.gbest_value > best_fitness_candidate:
-                    self.gbest_value = best_fitness_candidate
-                    self.gbest_position = particle.position.clone()
-
-            # --- For Each Particle Update Velocity
-            for particle in self.swarm:
-                particle.update_velocity(self.gbest_position)
-                particle.move()
-
-            toc = time.monotonic()
-            if verbosity == True:
-                print(
-                    "Iteration {:.0f} >> global best fitness {:.3f}  | iteration time {:.3f}".format(
-                        iteration + 1, self.gbest_value, toc - tic
-                    )
-                )
-            if iteration + 1 == self.max_iterations:
-                print(self.gbest_position)
-
     def __run_one_iteration(self, verbosity=True):
         tic = time.monotonic()
         # --- Set PBest
