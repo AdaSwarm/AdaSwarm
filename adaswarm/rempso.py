@@ -74,7 +74,7 @@ class RotatedEMParticleSwarmOptimizer:
         )
 
     def run_iteration(self, number=1, verbosity=False):
-        c1r1 = c2r2 = gbest = 0.0
+        average_c1r1 = average_c2r2 = gbest = 0.0
         for _ in range(number):
-            c1r1, c2r2, gbest = self.__run_one_iteration(verbosity=verbosity)
-        return (c1r1, c2r2, gbest)
+            average_c1r1, average_c2r2, gbest = self.__run_one_iteration(verbosity=verbosity)
+        return (average_c1r1, average_c2r2, gbest)
