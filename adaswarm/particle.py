@@ -27,11 +27,11 @@ class AccelerationCoefficients:
 
     def random_scale_c_1(self):
         """Randomly scale the acceleration coefficients"""
-        return (self.c_1 * torch.rand(1))
+        return self.c_1 * torch.rand(1)
 
     def random_scale_c_2(self):
         """Randomly scale the acceleration coefficients"""
-        return (self.c_2 * torch.rand(1))
+        return self.c_2 * torch.rand(1)
 
 
 class RotatedEMParticle:
