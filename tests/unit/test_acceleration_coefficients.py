@@ -29,8 +29,8 @@ class TestAccelerationCoefficients(unittest.TestCase):
         coefficients = AccelerationCoefficients(c_1=0.7, c_2=0.4)
 
         with patch("torch.rand", return_value=torch.tensor([0.5])):
-            self.assertAlmostEqual(coefficients.random_scale_c_1(), 0.35)
-            self.assertAlmostEqual(coefficients.random_scale_c_2(), 0.2)
+            self.assertAlmostEqual(coefficients.random_scale_c_1().item(), 0.35)
+            self.assertAlmostEqual(coefficients.random_scale_c_2().item(), 0.2)
 
 
 if __name__ == "__main__":

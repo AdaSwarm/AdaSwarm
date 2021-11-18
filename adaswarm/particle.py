@@ -10,7 +10,6 @@ import torch
 import numpy as np
 from adaswarm.utils.matrix import (
     get_rotation_matrix,
-    get_inverse_matrix,
     get_phi_matrix,
 )
 
@@ -28,11 +27,11 @@ class AccelerationCoefficients:
 
     def random_scale_c_1(self):
         """Randomly scale the acceleration coefficients"""
-        return (self.c_1 * torch.rand(1)).item()
+        return (self.c_1 * torch.rand(1))
 
     def random_scale_c_2(self):
         """Randomly scale the acceleration coefficients"""
-        return (self.c_2 * torch.rand(1)).item()
+        return (self.c_2 * torch.rand(1))
 
 
 class RotatedEMParticle:
@@ -76,11 +75,11 @@ class RotatedEMParticle:
         Returns:
             [Tuple]: Updated acceleration coefficients
         """
-        r_1 = torch.rand(1)
-        r_2 = torch.rand(1)
+        scaled_c_1_tensor = self.acceleration_coefficients.random_scale_c_1()
+        scaled_c_2_tensor = self.acceleration_coefficients.random_scale_c_2()
         momentum_t = self.beta * self.momentum + (1 - self.beta) * self.velocity
         a_matrix = get_rotation_matrix(self.dimensions, np.pi / 5, 0.4)
-        a_inverse_matrix = get_inverse_matrix(a_matrix)
+        a_inverse_matrix = torch.inverse(a_matrix)
         # TODO: check paper
         # TODO: x = a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix
         self.velocity = (
@@ -89,7 +88,7 @@ class RotatedEMParticle:
                 (
                     a_inverse_matrix
                     * get_phi_matrix(
-                        self.dimensions, self.acceleration_coefficients.c_1, r_1
+                        self.dimensions, scaled_c_1_tensor
                     )
                     * a_matrix
                 )
@@ -101,7 +100,7 @@ class RotatedEMParticle:
                 (
                     a_inverse_matrix
                     * get_phi_matrix(
-                        self.dimensions, self.acceleration_coefficients.c_2, r_2
+                        self.dimensions, scaled_c_2_tensor
                     )
                     * a_matrix
                 )
@@ -112,8 +111,8 @@ class RotatedEMParticle:
         )
 
         return (
-            (self.acceleration_coefficients.c_1 * r_1).item(),
-            (self.acceleration_coefficients.c_2 * r_2).item(),
+            scaled_c_1_tensor.item(),
+            scaled_c_2_tensor.item(),
         )
 
     def move(self):
