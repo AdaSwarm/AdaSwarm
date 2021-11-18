@@ -27,37 +27,6 @@ class AccelerationCoefficients:
         return self.c_1 + self.c_2
 
 
-class ParticleSwarm(list):
-    """Wrapper for a collection of particles"""
-
-    # pylint: disable=R0913
-
-    def __init__(
-        self,
-        targets,
-        dimension,
-        number_of_classes,
-        swarm_size: int = 100,
-        acceleration_coefficients: AccelerationCoefficients = AccelerationCoefficients(),
-        inertial_weight_beta: float = 0.5,
-        device: str = "cuda:0" if torch.cuda.is_available() else "cpu",
-    ):
-        super().__init__(self)
-        self.size = swarm_size
-
-        for _ in range(swarm_size):
-            self.append(
-                RotatedEMParticle(
-                    dimensions=dimension,
-                    beta=inertial_weight_beta,
-                    acceleration_coefficients=acceleration_coefficients,
-                    number_of_classes=number_of_classes,
-                    targets=targets,
-                    device=device,
-                )
-            )
-
-
 class RotatedEMParticle:
     """Exponentially weighted Momentum Particle"""
 
@@ -101,7 +70,8 @@ class RotatedEMParticle:
         """
         r_1 = torch.rand(1)
         r_2 = torch.rand(1)
-        momentum_t = self.beta * self.momentum + (1 - self.beta) * self.velocity
+        momentum_t = self.beta * self.momentum + \
+            (1 - self.beta) * self.velocity
         a_matrix = get_rotation_matrix(self.dimensions, np.pi / 5, 0.4)
         a_inverse_matrix = get_inverse_matrix(a_matrix)
         # TODO: check paper
@@ -146,6 +116,61 @@ class RotatedEMParticle:
             # print("Before Update: ",self.position[i])
             self.position[i] = self.position[i] + self.velocity[i]
             # print("After Update: ",self.position[i], self.velocity[i])
+
+
+class ParticleSwarm(list[RotatedEMParticle]):
+    """Wrapper for a collection of particles"""
+
+    # pylint: disable=R0913
+
+    def __init__(
+        self,
+        targets,
+        dimension,
+        number_of_classes,
+        swarm_size: int = 100,
+        acceleration_coefficients: AccelerationCoefficients = AccelerationCoefficients(),
+        inertial_weight_beta: float = 0.5,
+        device: str = "cuda:0" if torch.cuda.is_available() else "cpu",
+    ):
+        super().__init__(self)
+        self.size = swarm_size
+
+        for _ in range(swarm_size):
+            self.append(
+                RotatedEMParticle(
+                    dimensions=dimension,
+                    beta=inertial_weight_beta,
+                    acceleration_coefficients=acceleration_coefficients,
+                    number_of_classes=number_of_classes,
+                    targets=targets,
+                    device=device,
+                )
+            )
+
+    def update_velocities(self, gbest_position):
+        """Compute new velocities to enable calculation of the next position of
+        each particle.
+
+        Args:
+            gbest_position (torch.Tensor): Input tensor containing the global best
+            known value of all particles of the swarm.
+
+        Returns:
+            [list of floats, list of floats]: Two lists containing the c1r1 and c2r2
+            float values for the entire swarm (these are acceleration coefficients c1
+            and c2 scaled by a random number; r1 and r2 respectively).
+        """
+        particle_c1r1_list = []
+        particle_c2r2_list = []
+        for particle in self:
+            # TODO: use acceleration coefficient class object instead of list
+            particle_c1r1, particle_c2r2 = particle.update_velocity(
+                gbest_position)
+            particle.move()
+            particle_c1r1_list.append(particle_c1r1)
+            particle_c2r2_list.append(particle_c2r2)
+        return particle_c1r1_list, particle_c2r2_list
 
 
 def _initialize_position(targets, dimensions, number_of_classes):
