@@ -1,5 +1,7 @@
 import unittest
+import torch
 from adaswarm.particle import AccelerationCoefficients
+from unittest.mock import patch
 
 
 class TestAccelerationCoefficients(unittest.TestCase):
@@ -22,6 +24,13 @@ class TestAccelerationCoefficients(unittest.TestCase):
     def test_sum_of_coefficients(self):
         coefficients = AccelerationCoefficients(c_1=0.7, c_2=0.4)
         self.assertEqual(coefficients.sum(), 1.1)
+
+    def test_acceleration_coefficients_scaler(self):
+        coefficients = AccelerationCoefficients(c_1=0.7, c_2=0.4)
+
+        with patch("torch.rand", return_value=torch.tensor([0.5])):
+            self.assertAlmostEqual(coefficients.random_scale_c_1(), 0.35)
+            self.assertAlmostEqual(coefficients.random_scale_c_2(), 0.2)
 
 
 if __name__ == "__main__":

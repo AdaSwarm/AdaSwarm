@@ -26,6 +26,14 @@ class AccelerationCoefficients:
         """Sum of the acceleration coefficients"""
         return self.c_1 + self.c_2
 
+    def random_scale_c_1(self):
+        """Randomly scale the acceleration coefficients"""
+        return (self.c_1 * torch.rand(1)).item()
+
+    def random_scale_c_2(self):
+        """Randomly scale the acceleration coefficients"""
+        return (self.c_2 * torch.rand(1)).item()
+
 
 class RotatedEMParticle:
     """Exponentially weighted Momentum Particle"""
@@ -70,8 +78,7 @@ class RotatedEMParticle:
         """
         r_1 = torch.rand(1)
         r_2 = torch.rand(1)
-        momentum_t = self.beta * self.momentum + \
-            (1 - self.beta) * self.velocity
+        momentum_t = self.beta * self.momentum + (1 - self.beta) * self.velocity
         a_matrix = get_rotation_matrix(self.dimensions, np.pi / 5, 0.4)
         a_inverse_matrix = get_inverse_matrix(a_matrix)
         # TODO: check paper
@@ -165,8 +172,7 @@ class ParticleSwarm(list[RotatedEMParticle]):
         particle_c2r2_list = []
         for particle in self:
             # TODO: use acceleration coefficient class object instead of list
-            particle_c1r1, particle_c2r2 = particle.update_velocity(
-                gbest_position)
+            particle_c1r1, particle_c2r2 = particle.update_velocity(gbest_position)
             particle.move()
             particle_c1r1_list.append(particle_c1r1)
             particle_c2r2_list.append(particle_c2r2)
