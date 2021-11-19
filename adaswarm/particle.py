@@ -60,6 +60,8 @@ class RotatedEMParticle:
         self.momentum = torch.zeros((dimensions, 1)).to(device)
         self.beta = beta
         self.targets = targets
+        self.c_1_r_1 = None
+        self.c_2_r_2 = None
 
     def __str__(self):
         return f"Particle >> pbest {self.pbest_value.item():.3f}  | \
@@ -77,7 +79,10 @@ class RotatedEMParticle:
         """
         scaled_c_1_tensor = self.acceleration_coefficients.random_scale_c_1()
         scaled_c_2_tensor = self.acceleration_coefficients.random_scale_c_2()
-        momentum_t = self.beta * self.momentum + (1 - self.beta) * self.velocity
+        self.c_1_r_1 = scaled_c_1_tensor.item()
+        self.c_2_r_2 = scaled_c_2_tensor.item()
+        momentum_t = self.beta * self.momentum + \
+            (1 - self.beta) * self.velocity
         a_matrix = get_rotation_matrix(self.dimensions, np.pi / 5, 0.4)
         a_inverse_matrix = torch.inverse(a_matrix)
         # TODO: check paper
@@ -110,12 +115,8 @@ class RotatedEMParticle:
             )
         )
 
-        return (
-            scaled_c_1_tensor.item(),
-            scaled_c_2_tensor.item(),
-        )
-
     def move(self):
+        # TODO: launch move method from update_velocity
         """This evolves the position of the particle by the amount set in the velocity"""
         # TODO: tidy up loop and use of indexes
         for i in range(0, self.dimensions):
@@ -171,10 +172,10 @@ class ParticleSwarm(list[RotatedEMParticle]):
         particle_c2r2_list = []
         for particle in self:
             # TODO: use acceleration coefficient class object instead of list
-            particle_c1r1, particle_c2r2 = particle.update_velocity(gbest_position)
+            particle.update_velocity(gbest_position)
             particle.move()
-            particle_c1r1_list.append(particle_c1r1)
-            particle_c2r2_list.append(particle_c2r2)
+            particle_c1r1_list.append(particle.c_1_r_1)
+            particle_c2r2_list.append(particle.c_2_r_2)
         return particle_c1r1_list, particle_c2r2_list
 
 
