@@ -60,6 +60,8 @@ class RotatedEMParticle:
         self.momentum = torch.zeros((dimensions, 1)).to(device)
         self.beta = beta
         self.targets = targets
+        self.c_1_r_1 = None
+        self.c_2_r_2 = None
 
     def __str__(self):
         return f"Particle >> pbest {self.pbest_value.item():.3f}  | \
