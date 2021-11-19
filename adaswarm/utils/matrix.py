@@ -27,12 +27,8 @@ def get_rotation_matrix(dimensions, theta, axis_rotation_factor):
     return torch.from_numpy(matrix)
 
 
-def get_phi_matrix(dimensions, c, r):
+def get_phi_matrix(dimensions, c_times_r):
     matrix = np.zeros((dimensions, dimensions))
     for i in range(dimensions):
-        matrix[i][i] = c * r
+        matrix[i][i] = c_times_r
     return torch.from_numpy(matrix)
-
-
-def get_inverse_matrix(input):
-    return torch.inverse(input)
