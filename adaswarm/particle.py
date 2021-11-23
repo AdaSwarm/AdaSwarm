@@ -6,7 +6,6 @@ nothing but a population of particles. The swarm, guided by characteristic
 equations, attempt to converge to an optima [Ebenhart and Shi, 1995].
 """
 
-from functools import reduce
 import torch
 import numpy as np
 
@@ -63,7 +62,7 @@ class RotatedEMParticle:
         self.beta = beta
         self.targets = targets
         self.c_1_r_1 = 0.0
-        self.c_2_r_2 = 0.0 
+        self.c_2_r_2 = 0.0
 
     def __str__(self):
         return f"Particle >> pbest {self.pbest_value.item():.3f}  | \
