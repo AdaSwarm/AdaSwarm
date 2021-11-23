@@ -55,10 +55,7 @@ class RotatedEMParticleSwarmOptimizer:
                 self.gbest_value = best_fitness_candidate
                 self.gbest_position = particle.position.clone()
 
-        # TODO: use acceleration coefficient object
-        c1r1_list, c2r2_list = self.swarm.update_velocities(
-            self.gbest_position)
-        # TODO: use acceleration coefficient class object instead of list
+        self.swarm.update_velocities(self.gbest_position)
 
         toc = time.monotonic()
         if verbosity is True:
@@ -67,14 +64,10 @@ class RotatedEMParticleSwarmOptimizer:
                     self.gbest_value, toc - tic
                 )
             )
-        return (
-            sum(c1r1_list) / self.swarm_size,
-            sum(c2r2_list) / self.swarm_size,
-            self.gbest_position,
-        )
+        # TODO: Move Gbest to swarm
+        return self.gbest_position
 
     def run_iteration(self, number=1, verbosity=False):
-        average_c1r1 = average_c2r2 = gbest = 0.0
         for _ in range(number):
-            average_c1r1, average_c2r2, gbest = self.__run_one_iteration(verbosity=verbosity)
-        return (average_c1r1 + average_c2r2, gbest)
+            gbest = self.__run_one_iteration(verbosity=verbosity)
+        return (self.swarm.average_of_scaled_acceleration_coefficients(), gbest)

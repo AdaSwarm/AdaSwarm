@@ -8,6 +8,7 @@ equations, attempt to converge to an optima [Ebenhart and Shi, 1995].
 
 import torch
 import numpy as np
+
 from adaswarm.utils.matrix import (
     get_rotation_matrix,
     get_phi_matrix,
@@ -60,8 +61,8 @@ class RotatedEMParticle:
         self.momentum = torch.zeros((dimensions, 1)).to(device)
         self.beta = beta
         self.targets = targets
-        self.c_1_r_1 = None
-        self.c_2_r_2 = None
+        self.c_1_r_1 = 0.0
+        self.c_2_r_2 = 0.0
 
     def __str__(self):
         return f"Particle >> pbest {self.pbest_value.item():.3f}  | \
@@ -79,10 +80,7 @@ class RotatedEMParticle:
         """
         scaled_c_1_tensor = self.acceleration_coefficients.random_scale_c_1()
         scaled_c_2_tensor = self.acceleration_coefficients.random_scale_c_2()
-        self.c_1_r_1 = scaled_c_1_tensor.item()
-        self.c_2_r_2 = scaled_c_2_tensor.item()
-        momentum_t = self.beta * self.momentum + \
-            (1 - self.beta) * self.velocity
+        momentum_t = self.beta * self.momentum + (1 - self.beta) * self.velocity
         a_matrix = get_rotation_matrix(self.dimensions, np.pi / 5, 0.4)
         a_inverse_matrix = torch.inverse(a_matrix)
         # TODO: check paper
@@ -92,9 +90,7 @@ class RotatedEMParticle:
             + torch.matmul(
                 (
                     a_inverse_matrix
-                    * get_phi_matrix(
-                        self.dimensions, scaled_c_1_tensor
-                    )
+                    * get_phi_matrix(self.dimensions, scaled_c_1_tensor)
                     * a_matrix
                 )
                 .float()
@@ -104,9 +100,7 @@ class RotatedEMParticle:
             + torch.matmul(
                 (
                     a_inverse_matrix
-                    * get_phi_matrix(
-                        self.dimensions, scaled_c_2_tensor
-                    )
+                    * get_phi_matrix(self.dimensions, scaled_c_2_tensor)
                     * a_matrix
                 )
                 .float()
@@ -114,15 +108,15 @@ class RotatedEMParticle:
                 (gbest_position - self.position).float().to(self.device),
             )
         )
+        self.move()
+        self.c_1_r_1 = scaled_c_1_tensor.item()
+        self.c_2_r_2 = scaled_c_2_tensor.item()
 
     def move(self):
-        # TODO: launch move method from update_velocity
         """This evolves the position of the particle by the amount set in the velocity"""
         # TODO: tidy up loop and use of indexes
         for i in range(0, self.dimensions):
-            # print("Before Update: ",self.position[i])
             self.position[i] = self.position[i] + self.velocity[i]
-            # print("After Update: ",self.position[i], self.velocity[i])
 
 
 class ParticleSwarm(list[RotatedEMParticle]):
@@ -168,16 +162,13 @@ class ParticleSwarm(list[RotatedEMParticle]):
             float values for the entire swarm (these are acceleration coefficients c1
             and c2 scaled by a random number; r1 and r2 respectively).
         """
-        particle_c1r1_list = []
-        particle_c2r2_list = []
         for particle in self:
             # TODO: use acceleration coefficient class object instead of list
             particle.update_velocity(gbest_position)
-            particle.move()
-            particle_c1r1_list.append(particle.c_1_r_1)
-            particle_c2r2_list.append(particle.c_2_r_2)
-        return particle_c1r1_list, particle_c2r2_list
 
+    def average_of_scaled_acceleration_coefficients(self):
+        """Compute average of scaled coefficients"""
+        return sum((particle.c_1_r_1 + particle.c_2_r_2) for particle in self) / len(self)
 
 def _initialize_position(targets, dimensions, number_of_classes):
     const = -4
