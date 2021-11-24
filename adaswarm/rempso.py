@@ -2,7 +2,6 @@ import time
 from torch import device as torch_device, cuda, Tensor, randint
 from torch.nn import CrossEntropyLoss
 from adaswarm.particle import ParticleSwarm, AccelerationCoefficients
-import logging
 
 
 class RotatedEMParticleSwarmOptimizer:
@@ -64,7 +63,6 @@ class RotatedEMParticleSwarmOptimizer:
                     self.gbest_value, toc - tic
                 )
             )
-        # TODO: Move Gbest to swarm
         return self.gbest_position
 
     def run_iteration(self, number=1, verbosity=False):
