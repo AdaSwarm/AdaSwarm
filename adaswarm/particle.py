@@ -114,9 +114,8 @@ class RotatedEMParticle:
 
     def move(self):
         """This evolves the position of the particle by the amount set in the velocity"""
-        # TODO: tidy up loop and use of indexes
-        for i in range(0, self.dimensions):
-            self.position[i] = self.position[i] + self.velocity[i]
+        for index in range(self.dimensions):
+            self.position[index] += self.velocity[index]
 
 
 class ParticleSwarm(list[RotatedEMParticle]):
@@ -168,7 +167,10 @@ class ParticleSwarm(list[RotatedEMParticle]):
 
     def average_of_scaled_acceleration_coefficients(self):
         """Compute average of scaled coefficients"""
-        return sum((particle.c_1_r_1 + particle.c_2_r_2) for particle in self) / len(self)
+        return sum((particle.c_1_r_1 + particle.c_2_r_2) for particle in self) / len(
+            self
+        )
+
 
 def _initialize_position(targets, dimensions, number_of_classes):
     const = -4
