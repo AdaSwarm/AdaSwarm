@@ -118,7 +118,7 @@ class RotatedEMParticle:
             self.position[index] += self.velocity[index]
 
 
-class ParticleSwarm(list[RotatedEMParticle]):
+class ParticleSwarm(list):
     """Wrapper for a collection of particles"""
 
     # pylint: disable=R0913
