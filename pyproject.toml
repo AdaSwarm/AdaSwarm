@@ -6,7 +6,7 @@ authors = ["Your Name <you@example.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 torch = "^1.9.1"
 torchvision = "^0.10.1"
 torch-summary = "^1.4.5"
