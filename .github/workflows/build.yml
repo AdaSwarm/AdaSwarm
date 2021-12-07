@@ -12,19 +12,19 @@ jobs:
           uses: actions/setup-python@v2
           with:
             python-version: '3.9'
-        - uses: Gr1N/setup-poetry@v7
 
         - name: Install dependencies 
           run: |
-            poetry install
+            pip3 install -r requirements.txt
+            pip3 install -r requirements-dev.txt
           shell: bash
 
         - name: Lint and verify python code
           run: |
-            poetry run pylint -d duplicate-code examples/main.py adaswarm/particle.py
+            pylint -d duplicate-code examples/main.py adaswarm/particle.py
           shell: bash
 
         - name: Run unit tests
           run: |
-            poetry run python -m unittest tests/unit/test*
+            python3 -m unittest tests/unit/test*
           shell: bash
