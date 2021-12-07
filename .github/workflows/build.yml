@@ -15,10 +15,8 @@ jobs:
 
         - name: Install dependencies 
           run: |
-            python -m venv ./venv
-            source ./venv/bin/activate
-            pip install -r requirements.txt
-            pip install -r requirements-dev.txt
+            pip3 install -r requirements.txt
+            pip3 install -r requirements-dev.txt
           shell: bash
 
         - name: Lint and verify python code
@@ -28,5 +26,5 @@ jobs:
 
         - name: Run unit tests
           run: |
-            python -m unittest tests/unit/test*
+            python3 -m unittest tests/unit/test*
           shell: bash

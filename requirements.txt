@@ -1,6 +1,5 @@
 numpy
 Pillow
 torch
-torch-summary
 torchvision
 typing_extensions
