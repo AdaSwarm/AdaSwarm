@@ -11,8 +11,7 @@ jobs:
         - name: Check out repository code
           uses: actions/setup-python@v2
           with:
-            python-version: '3.8'
-        - uses: Gr1N/setup-poetry@v7
+            python-version: '3.9'
 
         - name: Install dependencies 
           run: |
