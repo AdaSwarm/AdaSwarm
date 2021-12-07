@@ -11,20 +11,23 @@ jobs:
         - name: Check out repository code
           uses: actions/setup-python@v2
           with:
-            python-version: '3.9'
+            python-version: '3.8'
         - uses: Gr1N/setup-poetry@v7
 
         - name: Install dependencies 
           run: |
-            poetry install
+            python -m venv ./venv
+            source ./venv/bin/activate
+            pip install -r requirements.txt
+            pip install -r requirements-dev.txt
           shell: bash
 
         - name: Lint and verify python code
           run: |
-            poetry run pylint -d duplicate-code examples/main.py adaswarm/particle.py
+            pylint -d duplicate-code examples/main.py adaswarm/particle.py
           shell: bash
 
         - name: Run unit tests
           run: |
-            poetry run python -m unittest tests/unit/test*
+            python -m unittest tests/unit/test*
           shell: bash
