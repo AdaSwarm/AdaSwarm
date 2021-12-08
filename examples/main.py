@@ -17,7 +17,9 @@ from torch import save as torch_save
 from torch.backends import cudnn
 from torch.nn.parallel import DataParallel
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 from torchvision import datasets, transforms
+import torchvision
 
 dirname = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(dirname, ".."))
@@ -26,6 +28,9 @@ sys.path.append(os.path.join(dirname, ".."))
 from adaswarm.nn_utils import CELossWithPSO
 from adaswarm.resnet import ResNet18
 from adaswarm.utils import progress_bar
+
+# Writer will output to ./runs/ directory by default
+writer = SummaryWriter()
 
 LOGLEVEL = os.environ.get("LOGLEVEL", "WARNING").upper()
 logging.basicConfig(level=LOGLEVEL)
@@ -127,6 +132,9 @@ def run():
             print_output = f"""Loss: {train_loss/(batch_idx+1):3f}
                     | Acc: {100.*correct/total}%% ({correct/total})"""
 
+            writer.add_scalar('Loss/train', train_loss/(batch_idx+1), batch_idx + 1)
+            writer.add_scalar('Accuracy/train', correct/total, batch_idx + 1)
+
             print(batch_idx, len(trainloader), print_output)
             progress_bar(batch_idx, len(trainloader), print_output)
 
@@ -152,6 +160,8 @@ def run():
                     f"""Loss: {test_loss/(batch_idx+1):3f}
                     | Acc: {100.*correct/total}%% ({correct/total})""",
                 )
+                writer.add_scalar('Loss/test', test_loss/(batch_idx+1), batch_idx + 1)
+                writer.add_scalar('Accuracy/test', correct/total, batch_idx + 1)
 
         # Save checkpoint.
         acc = 100.0 * correct / total
