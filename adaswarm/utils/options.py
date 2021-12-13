@@ -3,7 +3,7 @@ from adaswarm.utils.strings import str_to_bool
 
 
 def is_adaswarm():
-    """Retermine whther to run with AdaSWarm optimiser
+    """Determine whether or not to run with AdaSwarm optimiser
 
     Returns:
         bool: True if wanting to run with AdaSwarm, False for Adam
