@@ -11,3 +11,5 @@ __pycache__/
 .vscode
 src/data/*
 venv
+runs
+checkpoint/*.pth
