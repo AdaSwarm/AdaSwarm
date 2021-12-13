@@ -12,3 +12,4 @@ __pycache__/
 src/data/*
 venv
 runs
+checkpoint/*.pth

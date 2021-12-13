@@ -24,15 +24,17 @@ import torchvision
 dirname = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(dirname, ".."))
 
+
 # pylint: disable=C0411, E0401, C0413
 from adaswarm.nn_utils import CELossWithPSO
 from adaswarm.resnet import ResNet18
 from adaswarm.utils import progress_bar
+from adaswarm.utils.options import is_adaswarm
 
 # Writer will output to ./runs/ directory by default
 writer = SummaryWriter()
 
-LOGLEVEL = os.environ.get("LOGLEVEL", "WARNING").upper()
+LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
 logging.basicConfig(level=LOGLEVEL)
 
 # pylint: disable=R0914,R0915,C0116,C0413
@@ -102,7 +104,15 @@ def run():
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=args.lr)
-    approx_criterion = CELossWithPSO.apply
+
+    if is_adaswarm():
+        logging.info("Using Swarm Optimiser")
+        approx_criterion = CELossWithPSO.apply
+        chosen_optimizer = "Adaswarm"
+    else:
+        logging.info("Using Adam Optimiser")
+        approx_criterion = nn.CrossEntropyLoss()
+        chosen_optimizer = "Adam"
 
     # Training
     def train(epoch):
@@ -132,8 +142,14 @@ def run():
             print_output = f"""Loss: {train_loss/(batch_idx+1):3f}
                     | Acc: {100.*correct/total}%% ({correct/total})"""
 
-            writer.add_scalar('Loss/train', train_loss/(batch_idx+1), batch_idx + 1)
-            writer.add_scalar('Accuracy/train', correct/total, batch_idx + 1)
+            writer.add_scalar(
+                f"{chosen_optimizer}/loss/train",
+                train_loss / (batch_idx + 1),
+                batch_idx + 1,
+            )
+            writer.add_scalar(
+                f"{chosen_optimizer}/accuracy/train", correct / total, batch_idx + 1
+            )
 
             print(batch_idx, len(trainloader), print_output)
             progress_bar(batch_idx, len(trainloader), print_output)
@@ -160,8 +176,14 @@ def run():
                     f"""Loss: {test_loss/(batch_idx+1):3f}
                     | Acc: {100.*correct/total}%% ({correct/total})""",
                 )
-                writer.add_scalar('Loss/test', test_loss/(batch_idx+1), batch_idx + 1)
-                writer.add_scalar('Accuracy/test', correct/total, batch_idx + 1)
+                writer.add_scalar(
+                    f"{chosen_optimizer}/loss/test",
+                    test_loss / (batch_idx + 1),
+                    batch_idx + 1,
+                )
+                writer.add_scalar(
+                    f"{chosen_optimizer}/accuracy/test", correct / total, batch_idx + 1
+                )
 
         # Save checkpoint.
         acc = 100.0 * correct / total
