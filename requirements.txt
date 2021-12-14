@@ -1,6 +1,0 @@
-numpy
-Pillow
-torch
-torchvision
-typing_extensions
-tensorboard
