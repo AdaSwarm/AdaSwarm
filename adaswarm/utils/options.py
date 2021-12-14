@@ -8,4 +8,4 @@ def is_adaswarm():
     Returns:
         bool: True if wanting to run with AdaSwarm, False for Adam
     """
-    return str_to_bool(os.environ.get("USE_ADASWARM", True))
+    return str_to_bool(os.environ.get("USE_ADASWARM", "True"))
