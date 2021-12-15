@@ -141,14 +141,18 @@ def run():
             print_output = f"""Loss: {train_loss/(batch_idx+1):3f}
                     | Acc: {100.*correct/total}%% ({correct/total})"""
 
-            writer.add_scalar(
-                f"{chosen_optimizer}/loss/train",
-                train_loss / (batch_idx + 1),
-                batch_idx + 1,
-            )
-            writer.add_scalar(
-                f"{chosen_optimizer}/accuracy/train", correct / total, batch_idx + 1
-            )
+            if batch_idx % 1000 == 999:  # every 1000 mini-batches...
+
+                writer.add_scalar(
+                    tag=f"{chosen_optimizer}/train loss",
+                    scalar_value=train_loss / (batch_idx + 1),
+                    global_step=epoch * len(trainloader) + batch_idx + 1,
+                )
+                writer.add_scalar(
+                    tag=f"{chosen_optimizer}/train accuracy",
+                    scalar_value=correct / total,
+                    global_step=epoch * len(trainloader) + batch_idx + 1,
+                )
 
             print(batch_idx, len(trainloader), print_output)
             progress_bar(batch_idx, len(trainloader), print_output)
@@ -175,14 +179,18 @@ def run():
                     f"""Loss: {test_loss/(batch_idx+1):3f}
                     | Acc: {100.*correct/total}%% ({correct/total})""",
                 )
-                writer.add_scalar(
-                    f"{chosen_optimizer}/loss/test",
-                    test_loss / (batch_idx + 1),
-                    batch_idx + 1,
-                )
-                writer.add_scalar(
-                    f"{chosen_optimizer}/accuracy/test", correct / total, batch_idx + 1
-                )
+                if batch_idx % 1000 == 999:  # every 1000 mini-batches...
+
+                    writer.add_scalar(
+                        tag=f"{chosen_optimizer}/test loss",
+                        scalar_value=test_loss / (batch_idx + 1),
+                        global_step=epoch * len(testloader) + batch_idx + 1,
+                    )
+                    writer.add_scalar(
+                        tag=f"{chosen_optimizer}/test accuracy",
+                        scalar_value=correct / total,
+                        global_step=epoch * len(testloader) + batch_idx + 1,
+                    )
 
         # Save checkpoint.
         acc = 100.0 * correct / total
