@@ -141,7 +141,7 @@ def run():
             print_output = f"""Loss: {train_loss/(batch_idx+1):3f}
                     | Acc: {100.*correct/total}%% ({correct/total})"""
 
-            if batch_idx % 1000 == 999:  # every 1000 mini-batches...
+            if batch_idx % 50 == 49:  # every 50 mini-batches...
 
                 writer.add_scalar(
                     tag=f"{chosen_optimizer}/train loss",
@@ -179,7 +179,7 @@ def run():
                     f"""Loss: {test_loss/(batch_idx+1):3f}
                     | Acc: {100.*correct/total}%% ({correct/total})""",
                 )
-                if batch_idx % 1000 == 999:  # every 1000 mini-batches...
+                if batch_idx % 50 == 49:  # every 50 mini-batches...
 
                     writer.add_scalar(
                         tag=f"{chosen_optimizer}/test loss",
