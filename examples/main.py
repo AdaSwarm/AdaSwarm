@@ -31,7 +31,8 @@ from adaswarm.utils import progress_bar
 from adaswarm.utils.options import is_adaswarm
 
 # Writer will output to ./runs/ directory by default
-writer = SummaryWriter()
+TENSORBOARD_LOG_DIR = "runs/adaswarm" if is_adaswarm() else "runs/adam"
+writer = SummaryWriter(log_dir=TENSORBOARD_LOG_DIR)
 
 LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
 logging.basicConfig(level=LOGLEVEL)
