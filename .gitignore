@@ -13,3 +13,5 @@ src/data/*
 venv
 runs
 checkpoint/*.pth
+runs_adam/*
+runs_adaswarm/*
