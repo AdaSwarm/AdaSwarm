@@ -148,12 +148,12 @@ def run():
             if write_to_tensorboard(batch_idx):  # every X mini-batches...
 
                 writer_1.add_scalar(
-                    tag=f"ada_vs_adam/train loss",
+                    tag="ada_vs_adam/train loss",
                     scalar_value=train_loss / (batch_idx + 1),
                     global_step=epoch * len(trainloader) + batch_idx + 1,
                 )
                 writer_1.add_scalar(
-                    tag=f"ada_vs_adam/train accuracy",
+                    tag="ada_vs_adam/train accuracy",
                     scalar_value=correct / total,
                     global_step=epoch * len(trainloader) + batch_idx + 1,
                 )
@@ -186,12 +186,12 @@ def run():
                 if write_to_tensorboard(batch_idx):  # every X mini-batches...
 
                     writer_2.add_scalar(
-                        tag=f"ada_vs_adam/test loss",
+                        tag="ada_vs_adam/test loss",
                         scalar_value=test_loss / (batch_idx + 1),
                         global_step=epoch * len(testloader) + batch_idx + 1,
                     )
                     writer_2.add_scalar(
-                        tag=f"ada_vs_adam/test accuracy",
+                        tag="ada_vs_adam/test accuracy",
                         scalar_value=correct / total,
                         global_step=epoch * len(testloader) + batch_idx + 1,
                     )
