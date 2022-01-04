@@ -13,3 +13,4 @@ src/data/*
 venv
 runs
 checkpoint/*.pth
+mnist_performance/*

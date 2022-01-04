@@ -28,11 +28,15 @@ sys.path.append(os.path.join(dirname, ".."))
 from adaswarm.nn_utils import CELossWithPSO
 from adaswarm.resnet import ResNet18
 from adaswarm.utils import progress_bar
-from adaswarm.utils.options import is_adaswarm
+from adaswarm.utils.options import (
+    is_adaswarm,
+    get_tensorboard_log_path,
+    write_to_tensorboard,
+)
 
-# Writer will output to ./runs/ directory by default
-TENSORBOARD_LOG_DIR = "runs/adaswarm" if is_adaswarm() else "runs/adam"
-writer = SummaryWriter(log_dir=TENSORBOARD_LOG_DIR)
+# TODO: allow running without tensorboard option
+writer_1 = SummaryWriter(get_tensorboard_log_path("train"))
+writer_2 = SummaryWriter(get_tensorboard_log_path("eval"))
 
 LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
 logging.basicConfig(level=LOGLEVEL)
@@ -108,11 +112,10 @@ def run():
     if is_adaswarm():
         logging.info("Using Swarm Optimiser")
         approx_criterion = CELossWithPSO.apply
-        chosen_optimizer = "Adaswarm"
+
     else:
         logging.info("Using Adam Optimiser")
         approx_criterion = nn.CrossEntropyLoss()
-        chosen_optimizer = "Adam"
 
     # Training
     def train(epoch):
@@ -142,15 +145,15 @@ def run():
             print_output = f"""Loss: {train_loss/(batch_idx+1):3f}
                     | Acc: {100.*correct/total}%% ({correct/total})"""
 
-            if batch_idx % 50 == 49:  # every 50 mini-batches...
+            if write_to_tensorboard(batch_idx):  # every X mini-batches...
 
-                writer.add_scalar(
-                    tag=f"{chosen_optimizer}/train loss",
+                writer_1.add_scalar(
+                    tag="ada_vs_adam/train loss",
                     scalar_value=train_loss / (batch_idx + 1),
                     global_step=epoch * len(trainloader) + batch_idx + 1,
                 )
-                writer.add_scalar(
-                    tag=f"{chosen_optimizer}/train accuracy",
+                writer_1.add_scalar(
+                    tag="ada_vs_adam/train accuracy",
                     scalar_value=correct / total,
                     global_step=epoch * len(trainloader) + batch_idx + 1,
                 )
@@ -180,15 +183,15 @@ def run():
                     f"""Loss: {test_loss/(batch_idx+1):3f}
                     | Acc: {100.*correct/total}%% ({correct/total})""",
                 )
-                if batch_idx % 50 == 49:  # every 50 mini-batches...
+                if write_to_tensorboard(batch_idx):  # every X mini-batches...
 
-                    writer.add_scalar(
-                        tag=f"{chosen_optimizer}/test loss",
+                    writer_2.add_scalar(
+                        tag="ada_vs_adam/test loss",
                         scalar_value=test_loss / (batch_idx + 1),
                         global_step=epoch * len(testloader) + batch_idx + 1,
                     )
-                    writer.add_scalar(
-                        tag=f"{chosen_optimizer}/test accuracy",
+                    writer_2.add_scalar(
+                        tag="ada_vs_adam/test accuracy",
                         scalar_value=correct / total,
                         global_step=epoch * len(testloader) + batch_idx + 1,
                     )
