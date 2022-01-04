@@ -30,13 +30,11 @@ from adaswarm.resnet import ResNet18
 from adaswarm.utils import progress_bar
 from adaswarm.utils.options import (
     is_adaswarm,
-    write_batch_frequency,
     get_tensorboard_log_path,
     write_to_tensorboard,
 )
 
-WRITE_BATCH_FREQUENCY = write_batch_frequency()
-
+# TODO: 
 writer_1 = SummaryWriter(get_tensorboard_log_path("train"))
 writer_2 = SummaryWriter(get_tensorboard_log_path("eval"))
 
