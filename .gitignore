@@ -13,6 +13,4 @@ src/data/*
 venv
 runs
 checkpoint/*.pth
-runs_adam/*
-runs_adaswarm/*
-tb_summary/*
+mnist_performance/*
