@@ -34,7 +34,7 @@ from adaswarm.utils.options import (
     write_to_tensorboard,
 )
 
-# TODO: 
+# TODO: allow running without tensorboard option
 writer_1 = SummaryWriter(get_tensorboard_log_path("train"))
 writer_2 = SummaryWriter(get_tensorboard_log_path("eval"))
 
