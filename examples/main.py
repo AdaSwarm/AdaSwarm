@@ -31,6 +31,7 @@ from adaswarm.utils import progress_bar
 from adaswarm.utils.options import (
     is_adaswarm,
     get_tensorboard_log_path,
+    number_of_epochs,
     write_to_tensorboard,
 )
 
@@ -209,7 +210,7 @@ def run():
             os.mkdir("checkpoint")
         torch_save(state, "./checkpoint/ckpt.pth")
 
-    for epoch in range(start_epoch, start_epoch + 200):
+    for epoch in range(start_epoch, number_of_epochs):
         train(epoch)
         test(epoch)
 
