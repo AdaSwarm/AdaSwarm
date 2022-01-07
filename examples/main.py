@@ -210,7 +210,7 @@ def run():
             os.mkdir("checkpoint")
         torch_save(state, "./checkpoint/ckpt.pth")
 
-    for epoch in range(start_epoch, number_of_epochs):
+    for epoch in range(start_epoch, number_of_epochs()):
         train(epoch)
         test(epoch)
 

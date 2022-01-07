@@ -43,3 +43,10 @@ def get_tensorboard_log_path(run_type: str) -> str:
     tensorboard_dir = "runs_adaswarm" if is_adaswarm() else "runs_adam"
 
     return os.path.join("mnist_performance", tensorboard_dir, run_type)
+
+def number_of_epochs() -> int:
+    """Set the number of epochs to run
+    Returns:
+        [int]: Number of epochs
+    """
+    return int(os.environ.get("ADASWARM_NUMBER_OF_EPOCHS", "200"))
