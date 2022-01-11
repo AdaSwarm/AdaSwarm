@@ -114,8 +114,7 @@ class RotatedEMParticle:
 
     def move(self):
         """This evolves the position of the particle by the amount set in the velocity"""
-        for index in range(self.dimensions):
-            self.position[index] += self.velocity[index]
+        self.position += self.velocity
 
 
 class ParticleSwarm(list):
