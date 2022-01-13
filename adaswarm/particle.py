@@ -6,13 +6,13 @@ nothing but a population of particles. The swarm, guided by characteristic
 equations, attempt to converge to an optima [Ebenhart and Shi, 1995].
 """
 
+from concurrent.futures import ThreadPoolExecutor
+from itertools import repeat
 import numpy as np
 import torch
 
-from concurrent.futures import ThreadPoolExecutor
 
 from adaswarm.utils.matrix import get_phi_matrix, get_rotation_matrix
-
 
 class AccelerationCoefficients:
     """Acceleration coefficients for PSO"""
@@ -116,7 +116,60 @@ class RotatedEMParticle:
         self.position += self.velocity
 
 
-def update_velocity(particle, gbest_position):
+class ParticleSwarm(list):
+    """Wrapper for a collection of particles"""
+
+    # pylint: disable=R0913
+
+    def __init__(
+        self,
+        targets,
+        dimension,
+        number_of_classes,
+        swarm_size: int = 100,
+        acceleration_coefficients: AccelerationCoefficients = AccelerationCoefficients(),
+        inertial_weight_beta: float = 0.5,
+        device: str = "cuda:0" if torch.cuda.is_available() else "cpu",
+    ):
+        super().__init__(self)
+        self.size = swarm_size
+
+        for _ in range(swarm_size):
+            self.append(
+                RotatedEMParticle(
+                    dimensions=dimension,
+                    beta=inertial_weight_beta,
+                    acceleration_coefficients=acceleration_coefficients,
+                    number_of_classes=number_of_classes,
+                    targets=targets,
+                    device=device,
+                )
+            )
+
+    def update_velocities(self, gbest_position):
+        """Compute new velocities to enable calculation of the next position of
+        each particle.
+
+        Args:
+            gbest_position (torch.Tensor): Input tensor containing the global best
+            known value of all particles of the swarm.
+
+        Returns:
+            [list of floats, list of floats]: Two lists containing the c1r1 and c2r2
+            float values for the entire swarm (these are acceleration coefficients c1
+            and c2 scaled by a random number; r1 and r2 respectively).
+        """
+
+        with ThreadPoolExecutor() as executor:
+            executor.map(update_velocity, repeat(gbest_position), self)
+
+    def average_of_scaled_acceleration_coefficients(self):
+        """Compute average of scaled coefficients"""
+        return sum((particle.c_1_r_1 + particle.c_2_r_2) for particle in self) / len(
+            self
+        )
+
+def update_velocity(gbest_position, particle):
     """Velocity is the mechanism used to move (evolve) the position of
     a particle to search for optimal solutions.
 
@@ -162,63 +215,6 @@ def update_velocity(particle, gbest_position):
     particle.c_1_r_1 = scaled_c_1_tensor.item()
     particle.c_2_r_2 = scaled_c_2_tensor.item()
 
-
-class ParticleSwarm(list):
-    """Wrapper for a collection of particles"""
-
-    # pylint: disable=R0913
-
-    def __init__(
-        self,
-        targets,
-        dimension,
-        number_of_classes,
-        swarm_size: int = 100,
-        acceleration_coefficients: AccelerationCoefficients = AccelerationCoefficients(),
-        inertial_weight_beta: float = 0.5,
-        device: str = "cuda:0" if torch.cuda.is_available() else "cpu",
-    ):
-        super().__init__(self)
-        self.size = swarm_size
-
-        for _ in range(swarm_size):
-            self.append(
-                RotatedEMParticle(
-                    dimensions=dimension,
-                    beta=inertial_weight_beta,
-                    acceleration_coefficients=acceleration_coefficients,
-                    number_of_classes=number_of_classes,
-                    targets=targets,
-                    device=device,
-                )
-            )
-
-    def update_velocities(self, gbest_position):
-        """Compute new velocities to enable calculation of the next position of
-        each particle.
-
-        Args:
-            gbest_position (torch.Tensor): Input tensor containing the global best
-            known value of all particles of the swarm.
-
-        Returns:
-            [list of floats, list of floats]: Two lists containing the c1r1 and c2r2
-            float values for the entire swarm (these are acceleration coefficients c1
-            and c2 scaled by a random number; r1 and r2 respectively).
-        """
-
-        with ThreadPoolExecutor(max_workers=3) as executor:
-            executor.map(update_velocity, self)
-            
-        for particle in self:
-            # TODO: use acceleration coefficient class object instead of list
-            particle.update_velocity(gbest_position)
-
-    def average_of_scaled_acceleration_coefficients(self):
-        """Compute average of scaled coefficients"""
-        return sum((particle.c_1_r_1 + particle.c_2_r_2) for particle in self) / len(
-            self
-        )
 
 
 def _initialize_position(targets, dimensions, number_of_classes):
