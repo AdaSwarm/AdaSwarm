@@ -1,6 +1,6 @@
 from typing import Tuple
 import unittest
-from torch import device as torch_device, randint, Tensor, tensor 
+from torch import device as torch_device, randint, Tensor, tensor
 from adaswarm.particle import ParticleSwarm, RotatedEMParticle
 from unittest.mock import patch
 
@@ -15,6 +15,9 @@ targets = randint(
     device=torch_device("cpu"),
     requires_grad=False,
 )
+
+
+
 
 
 class TestParticleSwarm(unittest.TestCase):
@@ -35,6 +38,24 @@ class TestParticleSwarm(unittest.TestCase):
             number_of_classes=NUMBER_OF_CLASSES,
         )
         self.assertIsInstance(swarm[0], RotatedEMParticle)
+
+    def test_for_each_particle(self):
+        
+        swarm = ParticleSwarm(
+            swarm_size=2,
+            targets=targets,
+            dimension=DIMENSION,
+            number_of_classes=NUMBER_OF_CLASSES,
+        )
+
+        value_to_change_to = 0.6
+
+        def change_beta(particle):
+            particle.beta = value_to_change_to
+
+        swarm.for_each_particle(change_beta)
+
+        self.assertEqual(swarm[1].beta, value_to_change_to)
 
     def test_update_velocities(self):
         swarm = ParticleSwarm(
