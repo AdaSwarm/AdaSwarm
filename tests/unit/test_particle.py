@@ -1,6 +1,6 @@
 import unittest
 from torch import randint, device as torch_device, manual_seed, tensor
-from adaswarm.particle import RotatedEMParticle, AccelerationCoefficients
+from adaswarm.particle import RotatedEMParticle, AccelerationCoefficients, update_velocity
 from unittest.mock import patch
 
 manual_seed(0)
@@ -34,7 +34,7 @@ class TestRotatedEMParticleAttributes(unittest.TestCase):
                 device=device,
             )
             gbest_position = tensor([[-4] * number_of_classes] * dimension)
-            particle_this.update_velocity(gbest_position)
+            update_velocity(gbest_position, particle_this)
             self.assertAlmostEqual(particle_this.c_1_r_1, 0.35)
             self.assertAlmostEqual(particle_this.c_2_r_2, 0.2)
 
@@ -55,7 +55,7 @@ class TestRotatedEMParticleAttributes(unittest.TestCase):
                 device=device,
             )
             gbest_position = tensor([[-4] * number_of_classes] * dimension)
-            particle_this.update_velocity(gbest_position)
+            update_velocity(gbest_position, particle_this)
             self.assertAlmostEqual(particle_this.position[0][0].item(), 0.729, places=3)
 
 
