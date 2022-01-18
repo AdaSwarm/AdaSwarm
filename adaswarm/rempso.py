@@ -37,7 +37,7 @@ class RotatedEMParticleSwarmOptimizer:
         tic = time.monotonic()
 
         # --- Set PBest & GBest
-        def set_global_best_position(particle):
+        for particle in self.swarm:
             best_fitness_candidate = self.loss_function(
                 particle.position, self.targets
             ).to(self.device)
@@ -48,7 +48,6 @@ class RotatedEMParticleSwarmOptimizer:
                 self.gbest_value = best_fitness_candidate
                 self.gbest_position = particle.position.clone()
 
-        self.swarm.for_each_particle(set_global_best_position)
         self.swarm.update_velocities(self.gbest_position)
 
         toc = time.monotonic()
