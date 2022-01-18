@@ -9,8 +9,6 @@ NUMBER_OF_CLASSES = 10
 DIMENSION = 125
 coefficients = AccelerationCoefficients(c_1=0.7, c_2=0.4)
 
-
-
 targets = randint(
     low=0,
     high=NUMBER_OF_CLASSES,
@@ -19,35 +17,21 @@ targets = randint(
     requires_grad=False,
 )
 
+swarm = ParticleSwarm(
+    swarm_size=2,
+    targets=targets,
+    dimension=DIMENSION,
+    number_of_classes=NUMBER_OF_CLASSES,
+)
 
 class TestParticleSwarm(unittest.TestCase):
     def test_swarm_size(self):
-        swarm = ParticleSwarm(
-            swarm_size=2,
-            targets=targets,
-            dimension=DIMENSION,
-            number_of_classes=NUMBER_OF_CLASSES,
-        )
         self.assertEqual(len(swarm), 2)
 
     def test_initialise_swarm(self):
-        swarm = ParticleSwarm(
-            swarm_size=2,
-            targets=targets,
-            dimension=DIMENSION,
-            number_of_classes=NUMBER_OF_CLASSES,
-        )
         self.assertIsInstance(swarm[0], RotatedEMParticle)
 
     def test_for_each_particle(self):
-
-        swarm = ParticleSwarm(
-            swarm_size=2,
-            targets=targets,
-            dimension=DIMENSION,
-            number_of_classes=NUMBER_OF_CLASSES,
-        )
-
         value_to_change_to = 0.6
 
         def change_beta(particle):
@@ -58,13 +42,6 @@ class TestParticleSwarm(unittest.TestCase):
         self.assertEqual(swarm[1].beta, value_to_change_to)
 
     def test_update_velocities(self):
-        swarm = ParticleSwarm(
-            swarm_size=2,
-            targets=targets,
-            dimension=DIMENSION,
-            number_of_classes=NUMBER_OF_CLASSES,
-        )
-
         gbest_position = Tensor(
             size=(DIMENSION, NUMBER_OF_CLASSES), device=torch_device("cpu")
         )
@@ -100,13 +77,6 @@ class TestParticleSwarm(unittest.TestCase):
             self.assertAlmostEqual(swarm[0].position[0][0].item(), 0.729, places=3)
 
     def test_calculate_swarm_scaled_coeffiecient_average(self):
-        swarm = ParticleSwarm(
-            swarm_size=2,
-            targets=targets,
-            dimension=DIMENSION,
-            number_of_classes=NUMBER_OF_CLASSES,
-        )
-
         gbest_position = Tensor(
             size=(DIMENSION, NUMBER_OF_CLASSES), device=torch_device("cpu")
         )
