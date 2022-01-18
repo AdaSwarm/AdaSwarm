@@ -36,7 +36,7 @@ class RotatedEMParticleSwarmOptimizer:
     def __run_one_iteration(self, verbosity=True):
         tic = time.monotonic()
         # --- Set PBest
-        for particle in self.swarm:
+        def set_particle_best_position(particle):
             fitness_candidate = self.loss_function(particle.position, self.targets).to(
                 self.device
             )
@@ -44,6 +44,8 @@ class RotatedEMParticleSwarmOptimizer:
             if particle.pbest_value > fitness_candidate:
                 particle.pbest_value = fitness_candidate
                 particle.pbest_position = particle.position.clone()
+        
+        self.swarm.for_each_particle(set_particle_best_position)
             # print("========: ",particle.pbest_value)
         # --- Set GBest
         for particle in self.swarm:
