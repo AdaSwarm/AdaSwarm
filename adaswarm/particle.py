@@ -7,7 +7,6 @@ equations, attempt to converge to an optima [Ebenhart and Shi, 1995].
 """
 
 from concurrent.futures import ThreadPoolExecutor
-from itertools import repeat
 import numpy as np
 import torch
 
