@@ -14,6 +14,7 @@ import torch
 
 from adaswarm.utils.matrix import get_phi_matrix, get_rotation_matrix
 
+
 class AccelerationCoefficients:
     """Acceleration coefficients for PSO"""
 
@@ -116,10 +117,6 @@ class RotatedEMParticle:
         self.position += self.velocity
 
 
-    
-
-
-
 class ParticleSwarm(list):
     """Wrapper for a collection of particles"""
 
@@ -164,8 +161,56 @@ class ParticleSwarm(list):
             and c2 scaled by a random number; r1 and r2 respectively).
         """
 
-        with ThreadPoolExecutor() as executor:
-            executor.map(update_velocity, repeat(gbest_position), self)
+        def update_velocity(particle):
+            """Velocity is the mechanism used to move (evolve) the position of
+            a particle to search for optimal solutions.
+
+            Args:
+                gbest_position (float): global best position of the swarm
+
+            Returns:
+                [Tuple]: Updated acceleration coefficients
+            """
+            scaled_c_1_tensor = particle.acceleration_coefficients.random_scale_c_1()
+            scaled_c_2_tensor = particle.acceleration_coefficients.random_scale_c_2()
+            momentum_t = (
+                particle.beta * particle.momentum
+                + (1 - particle.beta) * particle.velocity
+            )
+            a_matrix = get_rotation_matrix(particle.dimensions, np.pi / 5, 0.4)
+            a_inverse_matrix = torch.inverse(a_matrix)
+            # TODO: check paper
+            # TODO: x = a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix
+            particle.velocity = (
+                momentum_t
+                + torch.matmul(
+                    (
+                        a_inverse_matrix
+                        * get_phi_matrix(particle.dimensions, scaled_c_1_tensor)
+                        * a_matrix
+                    )
+                    .float()
+                    .to(particle.device),
+                    (particle.pbest_position - particle.position)
+                    .float()
+                    .to(particle.device),
+                )
+                + torch.matmul(
+                    (
+                        a_inverse_matrix
+                        * get_phi_matrix(particle.dimensions, scaled_c_2_tensor)
+                        * a_matrix
+                    )
+                    .float()
+                    .to(particle.device),
+                    (gbest_position - particle.position).float().to(particle.device),
+                )
+            )
+            particle.move()
+            particle.c_1_r_1 = scaled_c_1_tensor.item()
+            particle.c_2_r_2 = scaled_c_2_tensor.item()
+
+        self.for_each_particle(update_velocity)
 
     def average_of_scaled_acceleration_coefficients(self):
         """Compute average of scaled coefficients"""
@@ -173,57 +218,13 @@ class ParticleSwarm(list):
             self
         )
 
-    def for_each_particle(self, callback, ):
+    def for_each_particle(
+        self,
+        callback,
+    ):
         """Threads to apply a function to every particle"""
         with ThreadPoolExecutor() as executor:
             executor.map(callback, self)
-
-def update_velocity(gbest_position, particle):
-    """Velocity is the mechanism used to move (evolve) the position of
-    a particle to search for optimal solutions.
-
-    Args:
-        gbest_position (float): global best position of the swarm
-
-    Returns:
-        [Tuple]: Updated acceleration coefficients
-    """
-    scaled_c_1_tensor = particle.acceleration_coefficients.random_scale_c_1()
-    scaled_c_2_tensor = particle.acceleration_coefficients.random_scale_c_2()
-    momentum_t = (
-        particle.beta * particle.momentum + (1 - particle.beta) * particle.velocity
-    )
-    a_matrix = get_rotation_matrix(particle.dimensions, np.pi / 5, 0.4)
-    a_inverse_matrix = torch.inverse(a_matrix)
-    # TODO: check paper
-    # TODO: x = a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix
-    particle.velocity = (
-        momentum_t
-        + torch.matmul(
-            (
-                a_inverse_matrix
-                * get_phi_matrix(particle.dimensions, scaled_c_1_tensor)
-                * a_matrix
-            )
-            .float()
-            .to(particle.device),
-            (particle.pbest_position - particle.position).float().to(particle.device),
-        )
-        + torch.matmul(
-            (
-                a_inverse_matrix
-                * get_phi_matrix(particle.dimensions, scaled_c_2_tensor)
-                * a_matrix
-            )
-            .float()
-            .to(particle.device),
-            (gbest_position - particle.position).float().to(particle.device),
-        )
-    )
-    particle.move()
-    particle.c_1_r_1 = scaled_c_1_tensor.item()
-    particle.c_2_r_2 = scaled_c_2_tensor.item()
-
 
 
 def _initialize_position(targets, dimensions, number_of_classes):

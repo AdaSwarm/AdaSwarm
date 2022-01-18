@@ -1,12 +1,15 @@
 from typing import Tuple
 import unittest
-from torch import device as torch_device, randint, Tensor, tensor
-from adaswarm.particle import ParticleSwarm, RotatedEMParticle
+from torch import device as torch_device, randint, Tensor, tensor, manual_seed
+from adaswarm.particle import ParticleSwarm, RotatedEMParticle, AccelerationCoefficients
 from unittest.mock import patch
 
-
+manual_seed(0)
 NUMBER_OF_CLASSES = 10
 DIMENSION = 125
+coefficients = AccelerationCoefficients(c_1=0.7, c_2=0.4)
+
+
 
 targets = randint(
     low=0,
@@ -15,9 +18,6 @@ targets = randint(
     device=torch_device("cpu"),
     requires_grad=False,
 )
-
-
-
 
 
 class TestParticleSwarm(unittest.TestCase):
@@ -40,7 +40,7 @@ class TestParticleSwarm(unittest.TestCase):
         self.assertIsInstance(swarm[0], RotatedEMParticle)
 
     def test_for_each_particle(self):
-        
+
         swarm = ParticleSwarm(
             swarm_size=2,
             targets=targets,
@@ -78,6 +78,26 @@ class TestParticleSwarm(unittest.TestCase):
         self.assertAlmostEqual(swarm[1].c_1_r_1, 0.45)
         self.assertAlmostEqual(swarm[0].c_2_r_2, 0.4)
         self.assertAlmostEqual(swarm[1].c_2_r_2, 0.4)
+
+    def test_update_velocities_moving_position(self):
+        axis_rotation_factor = 0.4
+        patched_list = [x for x in range(2 * int(DIMENSION * axis_rotation_factor))]
+        with (
+            patch("torch.rand", return_value=tensor([0.5])),
+            patch("random.sample", return_value=patched_list),
+        ):
+
+            swarm = ParticleSwarm(
+                swarm_size=1,
+                targets=targets,
+                dimension=DIMENSION,
+                inertial_weight_beta=0.5,
+                number_of_classes=NUMBER_OF_CLASSES,
+                acceleration_coefficients=coefficients
+            )
+            gbest_position = tensor([[-4] * NUMBER_OF_CLASSES] * DIMENSION)
+            swarm.update_velocities(gbest_position)
+            self.assertAlmostEqual(swarm[0].position[0][0].item(), 0.729, places=3)
 
     def test_calculate_swarm_scaled_coeffiecient_average(self):
         swarm = ParticleSwarm(
