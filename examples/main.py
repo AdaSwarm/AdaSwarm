@@ -27,7 +27,7 @@ sys.path.append(os.path.join(dirname, ".."))
 # pylint: disable=C0411, E0401, C0413
 from adaswarm.nn_utils import CELossWithPSO
 from adaswarm.resnet import ResNet18
-from adaswarm.utils import progress_bar
+from adaswarm.utils import progress_bar, Timer
 from adaswarm.utils.options import (
     is_adaswarm,
     get_tensorboard_log_path,
@@ -119,7 +119,7 @@ def run():
         approx_criterion = nn.CrossEntropyLoss()
 
     # Training
-    def train(epoch):
+    def train(epoch, metrics):
         print(f"\nEpoch: {epoch}")
         net.train()
         train_loss = 0
@@ -143,8 +143,10 @@ def run():
             total += targets.size(0)
             correct += predicted.eq(targets).sum().item()
 
+            accuracy = correct/total
+             
             print_output = f"""Loss: {train_loss/(batch_idx+1):3f}
-                    | Acc: {100.*correct/total}%% ({correct/total})"""
+                    | Acc: {100.*accuracy}%% ({accuracy})"""
 
             if write_to_tensorboard(batch_idx):  # every X mini-batches...
 
@@ -155,7 +157,7 @@ def run():
                 )
                 writer_1.add_scalar(
                     tag="ada_vs_adam/train accuracy",
-                    scalar_value=correct / total,
+                    scalar_value=accuracy,
                     global_step=epoch * len(trainloader) + batch_idx + 1,
                 )
 
@@ -210,9 +212,10 @@ def run():
             os.mkdir("checkpoint")
         torch_save(state, "./checkpoint/ckpt.pth")
 
-    for epoch in range(start_epoch, number_of_epochs()):
-        train(epoch)
-        test(epoch)
+    with Timer(name="Total run time"):
+        for epoch in range(start_epoch, number_of_epochs()):
+            train(epoch)
+            test(epoch)
 
 
 if __name__ == "__main__":
