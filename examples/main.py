@@ -119,7 +119,7 @@ def run():
         approx_criterion = nn.CrossEntropyLoss()
 
     # Training
-    def train(epoch, metrics):
+    def train(epoch):
         print(f"\nEpoch: {epoch}")
         net.train()
         train_loss = 0
@@ -144,7 +144,7 @@ def run():
             correct += predicted.eq(targets).sum().item()
 
             accuracy = correct/total
-             
+
             print_output = f"""Loss: {train_loss/(batch_idx+1):3f}
                     | Acc: {100.*accuracy}%% ({accuracy})"""
 
