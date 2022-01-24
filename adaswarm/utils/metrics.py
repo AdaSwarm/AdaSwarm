@@ -1,20 +1,25 @@
+import os
 import time
+import pandas as pd
+
 
 class Timer(object):
-    def __init__(self, name="Time taken"):
+    def __init__(self, name="Default run"):
         self.name = name
 
     def __enter__(self):
         self.tstart = time.time()
 
     def __exit__(self, *args):
-        print(f"""
-------------------------------------------
-            { self.name }
-------------------------------------------
-Elapsed: {(time.time() - self.tstart)}
-------------------------------------------
-        """)
+
+        time_taken = (time.time() - self.tstart)
+        this_summary_dataframe = pd.DataFrame({"Run name":self.name, "Elapsed (seconds)":time_taken}, index=[0])
+
+        os.makedirs(os.path.dirname("tests/unit/output/"), exist_ok=True)
+
+        with open("tests/unit/output/summary.md", "w") as file:
+            this_summary_dataframe.to_markdown(buf=file)
+
 
 class Stat(object):
     class Accuracy(object):
@@ -23,7 +28,7 @@ class Stat(object):
 
         def update(self, value):
             if value > self.best_accuracy:
-                self.best_accuracy = value 
+                self.best_accuracy = value
 
     def __init__(self, name="Time taken"):
         self.name = name
@@ -34,4 +39,3 @@ class Stat(object):
 
     def __exit__(self, *args):
         pass
-
