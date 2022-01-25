@@ -16,3 +16,4 @@ checkpoint/*.pth
 mnist_performance*/*
 profile*
 tests/unit/output/
+summary.md

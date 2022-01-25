@@ -125,7 +125,6 @@ def run():
         train_loss = 0
         correct = 0
         total = 0
-        best_accuracy = 0.0
 
         for batch_idx, (inputs, targets) in enumerate(trainloader):
             inputs, targets = inputs.to(device), targets.to(device)
@@ -145,8 +144,8 @@ def run():
             correct += predicted.eq(targets).sum().item()
 
             accuracy = correct / total
-            if accuracy > best_accuracy:
-                best_accuracy = accuracy
+
+            metrics.update_train_accuracy(accuracy)
 
             print_output = f"""Loss: {train_loss/(batch_idx+1):3f}
                     | Acc: {100.*accuracy}%% ({accuracy})"""
@@ -166,8 +165,6 @@ def run():
 
             print(batch_idx, len(trainloader), print_output)
             progress_bar(batch_idx, len(trainloader), print_output)
-
-        return best_accuracy
 
     def test(epoch):
         net.eval()
@@ -217,11 +214,11 @@ def run():
             os.mkdir("checkpoint")
         torch_save(state, "./checkpoint/ckpt.pth")
 
-    with Metrics(name="RSNET18") as metrics:
-        for epoch in range(start_epoch, number_of_epochs()):
-            metrics.update_train_accuracy(train(epoch))
-            test(epoch)
+    for epoch in range(start_epoch, number_of_epochs()):
+        train(epoch)
+        test(epoch)
 
 
 if __name__ == "__main__":
-    run()
+    with Metrics(name="RSNET18") as metrics:
+        run()
