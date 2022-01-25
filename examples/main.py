@@ -27,7 +27,7 @@ sys.path.append(os.path.join(dirname, ".."))
 # pylint: disable=C0411, E0401, C0413
 from adaswarm.nn_utils import CELossWithPSO
 from adaswarm.resnet import ResNet18
-from adaswarm.utils import progress_bar, Timer
+from adaswarm.utils import progress_bar, Metrics 
 from adaswarm.utils.options import (
     is_adaswarm,
     get_tensorboard_log_path,
@@ -125,6 +125,7 @@ def run():
         train_loss = 0
         correct = 0
         total = 0
+        best_accuracy = 0.0
 
         for batch_idx, (inputs, targets) in enumerate(trainloader):
             inputs, targets = inputs.to(device), targets.to(device)
@@ -144,6 +145,8 @@ def run():
             correct += predicted.eq(targets).sum().item()
 
             accuracy = correct/total
+            if accuracy > best_accuracy:
+                best_accuracy = accuracy
 
             print_output = f"""Loss: {train_loss/(batch_idx+1):3f}
                     | Acc: {100.*accuracy}%% ({accuracy})"""
@@ -163,6 +166,8 @@ def run():
 
             print(batch_idx, len(trainloader), print_output)
             progress_bar(batch_idx, len(trainloader), print_output)
+
+        return best_accuracy
 
     def test(epoch):
         net.eval()
@@ -212,9 +217,9 @@ def run():
             os.mkdir("checkpoint")
         torch_save(state, "./checkpoint/ckpt.pth")
 
-    with Timer(name="Total run time"):
+    with Metrics(name="RSNET18") as metrics:
         for epoch in range(start_epoch, number_of_epochs()):
-            train(epoch)
+            metrics.update_train_accuracy(train(epoch))
             test(epoch)
 
 
