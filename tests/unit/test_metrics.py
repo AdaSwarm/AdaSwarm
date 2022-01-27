@@ -3,6 +3,7 @@ import unittest
 from adaswarm.utils import Metrics
 from unittest.mock import patch
 import pandas as pd
+from freezegun import freeze_time
 
 
 MD_OUTPUT_FILENAME = "./tests/unit/output/summary.md"
@@ -99,15 +100,15 @@ class TestMetrics(unittest.TestCase):
             float(self.read_dataframe_from_csv()["Training Accuracy %"].values[1]), 1.62
         )
 
+    @freeze_time("2021-12-25 03:01:33")
     def test_start_time_in_output(self):
 
-        with patch("time.time", return_value=1):
-            with Metrics(
-                md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
-            ) as metrics:
-                metrics.update_train_accuracy(0.01523)
+        with Metrics(
+            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+        ) as metrics:
+            metrics.update_train_accuracy(0.01523)
 
         self.assertEqual(
             self.read_dataframe_from_csv()["Start time"].values[0],
-            "01-01-70 01:00:01",
+            "25-12-21 03:01:33",
         )
