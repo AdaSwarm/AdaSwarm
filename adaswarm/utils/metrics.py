@@ -4,6 +4,7 @@
 """
 import os
 import time
+import datetime
 import pandas as pd
 import numpy as np
 
@@ -54,6 +55,9 @@ class Metrics:
         time_taken = time.time() - self.tstart
         this_summary_dataframe = pd.DataFrame(
             {
+                "Start time": datetime.datetime.fromtimestamp(self.tstart).strftime(
+                    "%d-%m-%y %H:%M:%S"
+                ),
                 "Run name": self.name,
                 "Elapsed (seconds)": time_taken,
                 "Training Accuracy %": np.round(100.0 * self.accuracy.best_accuracy, 2),
@@ -68,7 +72,9 @@ class Metrics:
         else:
             previous_summary_dataframe = pd.DataFrame()
 
-        this_summary_dataframe = pd.concat([previous_summary_dataframe, this_summary_dataframe], axis=0)
+        this_summary_dataframe = pd.concat(
+            [previous_summary_dataframe, this_summary_dataframe], axis=0
+        )
 
         with open(self.md_filepath, mode="w", encoding="utf-8") as file:
             this_summary_dataframe.to_markdown(buf=file)
