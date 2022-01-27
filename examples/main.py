@@ -44,7 +44,8 @@ logging.basicConfig(level=LOGLEVEL)
 
 # pylint: disable=R0914,R0915,C0116,C0413
 
-chosen_loss_function = "AdaSwarm" if is_adaswarm() else "Adam"
+CHOSEN_LOSS_FUNCTION = "AdaSwarm" if is_adaswarm() else "Adam"
+
 
 def run():
     print("in run function")
@@ -111,10 +112,9 @@ def run():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=args.lr)
 
-    logging.info(f"Using {chosen_loss_function} Optimiser")
+    logging.info("Using %s Optimiser", CHOSEN_LOSS_FUNCTION)
 
     approx_criterion = CELossWithPSO.apply if is_adaswarm() else nn.CrossEntropyLoss()
-
 
     # Training
     def train(epoch):
@@ -218,5 +218,5 @@ def run():
 
 
 if __name__ == "__main__":
-    with Metrics(name=chosen_loss_function) as metrics:
+    with Metrics(name=CHOSEN_LOSS_FUNCTION) as metrics:
         run()
