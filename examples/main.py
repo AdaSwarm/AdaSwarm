@@ -27,7 +27,7 @@ sys.path.append(os.path.join(dirname, ".."))
 # pylint: disable=C0411, E0401, C0413
 from adaswarm.nn_utils import CELossWithPSO
 from adaswarm.resnet import ResNet18
-from adaswarm.utils import progress_bar
+from adaswarm.utils import progress_bar, Metrics
 from adaswarm.utils.options import (
     is_adaswarm,
     get_tensorboard_log_path,
@@ -43,6 +43,8 @@ LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
 logging.basicConfig(level=LOGLEVEL)
 
 # pylint: disable=R0914,R0915,C0116,C0413
+
+CHOSEN_LOSS_FUNCTION = "AdaSwarm" if is_adaswarm() else "Adam"
 
 
 def run():
@@ -110,13 +112,9 @@ def run():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=args.lr)
 
-    if is_adaswarm():
-        logging.info("Using Swarm Optimiser")
-        approx_criterion = CELossWithPSO.apply
+    logging.info("Using %s Optimiser", CHOSEN_LOSS_FUNCTION)
 
-    else:
-        logging.info("Using Adam Optimiser")
-        approx_criterion = nn.CrossEntropyLoss()
+    approx_criterion = CELossWithPSO.apply if is_adaswarm() else nn.CrossEntropyLoss()
 
     # Training
     def train(epoch):
@@ -143,8 +141,12 @@ def run():
             total += targets.size(0)
             correct += predicted.eq(targets).sum().item()
 
+            accuracy = correct / total
+
+            metrics.update_train_accuracy(accuracy)
+
             print_output = f"""Loss: {train_loss/(batch_idx+1):3f}
-                    | Acc: {100.*correct/total}%% ({correct/total})"""
+                    | Acc: {100.*accuracy}%% ({accuracy})"""
 
             if write_to_tensorboard(batch_idx):  # every X mini-batches...
 
@@ -155,7 +157,7 @@ def run():
                 )
                 writer_1.add_scalar(
                     tag="ada_vs_adam/train accuracy",
-                    scalar_value=correct / total,
+                    scalar_value=accuracy,
                     global_step=epoch * len(trainloader) + batch_idx + 1,
                 )
 
@@ -216,4 +218,5 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    with Metrics(name=CHOSEN_LOSS_FUNCTION) as metrics:
+        run()
