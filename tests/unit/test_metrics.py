@@ -5,15 +5,16 @@ from unittest.mock import patch
 import pandas as pd
 
 
-OUTPUT_FILENAME = "./tests/unit/output/summary.md"
+MD_OUTPUT_FILENAME = "./tests/unit/output/summary.md"
+CSV_OUTPUT_FILENAME = "./tests/unit/output/summary.csv"
 
 
 class TestMetrics(unittest.TestCase):
     @staticmethod
-    def read_dataframe():
+    def read_dataframe_from_markdown():
         dataframe = (
             pd.read_table(
-                OUTPUT_FILENAME,
+                MD_OUTPUT_FILENAME,
                 sep="|",
                 header=0,
                 index_col=1,
@@ -26,30 +27,51 @@ class TestMetrics(unittest.TestCase):
         dataframe.columns = [col.strip() for col in dataframe.columns]
         return dataframe
 
+    @staticmethod
+    def read_dataframe_from_csv():
+        dataframe = (
+            pd.read_csv(
+                CSV_OUTPUT_FILENAME,
+            )
+        )
+
+        dataframe.columns = [col.strip() for col in dataframe.columns]
+        return dataframe
+
     def tearDown(self):
         try:
-            os.remove(OUTPUT_FILENAME)
+            if os.path.exists(MD_OUTPUT_FILENAME):
+                os.remove(MD_OUTPUT_FILENAME)
+            if os.path.exists(CSV_OUTPUT_FILENAME):
+                os.remove(CSV_OUTPUT_FILENAME)
         except OSError as oserr:
             print(oserr)
 
     def test_train_accuracy(self):
-        with Metrics(filepath=OUTPUT_FILENAME) as metrics:
+        with Metrics(md_filepath=MD_OUTPUT_FILENAME) as metrics:
             metrics.update_train_accuracy(1.5)
             metrics.update_train_accuracy(1.0)
             self.assertEqual(metrics.best_accuracy, 1.5)
 
-    def test_train_accuracy_output(self):
-        with Metrics(filepath=OUTPUT_FILENAME) as metrics:
+    def test_train_accuracy_md_output(self):
+        with Metrics(md_filepath=MD_OUTPUT_FILENAME) as metrics:
             metrics.update_train_accuracy(0.01523)
         self.assertEqual(
-            float(self.read_dataframe()["Training Accuracy"].values[0]), 1.52
+            float(self.read_dataframe_from_markdown()["Training Accuracy %"].values[0]), 1.52
+        )
+
+    def test_train_accuracy_csv_output(self):
+        with Metrics(csv_filepath=CSV_OUTPUT_FILENAME) as metrics:
+            metrics.update_train_accuracy(0.01523)
+        self.assertEqual(
+            float(self.read_dataframe_from_csv()["Training Accuracy %"].values[0]), 1.52
         )
 
     def test_time_taken(self):
         with patch("time.time", return_value=1):
-            with Metrics(filepath=OUTPUT_FILENAME):
+            with Metrics(md_filepath=MD_OUTPUT_FILENAME):
                 self.assertEqual(True, True)
 
             self.assertEqual(
-                int(self.read_dataframe()["Elapsed (seconds)"].values[0]), 0
+                int(self.read_dataframe_from_markdown()["Elapsed (seconds)"].values[0]), 0
             )

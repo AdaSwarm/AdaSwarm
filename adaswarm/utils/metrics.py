@@ -33,8 +33,14 @@ class Metrics:
             if value > self.best_accuracy:
                 self.best_accuracy = value
 
-    def __init__(self, name:str="Default run", filepath:str="./summary.md"):
-        self.filepath = filepath
+    def __init__(
+        self,
+        name: str = "Default run",
+        md_filepath: str = "./report/summary.md",
+        csv_filepath: str = "./report/summary.csv",
+    ):
+        self.md_filepath = md_filepath
+        self.csv_filepath = csv_filepath
         self.name = name
         self.accuracy = Metrics.Stats()
         self.name = name
@@ -50,11 +56,14 @@ class Metrics:
             {
                 "Run name": self.name,
                 "Elapsed (seconds)": time_taken,
-                "Training Accuracy": np.round(100.0 * self.accuracy.best_accuracy, 2),
+                "Training Accuracy %": np.round(100.0 * self.accuracy.best_accuracy, 2),
             },
             index=[0],
         )
-        os.makedirs(os.path.dirname(self.filepath), exist_ok=True)
+        os.makedirs(os.path.dirname(self.md_filepath), exist_ok=True)
+        os.makedirs(os.path.dirname(self.csv_filepath), exist_ok=True)
 
-        with open(self.filepath, mode="w", encoding="utf-8") as file:
+        with open(self.md_filepath, mode="w", encoding="utf-8") as file:
             this_summary_dataframe.to_markdown(buf=file)
+
+        this_summary_dataframe.to_csv(self.csv_filepath)

@@ -17,3 +17,4 @@ mnist_performance*/*
 profile*
 tests/unit/output/
 summary.md
+report/
