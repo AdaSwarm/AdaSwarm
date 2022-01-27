@@ -63,7 +63,14 @@ class Metrics:
         os.makedirs(os.path.dirname(self.md_filepath), exist_ok=True)
         os.makedirs(os.path.dirname(self.csv_filepath), exist_ok=True)
 
+        if os.path.exists(self.csv_filepath):
+            previous_summary_dataframe = pd.read_csv(self.csv_filepath, index_col=None)
+        else:
+            previous_summary_dataframe = pd.DataFrame()
+
+        this_summary_dataframe = pd.concat([previous_summary_dataframe, this_summary_dataframe], axis=0)
+
         with open(self.md_filepath, mode="w", encoding="utf-8") as file:
             this_summary_dataframe.to_markdown(buf=file)
 
-        this_summary_dataframe.to_csv(self.csv_filepath)
+        this_summary_dataframe.to_csv(self.csv_filepath, index=False)
