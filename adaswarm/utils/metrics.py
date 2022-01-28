@@ -8,8 +8,6 @@ import datetime
 import pandas as pd
 import numpy as np
 
-OUTPUT_FILENAME = "./tests/unit/output/summary.md"
-
 
 class Metrics:
     """
@@ -37,8 +35,8 @@ class Metrics:
     def __init__(
         self,
         name: str = "Default run",
-        md_filepath: str = "./report/summary.md",
-        csv_filepath: str = "./report/summary.csv",
+        md_filepath: str = os.path.join("report", "summary.md"),
+        csv_filepath: str = os.path.join("report", "summary.csv"),
     ):
         self.md_filepath = md_filepath
         self.csv_filepath = csv_filepath
