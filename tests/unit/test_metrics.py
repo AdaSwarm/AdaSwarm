@@ -125,7 +125,7 @@ class TestMetrics(unittest.TestCase):
             2,
         )
 
-    def test_best_loss(self):
+    def test_best_training_loss(self):
 
         with Metrics(
             md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
@@ -139,7 +139,7 @@ class TestMetrics(unittest.TestCase):
             0.1,
         )
 
-    def test_empty_best_loss(self):
+    def test_empty_best_training_loss(self):
 
         with Metrics(md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME):
             pass
