@@ -23,14 +23,22 @@ class Metrics:
 
         def __init__(self):
             self.best_accuracy = 0.0
+            self.number_of_epochs = 0
 
         def update_train_accuracy(self, value):
             """
             Compare and store the best accuracy
             value
             """
+
+            # TODO: Store every epoch and accuracy
+            # TODO: Take epoch as an argument and store the best accuracy
+            # and the epoch when it was achieved
             if value > self.best_accuracy:
                 self.best_accuracy = value
+
+        def current_epoch(self, value):
+            self.number_of_epochs = value
 
     def __init__(
         self,
@@ -41,12 +49,12 @@ class Metrics:
         self.md_filepath = md_filepath
         self.csv_filepath = csv_filepath
         self.name = name
-        self.accuracy = Metrics.Stats()
+        self.stats = Metrics.Stats()
         self.name = name
         self.tstart = time.time()
 
     def __enter__(self):
-        return self.accuracy
+        return self.stats
 
     def __exit__(self, *args):
 
@@ -57,8 +65,9 @@ class Metrics:
                     "%d-%m-%y %H:%M:%S"
                 ),
                 "Run name": self.name,
+                "Number of epochs": self.stats.number_of_epochs,
                 "Elapsed (seconds)": time_taken,
-                "Training Accuracy %": np.round(100.0 * self.accuracy.best_accuracy, 2),
+                "Training Accuracy %": np.round(100.0 * self.stats.best_accuracy, 2),
             },
             index=[0],
         )

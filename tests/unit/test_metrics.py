@@ -112,3 +112,15 @@ class TestMetrics(unittest.TestCase):
             self.read_dataframe_from_csv()["Start time"].values[0],
             "25-12-21 03:01:33",
         )
+
+    def test_epoch(self):
+
+        with Metrics(
+            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+        ) as metrics:
+            metrics.current_epoch(2)
+
+        self.assertEqual(
+            self.read_dataframe_from_csv()["Number of epochs"].values[0],
+            2,
+        )
