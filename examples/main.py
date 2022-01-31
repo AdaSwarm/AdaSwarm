@@ -121,7 +121,7 @@ def run():
         print(f"\nEpoch: {epoch}")
         metrics.current_epoch(epoch + 1)
         net.train()
-        train_loss = 0
+        running_loss = 0
         correct = 0
         total = 0
 
@@ -137,23 +137,25 @@ def run():
             loss.backward()
             optimizer.step()
 
-            train_loss += loss.item()
+            running_loss += loss.item()
             _, predicted = outputs.max(1)
             total += targets.size(0)
             correct += predicted.eq(targets).sum().item()
 
             accuracy = correct / total
+            training_loss = running_loss / (batch_idx + 1)
 
-            metrics.update_train_accuracy(accuracy)
+            metrics.update_training_accuracy(accuracy)
+            metrics.update_training_loss(training_loss)
 
-            print_output = f"""Loss: {train_loss/(batch_idx+1):3f}
+            print_output = f"""Loss: {training_loss:3f}
                     | Acc: {100.*accuracy}%% ({accuracy})"""
 
             if write_to_tensorboard(batch_idx):  # every X mini-batches...
 
                 writer_1.add_scalar(
                     tag="ada_vs_adam/train loss",
-                    scalar_value=train_loss / (batch_idx + 1),
+                    scalar_value=training_loss,
                     global_step=epoch * len(trainloader) + batch_idx + 1,
                 )
                 writer_1.add_scalar(
