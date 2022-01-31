@@ -22,10 +22,11 @@ class Metrics:
         """
 
         def __init__(self):
-            self.best_accuracy = 0.0
+            self.best_training_accuracy = 0.0
+            self.best_training_loss = None
             self.number_of_epochs = 0
 
-        def update_train_accuracy(self, value):
+        def update_training_accuracy(self, value):
             """
             Compare and store the best accuracy
             value
@@ -34,8 +35,18 @@ class Metrics:
             # TODO: Store every epoch and accuracy
             # TODO: Take epoch as an argument and store the best accuracy
             # and the epoch when it was achieved
-            if value > self.best_accuracy:
-                self.best_accuracy = value
+            if value > self.best_training_accuracy:
+                self.best_training_accuracy = value
+
+        def update_training_loss(self, value):
+            """
+            Compare and store the best training loss
+            value
+            """
+            if self.best_training_loss == None:
+                self.best_training_loss = value
+            elif value < self.best_training_loss:
+                self.best_training_loss = value
 
         def current_epoch(self, value):
             self.number_of_epochs = value
@@ -67,7 +78,12 @@ class Metrics:
                 "Run name": self.name,
                 "Number of epochs": self.stats.number_of_epochs,
                 "Elapsed (seconds)": time_taken,
-                "Training Accuracy %": np.round(100.0 * self.stats.best_accuracy, 2),
+                "Training Accuracy %": np.round(
+                    100.0 * self.stats.best_training_accuracy, 2
+                ),
+                "Training Loss": self.stats.best_training_loss
+                if self.stats.best_training_loss != None
+                else "Not set",
             },
             index=[0],
         )

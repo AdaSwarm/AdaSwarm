@@ -48,15 +48,15 @@ class TestMetrics(unittest.TestCase):
         with Metrics(
             md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
-            metrics.update_train_accuracy(1.5)
-            metrics.update_train_accuracy(1.0)
-            self.assertEqual(metrics.best_accuracy, 1.5)
+            metrics.update_training_accuracy(1.5)
+            metrics.update_training_accuracy(1.0)
+            self.assertEqual(metrics.best_training_accuracy, 1.5)
 
     def test_train_accuracy_md_output(self):
         with Metrics(
             md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
-            metrics.update_train_accuracy(0.01523)
+            metrics.update_training_accuracy(0.01523)
         self.assertEqual(
             float(self.read_dataframe_from_markdown()["Training Accuracy %"].values[0]),
             1.52,
@@ -66,7 +66,7 @@ class TestMetrics(unittest.TestCase):
         with Metrics(
             md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
-            metrics.update_train_accuracy(0.01523)
+            metrics.update_training_accuracy(0.01523)
         self.assertEqual(
             float(self.read_dataframe_from_csv()["Training Accuracy %"].values[0]), 1.52
         )
@@ -87,12 +87,12 @@ class TestMetrics(unittest.TestCase):
         with Metrics(
             md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
-            metrics.update_train_accuracy(0.01523)
+            metrics.update_training_accuracy(0.01523)
 
         with Metrics(
             md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
-            metrics.update_train_accuracy(0.01623)
+            metrics.update_training_accuracy(0.01623)
         self.assertEqual(
             float(self.read_dataframe_from_csv()["Training Accuracy %"].values[0]), 1.52
         )
@@ -106,7 +106,7 @@ class TestMetrics(unittest.TestCase):
         with Metrics(
             md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
-            metrics.update_train_accuracy(0.01523)
+            metrics.update_training_accuracy(0.01523)
 
         self.assertEqual(
             self.read_dataframe_from_csv()["Start time"].values[0],
@@ -123,4 +123,28 @@ class TestMetrics(unittest.TestCase):
         self.assertEqual(
             self.read_dataframe_from_csv()["Number of epochs"].values[0],
             2,
+        )
+
+    def test_best_loss(self):
+
+        with Metrics(
+            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+        ) as metrics:
+            metrics.update_training_loss(0.2)
+            metrics.update_training_loss(0.1)
+            metrics.update_training_loss(0.3)
+
+        self.assertEqual(
+            self.read_dataframe_from_csv()["Training Loss"].values[0],
+            0.1,
+        )
+
+    def test_empty_best_loss(self):
+
+        with Metrics(md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME):
+            pass
+
+        self.assertEqual(
+            self.read_dataframe_from_csv()["Training Loss"].values[0],
+            "Not set",
         )
