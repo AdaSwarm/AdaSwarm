@@ -119,6 +119,7 @@ def run():
     # Training
     def train(epoch):
         print(f"\nEpoch: {epoch}")
+        metrics.current_epoch(epoch + 1)
         net.train()
         train_loss = 0
         correct = 0
@@ -217,6 +218,8 @@ def run():
         test(epoch)
 
 
+# TODO: Add a script to run both optimizers and
+# read the csv ouput to compare both runs
 if __name__ == "__main__":
     with Metrics(name=CHOSEN_LOSS_FUNCTION) as metrics:
         run()
