@@ -24,6 +24,7 @@ class Metrics:
         def __init__(self):
             self.best_training_accuracy = 0.0
             self.best_training_loss = None
+            self.best_test_loss = None
             self.number_of_epochs = 0
 
         def update_training_accuracy(self, value):
@@ -43,10 +44,16 @@ class Metrics:
             Compare and store the best training loss
             value
             """
-            if self.best_training_loss == None:
+            if (self.best_training_loss == None) or (value < self.best_training_loss):
                 self.best_training_loss = value
-            elif value < self.best_training_loss:
-                self.best_training_loss = value
+
+        def update_test_loss(self, value):
+            """
+            Compare and store the best test loss
+            value
+            """
+            if (self.best_test_loss == None) or (value < self.best_test_loss):
+                self.best_test_loss = value
 
         def current_epoch(self, value):
             self.number_of_epochs = value
@@ -84,6 +91,9 @@ class Metrics:
                 "Training Loss": self.stats.best_training_loss
                 if self.stats.best_training_loss != None
                 else "Not set",
+                "Test Loss": self.stats.best_test_loss
+                if self.stats.best_test_loss != None
+                else "Not set",
             },
             index=[0],
         )
@@ -100,6 +110,6 @@ class Metrics:
         )
 
         with open(self.md_filepath, mode="w", encoding="utf-8") as file:
-            this_summary_dataframe.to_markdown(buf=file)
+            this_summary_dataframe.to_markdown(buf=file, index=False)
 
         this_summary_dataframe.to_csv(self.csv_filepath, index=False)

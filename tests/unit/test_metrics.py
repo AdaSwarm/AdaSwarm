@@ -139,6 +139,19 @@ class TestMetrics(unittest.TestCase):
             0.1,
         )
 
+    def test_best_test_loss(self):
+        with Metrics(
+            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+        ) as metrics:
+            metrics.update_test_loss(0.2)
+            metrics.update_test_loss(0.1)
+            metrics.update_test_loss(0.3)
+
+        self.assertEqual(
+            self.read_dataframe_from_csv()["Test Loss"].values[0],
+            0.1,
+        )
+
     def test_empty_best_training_loss(self):
 
         with Metrics(md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME):
@@ -146,5 +159,15 @@ class TestMetrics(unittest.TestCase):
 
         self.assertEqual(
             self.read_dataframe_from_csv()["Training Loss"].values[0],
+            "Not set",
+        )
+
+    def test_empty_best_test_loss(self):
+
+        with Metrics(md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME):
+            pass
+
+        self.assertEqual(
+            self.read_dataframe_from_csv()["Test Loss"].values[0],
             "Not set",
         )
