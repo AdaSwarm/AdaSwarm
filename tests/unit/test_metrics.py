@@ -52,6 +52,15 @@ class TestMetrics(unittest.TestCase):
             metrics.update_training_accuracy(1.0)
             self.assertEqual(metrics.best_training_accuracy, 1.5)
 
+    def test_test_accuracy(self):
+        with Metrics(
+            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+        ) as metrics:
+            metrics.update_test_accuracy(1.5)
+            metrics.update_test_accuracy(1.0)
+            self.assertEqual(metrics.best_test_accuracy, 1.5)
+
+
     def test_train_accuracy_md_output(self):
         with Metrics(
             md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
@@ -62,6 +71,16 @@ class TestMetrics(unittest.TestCase):
             1.52,
         )
 
+    def test_test_accuracy_md_output(self):
+        with Metrics(
+            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+        ) as metrics:
+            metrics.update_test_accuracy(0.01523)
+        self.assertEqual(
+            float(self.read_dataframe_from_markdown()["Test Accuracy %"].values[0]),
+            1.52,
+        )
+
     def test_train_accuracy_csv_output(self):
         with Metrics(
             md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
@@ -69,6 +88,15 @@ class TestMetrics(unittest.TestCase):
             metrics.update_training_accuracy(0.01523)
         self.assertEqual(
             float(self.read_dataframe_from_csv()["Training Accuracy %"].values[0]), 1.52
+        )
+
+    def test_test_accuracy_csv_output(self):
+        with Metrics(
+            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+        ) as metrics:
+            metrics.update_test_accuracy(0.01523)
+        self.assertEqual(
+            float(self.read_dataframe_from_csv()["Test Accuracy %"].values[0]), 1.52
         )
 
     def test_time_taken(self):
@@ -98,6 +126,23 @@ class TestMetrics(unittest.TestCase):
         )
         self.assertEqual(
             float(self.read_dataframe_from_csv()["Training Accuracy %"].values[1]), 1.62
+        )
+
+    def test_test_accuracy_csv_output(self):
+        with Metrics(
+            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+        ) as metrics:
+            metrics.update_test_accuracy(0.01523)
+
+        with Metrics(
+            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+        ) as metrics:
+            metrics.update_test_accuracy(0.01623)
+        self.assertEqual(
+            float(self.read_dataframe_from_csv()["Test Accuracy %"].values[0]), 1.52
+        )
+        self.assertEqual(
+            float(self.read_dataframe_from_csv()["Test Accuracy %"].values[1]), 1.62
         )
 
     @freeze_time("2021-12-25 03:01:33")

@@ -172,33 +172,41 @@ def run():
         test_loss = 0
         correct = 0
         total = 0
+        running_loss = 0
+
         with no_grad():
             for batch_idx, (inputs, targets) in enumerate(testloader):
                 inputs, targets = inputs.to(device), targets.to(device)
                 outputs = net(inputs)
                 loss = criterion(outputs, targets)
 
-                test_loss += loss.item()
+                running_loss += loss.item()
                 _, predicted = outputs.max(1)
                 total += targets.size(0)
                 correct += predicted.eq(targets).sum().item()
 
+                accuracy = correct / total
+                test_loss = running_loss / (batch_idx + 1)
+
+                metrics.update_test_accuracy(accuracy)
+                metrics.update_test_loss(test_loss)
+
                 progress_bar(
                     batch_idx,
                     len(testloader),
-                    f"""Loss: {test_loss/(batch_idx+1):3f}
-                    | Acc: {100.*correct/total}%% ({correct/total})""",
+                    f"""Loss: {test_loss:3f}
+                    | Acc: {100.*accuracy}%% ({accuracy})""",
                 )
                 if write_to_tensorboard(batch_idx):  # every X mini-batches...
 
                     writer_2.add_scalar(
                         tag="ada_vs_adam/test loss",
-                        scalar_value=test_loss / (batch_idx + 1),
+                        scalar_value=test_loss,
                         global_step=epoch * len(testloader) + batch_idx + 1,
                     )
                     writer_2.add_scalar(
                         tag="ada_vs_adam/test accuracy",
-                        scalar_value=correct / total,
+                        scalar_value=accuracy,
                         global_step=epoch * len(testloader) + batch_idx + 1,
                     )
 

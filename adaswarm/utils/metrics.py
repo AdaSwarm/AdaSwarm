@@ -23,13 +23,14 @@ class Metrics:
 
         def __init__(self):
             self.best_training_accuracy = 0.0
+            self.best_test_accuracy = 0.0
             self.best_training_loss = None
             self.best_test_loss = None
             self.number_of_epochs = 0
 
         def update_training_accuracy(self, value):
             """
-            Compare and store the best accuracy
+            Compare and store the best training accuracy
             value
             """
 
@@ -38,6 +39,14 @@ class Metrics:
             # and the epoch when it was achieved
             if value > self.best_training_accuracy:
                 self.best_training_accuracy = value
+
+        def update_test_accuracy(self, value):
+            """
+            Compare and store the best test accuracy
+            value
+            """
+            if value > self.best_test_accuracy:
+                self.best_test_accuracy = value
 
         def update_training_loss(self, value):
             """
@@ -91,6 +100,9 @@ class Metrics:
                 "Training Loss": self.stats.best_training_loss
                 if self.stats.best_training_loss != None
                 else "Not set",
+                "Test Accuracy %": np.round(
+                    100.0 * self.stats.best_test_accuracy, 2
+                ),
                 "Test Loss": self.stats.best_test_loss
                 if self.stats.best_test_loss != None
                 else "Not set",
