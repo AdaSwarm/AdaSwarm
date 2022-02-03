@@ -12,6 +12,9 @@ tensorboard = "^2.7.0"
 torch-tb-profiler = "^0.3.1"
 pandas = "^1.4.0"
 tabulate = "^0.8.9"
+pytorch-lightning = "^1.5.9"
+pytorch-lightning-bolts = "^0.3.2"
+torchmetrics = "^0.7.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.12.2"
