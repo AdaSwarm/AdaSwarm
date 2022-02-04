@@ -19,6 +19,7 @@ from torch.nn.parallel import DataParallel
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard.writer import SummaryWriter
 from torchvision import datasets, transforms
+import adaswarm
 
 dirname = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(dirname, ".."))
@@ -28,11 +29,14 @@ sys.path.append(os.path.join(dirname, ".."))
 from adaswarm.nn_utils import CELossWithPSO
 from adaswarm.resnet import ResNet18
 from adaswarm.utils import progress_bar, Metrics
+from adaswarm.data import DataLoaderFetcher
+
 from adaswarm.utils.options import (
     is_adaswarm,
     get_tensorboard_log_path,
     number_of_epochs,
     write_to_tensorboard,
+    dataset_name,
 )
 
 # TODO: allow running without tensorboard option
@@ -63,17 +67,9 @@ def run():
 
     # Data
     print("==> Preparing data..")
-    transform_train = transforms.Compose(
-        [
-            # Image Transformations suitable for MNIST dataset(handwritten digits)
-            transforms.RandomRotation(30),
-            transforms.RandomAffine(degrees=20, translate=(0.1, 0.1), scale=(0.9, 1.1)),
-            transforms.ColorJitter(brightness=0.2, contrast=0.2),
-            transforms.ToTensor(),
-            # Mean and Std deviation values of MNIST dataset
-            transforms.Normalize((0.1307,), (0.3081,)),
-        ]
-    )
+
+    fetcher = DataLoaderFetcher(dataset_name())
+    trainloader = fetcher.train_loader()
 
     transform_test = transforms.Compose(
         [
@@ -81,12 +77,6 @@ def run():
             transforms.Normalize((0.1307,), (0.3081,)),
         ]
     )
-
-    trainset = datasets.MNIST(
-        root="./data", train=True, download=True, transform=transform_train
-    )
-
-    trainloader = DataLoader(trainset, batch_size=125, shuffle=True, num_workers=2)
 
     testset = datasets.MNIST(
         root="./data", train=False, download=True, transform=transform_test

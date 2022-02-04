@@ -28,7 +28,7 @@ def write_to_tensorboard(batch_idx: int) -> bool:
 
     Returns:
         bool: boolean flag, True to write
-    """    
+    """
     frequency = write_batch_frequency()
     return batch_idx % frequency == (frequency - 1)
 
@@ -44,9 +44,18 @@ def get_tensorboard_log_path(run_type: str) -> str:
 
     return os.path.join("mnist_performance", tensorboard_dir, run_type)
 
+
 def number_of_epochs() -> int:
     """Set the number of epochs to run
     Returns:
         [int]: Number of epochs
     """
     return int(os.environ.get("ADASWARM_NUMBER_OF_EPOCHS", "200"))
+
+
+def dataset_name() -> str:
+    """Set the number of epochs to run
+    Returns:
+        [int]: Number of epochs
+    """
+    return os.environ.get("ADASWARM_DATASET_NAME", "MNIST")
