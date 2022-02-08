@@ -54,8 +54,8 @@ def number_of_epochs() -> int:
 
 
 def dataset_name() -> str:
-    """Set the number of epochs to run
+    """Set the dataset name
     Returns:
-        [int]: Number of epochs
+        [str]: Name of dataset
     """
     return os.environ.get("ADASWARM_DATASET_NAME", "MNIST")
