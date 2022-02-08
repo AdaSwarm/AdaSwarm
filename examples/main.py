@@ -69,18 +69,7 @@ def run():
 
     fetcher = DataLoaderFetcher(dataset_name())
     trainloader = fetcher.train_loader()
-
-    transform_test = transforms.Compose(
-        [
-            transforms.ToTensor(),
-            transforms.Normalize((0.1307,), (0.3081,)),
-        ]
-    )
-
-    testset = datasets.MNIST(
-        root="./data", train=False, download=True, transform=transform_test
-    )
-    testloader = DataLoader(testset, batch_size=100, shuffle=False, num_workers=2)
+    testloader = fetcher.test_loader()
 
     # Model
     print("==> Building model..")

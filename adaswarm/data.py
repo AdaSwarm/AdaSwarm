@@ -29,3 +29,20 @@ class DataLoaderFetcher:
                 shuffle=True,
                 num_workers=2,
             )
+
+    def test_loader(self):
+        if self.name == "MNIST":
+            transform_test = transforms.Compose(
+                [
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.1307,), (0.3081,)),
+                ]
+            )
+            return DataLoader(
+                datasets.MNIST(
+                    root="./data", train=False, download=True, transform=transform_test
+                ),
+                batch_size=100,
+                shuffle=False,
+                num_workers=2,
+            )
