@@ -5,8 +5,8 @@ from torchvision import datasets, transforms
 
 from adaswarm.utils.options import get_device
 
-from sklearn.datasets import load_iris
 import sklearn
+from sklearn.model_selection import train_test_split
 
 device = get_device()
 
@@ -47,7 +47,6 @@ class DataLoaderFetcher:
                 drop_last=False,
             )
 
-
     def test_loader(self):
         if self.name == "MNIST":
             transform_test = transforms.Compose(
@@ -64,13 +63,28 @@ class DataLoaderFetcher:
                 shuffle=False,
                 num_workers=2,
             )
+        elif self.name == "Iris":
+            return DataLoader(
+                IrisDataSet(train=False),
+                batch_size=2,
+                shuffle=True,
+                drop_last=False,
+            )
 
 
 class IrisDataSet(Dataset):
-    def __init__(self):
+    def __init__(self, train=True):
         iris_data_bundle = sklearn.datasets.load_iris()
-        self.data = iris_data_bundle.data
-        self.target = iris_data_bundle.target
+        x, y = iris_data_bundle.data, iris_data_bundle.target
+        x_train, x_test, y_train, y_test = train_test_split(
+            x, y, test_size=0.2, random_state=123
+        )
+        if train:
+            self.data = x_train
+            self.target = y_train
+        else:
+            self.data = x_test
+            self.target = y_test
 
     def __getitem__(self, idx):
         if is_tensor(idx):
