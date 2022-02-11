@@ -1,9 +1,14 @@
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
+from torch import is_tensor, from_numpy
 from torchvision import datasets, transforms
+
+from adaswarm.utils.options import get_device
 
 from sklearn.datasets import load_iris
 import sklearn
+
+device = get_device()
 
 
 class DataLoaderFetcher:
@@ -34,6 +39,15 @@ class DataLoaderFetcher:
                 num_workers=2,
             )
 
+        elif self.name == "Iris":
+            return DataLoader(
+                IrisDataSet(),
+                batch_size=2,
+                shuffle=True,
+                drop_last=False,
+            )
+
+
     def test_loader(self):
         if self.name == "MNIST":
             transform_test = transforms.Compose(
@@ -54,10 +68,17 @@ class DataLoaderFetcher:
 
 class IrisDataSet(Dataset):
     def __init__(self):
-        self.data = sklearn.datasets.load_iris()
+        iris_data_bundle = sklearn.datasets.load_iris()
+        self.data = iris_data_bundle.data
+        self.target = iris_data_bundle.target
 
-    def __getitem__(self, key):
-        return self.data[key]
+    def __getitem__(self, idx):
+        if is_tensor(idx):
+            idx = idx.tolist()
+        predictors = from_numpy(self.data[idx, 0:4]).to(device)
+        species = from_numpy(self.target[idx]).to(device)
+        sample = {"predictors": predictors, "species": species}
+        return sample
 
     def __len__(self):
         return len(self.data)
