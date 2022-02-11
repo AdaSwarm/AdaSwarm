@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
 
 from adaswarm.utils.options import dataset_name
-from adaswarm.data import DataLoaderFetcher
+from adaswarm.data import DataLoaderFetcher, IrisDataSet
 
 
 class CustomDataset(Dataset):
@@ -46,3 +46,19 @@ class DataLoaderTestCase(unittest.TestCase):
                 root="./data", train=False, download=True, transform=ANY
             )
         self.assertIsInstance(loader, DataLoader)
+
+    # def test_load_iris_training_set(self):
+    #     os.environ["ADASWARM_DATASET_NAME"] = "Iris"
+    #     fetcher = DataLoaderFetcher(dataset_name())
+    #     with patch(
+    #         "sklearn.datasets.load_iris", return_value=DataLoader(CustomDataset())
+    #     ) as mock:
+    #         loader = fetcher.train_loader()
+    #         mock.assert_called()
+
+    #     self.assertIsInstance(loader, DataLoader)
+
+    def test_iris_data(self):
+        with patch("sklearn.datasets.load_iris") as mock:
+            IrisDataSet()
+            mock.assert_called()

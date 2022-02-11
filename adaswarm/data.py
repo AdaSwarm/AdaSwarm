@@ -1,5 +1,9 @@
 from torch.utils.data import DataLoader
+from torch.utils.data.dataset import Dataset
 from torchvision import datasets, transforms
+
+from sklearn.datasets import load_iris
+import sklearn
 
 
 class DataLoaderFetcher:
@@ -46,3 +50,14 @@ class DataLoaderFetcher:
                 shuffle=False,
                 num_workers=2,
             )
+
+
+class IrisDataSet(Dataset):
+    def __init__(self):
+        self.data = sklearn.datasets.load_iris()
+
+    def __getitem__(self, key):
+        return self.data[key]
+
+    def __len__(self):
+        return len(self.data)
