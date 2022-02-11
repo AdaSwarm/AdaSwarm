@@ -1,6 +1,16 @@
 import os
+from torch import cuda
+from torch import device as torch_device
 from adaswarm.utils.strings import str_to_bool
 
+
+def get_device():
+    """Obtain the processor type (CPU or GPU)
+
+    Returns:
+        torch.device: Available device
+    """    
+    return torch_device("cuda:0" if cuda.is_available() else "cpu")
 
 def is_adaswarm():
     """Determine whether or not to run with AdaSwarm optimiser

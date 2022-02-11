@@ -8,8 +8,6 @@ import os
 import sys
 
 # pylint: disable=E0611
-from torch import cuda
-from torch import device as torch_device
 from torch import load as torch_load
 from torch import nn, optim
 from torch.autograd.grad_mode import no_grad
@@ -36,6 +34,7 @@ from adaswarm.utils.options import (
     number_of_epochs,
     write_to_tensorboard,
     dataset_name,
+    get_device
 )
 
 # TODO: allow running without tensorboard option
@@ -52,7 +51,7 @@ CHOSEN_LOSS_FUNCTION = "AdaSwarm" if is_adaswarm() else "Adam"
 
 def run():
     print("in run function")
-    device = torch_device("cuda:0" if cuda.is_available() else "cpu")
+    device = get_device()
 
     parser = argparse.ArgumentParser(description="PyTorch MNIST Training")
     parser.add_argument("--lr", default=0.001, type=float, help="learning rate")
