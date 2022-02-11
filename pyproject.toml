@@ -5,13 +5,14 @@ description = ""
 authors = ["swhustla <fdkelly@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9.0, <3.11"
 torch = "^1.10.0"
 torchvision = "^0.11.1"
 tensorboard = "^2.7.0"
 torch-tb-profiler = "^0.3.1"
 pandas = "^1.4.0"
 tabulate = "^0.8.9"
+scipy = "^1.7.0"
 scikit-learn = "^1.0.2"
 
 [tool.poetry.dev-dependencies]
