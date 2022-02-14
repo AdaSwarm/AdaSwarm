@@ -1,11 +1,12 @@
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
 from torch import is_tensor, from_numpy
-from torchvision import datasets, transforms
+from torchvision import transforms
 
 from adaswarm.utils.options import get_device
 
-import sklearn
+from sklearn import datasets as skl_datasets
+from torchvision import datasets as tv_datasets
 from sklearn.model_selection import train_test_split
 
 device = get_device()
@@ -31,7 +32,7 @@ class DataLoaderFetcher:
                 ]
             )
             return DataLoader(
-                datasets.MNIST(
+                tv_datasets.MNIST(
                     root="./data", train=True, download=True, transform=transform_train
                 ),
                 batch_size=125,
@@ -56,7 +57,7 @@ class DataLoaderFetcher:
                 ]
             )
             return DataLoader(
-                datasets.MNIST(
+                tv_datasets.MNIST(
                     root="./data", train=False, download=True, transform=transform_test
                 ),
                 batch_size=100,
@@ -74,7 +75,7 @@ class DataLoaderFetcher:
 
 class IrisDataSet(Dataset):
     def __init__(self, train=True):
-        iris_data_bundle = sklearn.datasets.load_iris()
+        iris_data_bundle = skl_datasets.load_iris()
         x, y = iris_data_bundle.data, iris_data_bundle.target
         x_train, x_test, y_train, y_test = train_test_split(
             x, y, test_size=0.2, random_state=123
