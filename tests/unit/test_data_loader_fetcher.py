@@ -46,11 +46,9 @@ class DataLoaderTestCase(unittest.TestCase):
         ) as mock:
             IrisDataSet()
             mock.assert_called()
-        iris_test_values = IrisDataSet().__getitem__([50])
-        self.assertEqual(
-            iris_test_values["predictors"].tolist()[0], [5.0, 3.5, 1.6, 0.6]
-        )
-        self.assertEqual(iris_test_values["species"], tensor([0]))
+        predictors, species = IrisDataSet().__getitem__([50])
+        self.assertEqual(predictors.tolist()[0], [5.0, 3.5, 1.6, 0.6])
+        self.assertEqual(species, tensor([0]))
 
     def test_load_iris_training_set(self):
         fetcher = DataLoaderFetcher(name="Iris")
@@ -68,8 +66,6 @@ class DataLoaderTestCase(unittest.TestCase):
         ) as mock:
             IrisDataSet(train=False)
             mock.assert_called()
-        iris_test_values = IrisDataSet(train=False).__getitem__([5])
-        self.assertEqual(
-            iris_test_values["predictors"].tolist()[0], [6.0, 3.0, 4.8, 1.8]
-        )
-        self.assertEqual(iris_test_values["species"], tensor([2]))
+        predictors, species = IrisDataSet(train=False).__getitem__([5])
+        self.assertEqual(predictors.tolist()[0], [6.0, 3.0, 4.8, 1.8])
+        self.assertEqual(species, tensor([2]))

@@ -34,7 +34,7 @@ from adaswarm.utils.options import (
     number_of_epochs,
     write_to_tensorboard,
     dataset_name,
-    get_device
+    get_device,
 )
 
 # TODO: allow running without tensorboard option

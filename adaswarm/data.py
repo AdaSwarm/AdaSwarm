@@ -1,6 +1,7 @@
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
 from torch import is_tensor, from_numpy
+import numpy as np
 from torchvision import transforms
 
 from adaswarm.utils.options import get_device
@@ -91,9 +92,8 @@ class IrisDataSet(Dataset):
         if is_tensor(idx):
             idx = idx.tolist()
         predictors = from_numpy(self.data[idx, 0:4]).to(device)
-        species = from_numpy(self.target[idx]).to(device)
-        sample = {"predictors": predictors, "species": species}
-        return sample
+        species = from_numpy(np.array(self.target[idx])).to(device)
+        return predictors, species
 
     def __len__(self):
         return len(self.data)
