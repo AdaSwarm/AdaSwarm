@@ -70,10 +70,10 @@ def run():
 
     # Model
     print("==> Building model..")
-    net = ResNet18(1)
-    net = net.to(device)
+    model = fetcher.model()
+
     if device == "cuda":
-        net = DataParallel(net)
+        model = DataParallel(model)
         cudnn.benchmark = True
 
     if args.resume:
@@ -81,11 +81,11 @@ def run():
         print("==> Resuming from checkpoint..")
         assert os.path.isdir("checkpoint"), "Error: no checkpoint directory found!"
         checkpoint = torch_load("./checkpoint/ckpt.pth")
-        net.load_state_dict(checkpoint["net"])
+        model.load_state_dict(checkpoint["net"])
         start_epoch = checkpoint["epoch"]
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(net.parameters(), lr=args.lr)
+    optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     logging.info("Using %s Optimiser", CHOSEN_LOSS_FUNCTION)
 
@@ -95,7 +95,7 @@ def run():
     def train(epoch):
         print(f"\nEpoch: {epoch}")
         metrics.current_epoch(epoch + 1)
-        net.train()
+        model.train()
         running_loss = 0
         correct = 0
         total = 0
@@ -105,7 +105,7 @@ def run():
             logging.debug("targets: %s", targets)
             targets.requires_grad = False
             optimizer.zero_grad()
-            outputs = net(inputs)
+            outputs = model(inputs)
 
             loss = approx_criterion(outputs, targets)
 
@@ -143,7 +143,7 @@ def run():
             progress_bar(batch_idx, len(trainloader), print_output)
 
     def test(epoch):
-        net.eval()
+        model.eval()
         test_loss = 0
         correct = 0
         total = 0
@@ -152,7 +152,7 @@ def run():
         with no_grad():
             for batch_idx, (inputs, targets) in enumerate(testloader):
                 inputs, targets = inputs.to(device), targets.to(device)
-                outputs = net(inputs)
+                outputs = model(inputs)
                 loss = criterion(outputs, targets)
 
                 running_loss += loss.item()
@@ -190,7 +190,7 @@ def run():
 
         print("Saving..")
         state = {
-            "net": net.state_dict(),
+            "net": model.state_dict(),
             "acc": acc,
             "epoch": epoch,
         }

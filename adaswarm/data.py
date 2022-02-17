@@ -5,6 +5,7 @@ import numpy as np
 from torchvision import transforms
 
 from adaswarm.utils.options import get_device
+from adaswarm.resnet import ResNet18
 
 from sklearn import datasets as skl_datasets
 from torchvision import datasets as tv_datasets
@@ -72,6 +73,12 @@ class DataLoaderFetcher:
                 shuffle=True,
                 drop_last=False,
             )
+
+    def model(self):
+        if self.name == "MNIST":
+            model = ResNet18(in_channels=1, num_classes=10)
+            return model.to(device)
+
 
 
 class IrisDataSet(Dataset):

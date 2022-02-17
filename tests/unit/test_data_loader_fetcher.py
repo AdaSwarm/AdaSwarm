@@ -7,6 +7,7 @@ from torch import tensor
 from sklearn import datasets
 
 from adaswarm.data import DataLoaderFetcher, IrisDataSet
+from adaswarm.resnet import ResNet
 
 
 class CustomDataset(Dataset):
@@ -60,7 +61,7 @@ class DataLoaderTestCase(unittest.TestCase):
 
         self.assertIsInstance(loader, DataLoader)
 
-    def test_iris_test_set(self):
+    def test_load_iris_test_set(self):
         with patch(
             "sklearn.datasets.load_iris", return_value=datasets.load_iris()
         ) as mock:
@@ -69,3 +70,9 @@ class DataLoaderTestCase(unittest.TestCase):
         predictors, species = IrisDataSet(train=False).__getitem__([5])
         self.assertEqual(predictors.tolist()[0], [6.0, 3.0, 4.8, 1.8])
         self.assertEqual(species, tensor([2]))
+
+
+    def test_MNIST_model_selection(self):
+        fetcher = DataLoaderFetcher(name="MNIST")
+        chosen_model = fetcher.model()
+        self.assertIsInstance(chosen_model, ResNet)
