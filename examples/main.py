@@ -22,7 +22,6 @@ sys.path.append(os.path.join(dirname, ".."))
 
 # pylint: disable=C0411, E0401, C0413
 from adaswarm.nn_utils import CELossWithPSO
-from adaswarm.resnet import ResNet18
 from adaswarm.utils import progress_bar, Metrics
 from adaswarm.data import DataLoaderFetcher
 
