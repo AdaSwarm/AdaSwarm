@@ -14,9 +14,7 @@ from torch.autograd.grad_mode import no_grad
 from torch import save as torch_save
 from torch.backends import cudnn
 from torch.nn.parallel import DataParallel
-from torch.utils.data import DataLoader
 from torch.utils.tensorboard.writer import SummaryWriter
-from torchvision import datasets, transforms
 
 dirname = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(dirname, ".."))
