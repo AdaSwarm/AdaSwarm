@@ -73,7 +73,6 @@ def run():
 
     if device == "cuda":
         model = DataParallel(model)
-        cudnn.benchmark = True
 
     if args.resume:
         # Load checkpoint.

@@ -3,6 +3,8 @@ from torch.utils.data.dataset import Dataset
 from torch import is_tensor, from_numpy
 import numpy as np
 from torchvision import transforms
+from torch import cuda
+from torch.backends import cudnn
 
 from adaswarm.utils.options import get_device
 from adaswarm.resnet import ResNet18
@@ -15,11 +17,21 @@ device = get_device()
 
 
 class DataLoaderFetcher:
-    def __init__(self, name: str):
+    def __init__(self, name: str = "MNIST"):
         self.name = name
 
+    # TODO: Handle error in case user passes an unsupported dataset name
     def train_loader(self):
-        if self.name == "MNIST":
+
+        if self.name == "Iris":
+            return DataLoader(
+                IrisDataSet(),
+                batch_size=2,
+                shuffle=True,
+                drop_last=False,
+            )
+
+        else:
             transform_train = transforms.Compose(
                 [
                     # Image Transformations suitable for MNIST dataset(handwritten digits)
@@ -42,16 +54,15 @@ class DataLoaderFetcher:
                 num_workers=2,
             )
 
-        elif self.name == "Iris":
+    def test_loader(self):
+        if self.name == "Iris":
             return DataLoader(
-                IrisDataSet(),
+                IrisDataSet(train=False),
                 batch_size=2,
                 shuffle=True,
                 drop_last=False,
             )
-
-    def test_loader(self):
-        if self.name == "MNIST":
+        else:
             transform_test = transforms.Compose(
                 [
                     transforms.ToTensor(),
@@ -66,19 +77,12 @@ class DataLoaderFetcher:
                 shuffle=False,
                 num_workers=2,
             )
-        elif self.name == "Iris":
-            return DataLoader(
-                IrisDataSet(train=False),
-                batch_size=2,
-                shuffle=True,
-                drop_last=False,
-            )
 
     def model(self):
-        if self.name == "MNIST":
-            model = ResNet18(in_channels=1, num_classes=10)
-            return model.to(device)
-
+        model = ResNet18(in_channels=1, num_classes=10)
+        if cuda.is_available():
+            cudnn.benchmark = True
+        return model.to(device)
 
 
 class IrisDataSet(Dataset):

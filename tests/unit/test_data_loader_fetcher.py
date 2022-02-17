@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
 from torch import tensor
 from sklearn import datasets
+from torch.backends import cudnn
 
 from adaswarm.data import DataLoaderFetcher, IrisDataSet
 from adaswarm.resnet import ResNet
@@ -71,8 +72,15 @@ class DataLoaderTestCase(unittest.TestCase):
         self.assertEqual(predictors.tolist()[0], [6.0, 3.0, 4.8, 1.8])
         self.assertEqual(species, tensor([2]))
 
-
     def test_MNIST_model_selection(self):
         fetcher = DataLoaderFetcher(name="MNIST")
         chosen_model = fetcher.model()
         self.assertIsInstance(chosen_model, ResNet)
+
+    def test_MNIST_model_selection_for_cuda(self):
+        fetcher = DataLoaderFetcher(name="MNIST")
+        cudnn.benchmark = False
+        with patch("torch.cuda.is_available", return_value=True) as mock:
+            chosen_model = fetcher.model()
+            mock.assert_called()
+            self.assertTrue(cudnn.benchmark)
