@@ -38,7 +38,7 @@ from adaswarm.utils.options import (
 writer_1 = SummaryWriter(get_tensorboard_log_path("train"))
 writer_2 = SummaryWriter(get_tensorboard_log_path("eval"))
 
-LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
+LOGLEVEL = os.environ.get("LOGLEVEL", "DEBUG").upper()
 logging.basicConfig(level=LOGLEVEL)
 
 # pylint: disable=R0914,R0915,C0116,C0413
@@ -50,7 +50,7 @@ def run():
     print("in run function")
     device = get_device()
 
-    parser = argparse.ArgumentParser(description="PyTorch MNIST Training")
+    parser = argparse.ArgumentParser(description=f"PyTorch {dataset_name()} Training")
     parser.add_argument("--lr", default=0.001, type=float, help="learning rate")
     parser.add_argument(
         "--resume", "-r", action="store_true", help="resume from checkpoint"
@@ -97,6 +97,7 @@ def run():
 
         for batch_idx, (inputs, targets) in enumerate(trainloader):
             inputs, targets = inputs.to(device), targets.to(device)
+            logging.debug("inputs: %s", inputs)
             logging.debug("targets: %s", targets)
             targets.requires_grad = False
             optimizer.zero_grad()

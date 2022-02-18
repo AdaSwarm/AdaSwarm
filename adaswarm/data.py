@@ -1,6 +1,8 @@
-from torch.nn.parallel import DataParallel, distributed
+from torch.nn.parallel import DataParallel
+from torch import nn
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
+from torch.autograd import Variable
 from torch import is_tensor, from_numpy
 import numpy as np
 from torchvision import transforms
@@ -80,7 +82,15 @@ class DataLoaderFetcher:
             )
 
     def model(self):
-        model = ResNet18(in_channels=1, num_classes=10)
+        if self.name == "Iris":
+            model = nn.Sequential(
+                nn.Linear(4, 10),
+                nn.SELU(),
+                nn.Linear(10, 3),
+                nn.Softmax(dim=1),
+            )
+        else:
+            model = ResNet18(in_channels=1, num_classes=10)
         model = model.to(device)
         if cuda.is_available():
             cudnn.benchmark = True
@@ -93,21 +103,25 @@ class IrisDataSet(Dataset):
     def __init__(self, train=True):
         iris_data_bundle = skl_datasets.load_iris()
         x, y = iris_data_bundle.data, iris_data_bundle.target
-        x_train, x_test, y_train, y_test = train_test_split(
+        x_train_array, x_test_array, y_train_array, y_test_array = train_test_split(
             x, y, test_size=0.2, random_state=123
         )
+
         if train:
-            self.data = x_train
-            self.target = y_train
+
+            self.data = x_train_array
+            self.target = y_train_array
         else:
-            self.data = x_test
-            self.target = y_test
+
+            self.data = x_test_array
+            self.target = y_test_array
 
     def __getitem__(self, idx):
         if is_tensor(idx):
             idx = idx.tolist()
-        predictors = from_numpy(self.data[idx, 0:4]).to(device)
-        species = from_numpy(np.array(self.target[idx])).to(device)
+        #TODO: may be repetition of from_numpy here
+        predictors = from_numpy(self.data[idx, 0:4]).float().to(device)
+        species = from_numpy(np.array(self.target[idx])).long().to(device)
         return predictors, species
 
     def __len__(self):
