@@ -71,9 +71,6 @@ def run():
     print("==> Building model..")
     model = fetcher.model()
 
-    if device == "cuda":
-        model = DataParallel(model)
-
     if args.resume:
         # Load checkpoint.
         print("==> Resuming from checkpoint..")

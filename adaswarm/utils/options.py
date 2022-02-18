@@ -10,7 +10,7 @@ def get_device():
     Returns:
         torch.device: Available device
     """
-    return torch_device("cuda" if cuda.is_available() else "cpu")
+    return torch_device("cuda:0" if cuda.is_available() else "cpu")
 
 
 def is_adaswarm():

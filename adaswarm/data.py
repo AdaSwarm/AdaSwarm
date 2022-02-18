@@ -1,3 +1,4 @@
+from torch.nn.parallel import DataParallel, distributed
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
 from torch import is_tensor, from_numpy
@@ -80,9 +81,12 @@ class DataLoaderFetcher:
 
     def model(self):
         model = ResNet18(in_channels=1, num_classes=10)
+        model = model.to(device)
         if cuda.is_available():
             cudnn.benchmark = True
-        return model.to(device)
+            # TODO: Use torch.nn.parallel.DistributedDataParallel
+            model = DataParallel(model)
+        return model
 
 
 class IrisDataSet(Dataset):
