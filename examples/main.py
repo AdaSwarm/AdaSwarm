@@ -12,8 +12,6 @@ from torch import load as torch_load
 from torch import nn, optim
 from torch.autograd.grad_mode import no_grad
 from torch import save as torch_save
-from torch.backends import cudnn
-from torch.nn.parallel import DataParallel
 from torch.utils.tensorboard.writer import SummaryWriter
 
 dirname = os.path.dirname(os.path.abspath(__file__))
