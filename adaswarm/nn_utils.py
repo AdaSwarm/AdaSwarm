@@ -7,6 +7,7 @@ class CELossWithPSO(torch.autograd.Function):
     @staticmethod
     def forward(ctx, y, y_pred, swarm_learning_rate=0.1):
         dimension, classes = y.size()
+        # TODO: Check the optimum swarm size
         particle_swarm_optimizer = RotatedEMParticleSwarmOptimizer(
             dimension=dimension, swarm_size=10, number_of_classes=classes, targets=y_pred
         )
