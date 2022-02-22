@@ -2,14 +2,12 @@
 
 
 # data folder
-./data
+data/*
 notebooks/.ipynb_checkpoints/*ipynb
 *.code-workspace
-data/*
 *.pyc
 __pycache__/
 .vscode
-src/data/*
 venv
 runs
 checkpoint/*.pth

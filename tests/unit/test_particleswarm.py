@@ -1,8 +1,10 @@
 from typing import Tuple
 import unittest
-from torch import device as torch_device, randint, Tensor, tensor, manual_seed
+from torch import randint, Tensor, tensor, manual_seed
 from adaswarm.particle import ParticleSwarm, RotatedEMParticle, AccelerationCoefficients
+from adaswarm.utils.options import get_device
 from unittest.mock import patch
+
 
 manual_seed(0)
 NUMBER_OF_CLASSES = 10
@@ -13,7 +15,7 @@ targets = randint(
     low=0,
     high=NUMBER_OF_CLASSES,
     size=(DIMENSION, NUMBER_OF_CLASSES),
-    device=torch_device("cpu"),
+    device=get_device(),
     requires_grad=False,
 )
 
@@ -43,7 +45,7 @@ class TestParticleSwarm(unittest.TestCase):
 
     def test_update_velocities(self):
         gbest_position = Tensor(
-            size=(DIMENSION, NUMBER_OF_CLASSES), device=torch_device("cpu")
+            size=(DIMENSION, NUMBER_OF_CLASSES), device=get_device()
         )
 
         gbest_position = gbest_position.fill_(0.3)
@@ -78,7 +80,7 @@ class TestParticleSwarm(unittest.TestCase):
 
     def test_calculate_swarm_scaled_coeffiecient_average(self):
         gbest_position = Tensor(
-            size=(DIMENSION, NUMBER_OF_CLASSES), device=torch_device("cpu")
+            size=(DIMENSION, NUMBER_OF_CLASSES), device=get_device()
         )
 
         gbest_position = gbest_position.fill_(0.3)

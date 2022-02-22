@@ -1,5 +1,16 @@
 import os
+from torch import cuda
+from torch import device as torch_device
 from adaswarm.utils.strings import str_to_bool
+
+
+def get_device():
+    """Obtain the processor type (CPU or GPU)
+
+    Returns:
+        torch.device: Available device
+    """
+    return torch_device("cuda:0" if cuda.is_available() else "cpu")
 
 
 def is_adaswarm():
@@ -28,7 +39,7 @@ def write_to_tensorboard(batch_idx: int) -> bool:
 
     Returns:
         bool: boolean flag, True to write
-    """    
+    """
     frequency = write_batch_frequency()
     return batch_idx % frequency == (frequency - 1)
 
@@ -44,9 +55,26 @@ def get_tensorboard_log_path(run_type: str) -> str:
 
     return os.path.join("mnist_performance", tensorboard_dir, run_type)
 
+
 def number_of_epochs() -> int:
     """Set the number of epochs to run
     Returns:
         [int]: Number of epochs
     """
     return int(os.environ.get("ADASWARM_NUMBER_OF_EPOCHS", "200"))
+
+
+def dataset_name() -> str:
+    """Set the dataset name
+    Returns:
+        [str]: Name of dataset
+    """
+    return os.environ.get("ADASWARM_DATASET_NAME", "MNIST")
+
+
+def log_level() -> str:
+    """Set the default log level
+    Returns:
+        [str]: Log level
+    """
+    return os.environ.get("LOGLEVEL", "INFO").upper()

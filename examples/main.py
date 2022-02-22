@@ -8,17 +8,11 @@ import os
 import sys
 
 # pylint: disable=E0611
-from torch import cuda
-from torch import device as torch_device
 from torch import load as torch_load
 from torch import nn, optim
 from torch.autograd.grad_mode import no_grad
 from torch import save as torch_save
-from torch.backends import cudnn
-from torch.nn.parallel import DataParallel
-from torch.utils.data import DataLoader
 from torch.utils.tensorboard.writer import SummaryWriter
-from torchvision import datasets, transforms
 
 dirname = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(dirname, ".."))
@@ -26,21 +20,24 @@ sys.path.append(os.path.join(dirname, ".."))
 
 # pylint: disable=C0411, E0401, C0413
 from adaswarm.nn_utils import CELossWithPSO
-from adaswarm.resnet import ResNet18
 from adaswarm.utils import progress_bar, Metrics
+from adaswarm.data import DataLoaderFetcher
+
 from adaswarm.utils.options import (
     is_adaswarm,
     get_tensorboard_log_path,
     number_of_epochs,
     write_to_tensorboard,
+    dataset_name,
+    get_device,
+    log_level,
 )
 
 # TODO: allow running without tensorboard option
 writer_1 = SummaryWriter(get_tensorboard_log_path("train"))
 writer_2 = SummaryWriter(get_tensorboard_log_path("eval"))
 
-LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
-logging.basicConfig(level=LOGLEVEL)
+logging.basicConfig(level=log_level())
 
 # pylint: disable=R0914,R0915,C0116,C0413
 
@@ -49,9 +46,9 @@ CHOSEN_LOSS_FUNCTION = "AdaSwarm" if is_adaswarm() else "Adam"
 
 def run():
     print("in run function")
-    device = torch_device("cuda:0" if cuda.is_available() else "cpu")
+    device = get_device()
 
-    parser = argparse.ArgumentParser(description="PyTorch MNIST Training")
+    parser = argparse.ArgumentParser(description=f"PyTorch {dataset_name()} Training")
     parser.add_argument("--lr", default=0.001, type=float, help="learning rate")
     parser.add_argument(
         "--resume", "-r", action="store_true", help="resume from checkpoint"
@@ -63,54 +60,25 @@ def run():
 
     # Data
     print("==> Preparing data..")
-    transform_train = transforms.Compose(
-        [
-            # Image Transformations suitable for MNIST dataset(handwritten digits)
-            transforms.RandomRotation(30),
-            transforms.RandomAffine(degrees=20, translate=(0.1, 0.1), scale=(0.9, 1.1)),
-            transforms.ColorJitter(brightness=0.2, contrast=0.2),
-            transforms.ToTensor(),
-            # Mean and Std deviation values of MNIST dataset
-            transforms.Normalize((0.1307,), (0.3081,)),
-        ]
-    )
 
-    transform_test = transforms.Compose(
-        [
-            transforms.ToTensor(),
-            transforms.Normalize((0.1307,), (0.3081,)),
-        ]
-    )
-
-    trainset = datasets.MNIST(
-        root="./data", train=True, download=True, transform=transform_train
-    )
-
-    trainloader = DataLoader(trainset, batch_size=125, shuffle=True, num_workers=2)
-
-    testset = datasets.MNIST(
-        root="./data", train=False, download=True, transform=transform_test
-    )
-    testloader = DataLoader(testset, batch_size=100, shuffle=False, num_workers=2)
+    fetcher = DataLoaderFetcher(dataset_name())
+    trainloader = fetcher.train_loader()
+    testloader = fetcher.test_loader()
 
     # Model
     print("==> Building model..")
-    net = ResNet18(1)
-    net = net.to(device)
-    if device == "cuda":
-        net = DataParallel(net)
-        cudnn.benchmark = True
+    model = fetcher.model()
 
     if args.resume:
         # Load checkpoint.
         print("==> Resuming from checkpoint..")
         assert os.path.isdir("checkpoint"), "Error: no checkpoint directory found!"
         checkpoint = torch_load("./checkpoint/ckpt.pth")
-        net.load_state_dict(checkpoint["net"])
+        model.load_state_dict(checkpoint["net"])
         start_epoch = checkpoint["epoch"]
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(net.parameters(), lr=args.lr)
+    optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     logging.info("Using %s Optimiser", CHOSEN_LOSS_FUNCTION)
 
@@ -120,17 +88,16 @@ def run():
     def train(epoch):
         print(f"\nEpoch: {epoch}")
         metrics.current_epoch(epoch + 1)
-        net.train()
+        model.train()
         running_loss = 0
         correct = 0
         total = 0
 
         for batch_idx, (inputs, targets) in enumerate(trainloader):
             inputs, targets = inputs.to(device), targets.to(device)
-            logging.debug("targets: %s", targets)
             targets.requires_grad = False
             optimizer.zero_grad()
-            outputs = net(inputs)
+            outputs = model(inputs)
 
             loss = approx_criterion(outputs, targets)
 
@@ -168,7 +135,7 @@ def run():
             progress_bar(batch_idx, len(trainloader), print_output)
 
     def test(epoch):
-        net.eval()
+        model.eval()
         test_loss = 0
         correct = 0
         total = 0
@@ -177,7 +144,7 @@ def run():
         with no_grad():
             for batch_idx, (inputs, targets) in enumerate(testloader):
                 inputs, targets = inputs.to(device), targets.to(device)
-                outputs = net(inputs)
+                outputs = model(inputs)
                 loss = criterion(outputs, targets)
 
                 running_loss += loss.item()
@@ -215,7 +182,7 @@ def run():
 
         print("Saving..")
         state = {
-            "net": net.state_dict(),
+            "net": model.state_dict(),
             "acc": acc,
             "epoch": epoch,
         }

@@ -1,7 +1,8 @@
 import time
-from torch import device as torch_device, cuda, Tensor, randint
+from torch import cuda, Tensor, randint
 from torch.nn import CrossEntropyLoss
 from adaswarm.particle import ParticleSwarm, AccelerationCoefficients
+from adaswarm.utils.options import get_device
 
 
 class RotatedEMParticleSwarmOptimizer:
@@ -14,7 +15,7 @@ class RotatedEMParticleSwarmOptimizer:
         acceleration_coefficients=AccelerationCoefficients(c_1=0.2, c_2=0.8),
         inertial_weight_beta: float = 0.9,
         max_iterations=100,
-        device=torch_device("cuda:0" if cuda.is_available() else "cpu"),
+        device=get_device(),
     ):
 
         self.max_iterations = max_iterations
