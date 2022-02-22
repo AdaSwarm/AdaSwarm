@@ -18,7 +18,7 @@ class CELossWithPSO(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx, grad_output):
-        yy, yy_pred = ctx.saved_tensors
+        yy, _ = ctx.saved_tensors
         sum_cr = ctx.sum_cr
         eta = ctx.eta
         grad_input = torch.neg((sum_cr / eta) * (ctx.gbest - yy))
