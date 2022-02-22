@@ -70,3 +70,11 @@ def dataset_name() -> str:
         [str]: Name of dataset
     """
     return os.environ.get("ADASWARM_DATASET_NAME", "MNIST")
+
+
+def log_level() -> str:
+    """Set the default log level
+    Returns:
+        [str]: Log level
+    """
+    return os.environ.get("LOGLEVEL", "INFO").upper()

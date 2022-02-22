@@ -30,14 +30,14 @@ from adaswarm.utils.options import (
     write_to_tensorboard,
     dataset_name,
     get_device,
+    log_level,
 )
 
 # TODO: allow running without tensorboard option
 writer_1 = SummaryWriter(get_tensorboard_log_path("train"))
 writer_2 = SummaryWriter(get_tensorboard_log_path("eval"))
 
-LOGLEVEL = os.environ.get("LOGLEVEL", "DEBUG").upper()
-logging.basicConfig(level=LOGLEVEL)
+logging.basicConfig(level=log_level())
 
 # pylint: disable=R0914,R0915,C0116,C0413
 
@@ -95,8 +95,6 @@ def run():
 
         for batch_idx, (inputs, targets) in enumerate(trainloader):
             inputs, targets = inputs.to(device), targets.to(device)
-            logging.debug("inputs: %s", inputs)
-            logging.debug("targets: %s", targets)
             targets.requires_grad = False
             optimizer.zero_grad()
             outputs = model(inputs)
