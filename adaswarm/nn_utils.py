@@ -6,8 +6,9 @@ from adaswarm.rempso import RotatedEMParticleSwarmOptimizer
 class CELossWithPSO(torch.autograd.Function):
     @staticmethod
     def forward(ctx, y, y_pred, swarm_learning_rate=0.1):
+        dimension, classes = y.size()
         particle_swarm_optimizer = RotatedEMParticleSwarmOptimizer(
-            dimension=125, swarm_size=10, number_of_classes=10, targets=y_pred
+            dimension=dimension, swarm_size=10, number_of_classes=classes, targets=y_pred
         )
         sum_cr, gbest = particle_swarm_optimizer.run_iteration(number=5)
         ctx.save_for_backward(y, y_pred)
