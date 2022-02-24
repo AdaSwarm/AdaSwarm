@@ -198,5 +198,5 @@ def run():
 # TODO: Add a script to run both optimizers and
 # read the csv ouput to compare both runs
 if __name__ == "__main__":
-    with Metrics(name=CHOSEN_LOSS_FUNCTION) as metrics:
+    with Metrics(name=CHOSEN_LOSS_FUNCTION, dataset=dataset_name()) as metrics:
         run()

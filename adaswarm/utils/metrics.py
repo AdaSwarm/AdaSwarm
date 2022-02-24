@@ -72,13 +72,14 @@ class Metrics:
         name: str = "Default run",
         md_filepath: str = os.path.join("report", "summary.md"),
         csv_filepath: str = os.path.join("report", "summary.csv"),
+        dataset: str = "Not set",
     ):
         self.md_filepath = md_filepath
         self.csv_filepath = csv_filepath
         self.name = name
         self.stats = Metrics.Stats()
-        self.name = name
         self.tstart = time.time()
+        self.dataset = dataset
 
     def __enter__(self):
         return self.stats
@@ -91,16 +92,17 @@ class Metrics:
                 "Start time": datetime.datetime.fromtimestamp(self.tstart).strftime(
                     "%d-%m-%y %H:%M:%S"
                 ),
-                "Run name": self.name,
-                "Number of epochs": self.stats.number_of_epochs,
-                "Elapsed (seconds)": time_taken,
-                "Training Accuracy %": np.round(
+                "Name": self.name,
+                "Dataset": self.dataset,
+                "Epochs": self.stats.number_of_epochs,
+                "Elapsed (s)": time_taken,
+                "Training Acc %": np.round(
                     100.0 * self.stats.best_training_accuracy, 2
                 ),
                 "Training Loss": self.stats.best_training_loss
                 if self.stats.best_training_loss != None
                 else "Not set",
-                "Test Accuracy %": np.round(
+                "Test Acc %": np.round(
                     100.0 * self.stats.best_test_accuracy, 2
                 ),
                 "Test Loss": self.stats.best_test_loss
