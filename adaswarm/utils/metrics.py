@@ -7,6 +7,7 @@ import time
 import datetime
 import pandas as pd
 import numpy as np
+from adaswarm.utils.options import get_device
 
 
 class Metrics:
@@ -93,6 +94,7 @@ class Metrics:
                     "%d-%m-%y %H:%M:%S"
                 ),
                 "Name": self.name,
+                "Device": get_device().type,
                 "Dataset": self.dataset,
                 "Epochs": self.stats.number_of_epochs,
                 "Elapsed (s)": time_taken,
