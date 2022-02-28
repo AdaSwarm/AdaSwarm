@@ -1,4 +1,3 @@
-from typing import Tuple
 import unittest
 from torch import randint, Tensor, tensor, manual_seed
 from adaswarm.particle import ParticleSwarm, RotatedEMParticle, AccelerationCoefficients
@@ -32,16 +31,6 @@ class TestParticleSwarm(unittest.TestCase):
 
     def test_initialise_swarm(self):
         self.assertIsInstance(swarm[0], RotatedEMParticle)
-
-    def test_for_each_particle(self):
-        value_to_change_to = 0.6
-
-        def change_beta(particle):
-            particle.beta = value_to_change_to
-
-        swarm.for_each_particle(change_beta)
-
-        self.assertEqual(swarm[1].beta, value_to_change_to)
 
     def test_update_velocities(self):
         gbest_position = Tensor(

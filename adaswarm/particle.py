@@ -6,10 +6,8 @@ nothing but a population of particles. The swarm, guided by characteristic
 equations, attempt to converge to an optima [Ebenhart and Shi, 1995].
 """
 
-from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 import torch
-
 
 from adaswarm.utils.matrix import get_phi_matrix, get_rotation_matrix
 
@@ -209,22 +207,15 @@ class ParticleSwarm(list):
             particle.c_1_r_1 = scaled_c_1_tensor.item()
             particle.c_2_r_2 = scaled_c_2_tensor.item()
 
-        self.for_each_particle(update_velocity)
+        # TODO: Vectorize this operation
+        for particle in self:
+            update_velocity(particle)
 
     def average_of_scaled_acceleration_coefficients(self):
         """Compute average of scaled coefficients"""
         return sum((particle.c_1_r_1 + particle.c_2_r_2) for particle in self) / len(
             self
         )
-
-    def for_each_particle(
-        self,
-        callback,
-    ):
-        """Threads to apply a function to every particle"""
-        with ThreadPoolExecutor() as executor:
-            executor.map(callback, self)
-
 
 def _initialize_position(targets, dimensions, number_of_classes):
     const = -4
