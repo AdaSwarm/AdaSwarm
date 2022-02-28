@@ -5,6 +5,7 @@ from unittest.mock import patch
 import pandas as pd
 from freezegun import freeze_time
 from adaswarm.utils.options import get_device
+from platform import platform
 
 MD_OUTPUT_FILENAME = "./tests/unit/output/summary.md"
 CSV_OUTPUT_FILENAME = "./tests/unit/output/summary.csv"
@@ -235,6 +236,16 @@ class TestMetrics(unittest.TestCase):
         self.assertEqual(
             self.read_dataframe_from_csv()["Device"].values[0],
             get_device().type,
+        )
+
+    def test_platform_info(self):
+        with Metrics(md_filepath=MD_OUTPUT_FILENAME,
+            csv_filepath=CSV_OUTPUT_FILENAME):
+            pass
+
+        self.assertEqual(
+            self.read_dataframe_from_csv()["Platform"].values[0],
+            platform(),
         )
 
 

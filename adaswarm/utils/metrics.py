@@ -8,6 +8,7 @@ import datetime
 import pandas as pd
 import numpy as np
 from adaswarm.utils.options import get_device
+from platform import platform
 
 
 class Metrics:
@@ -95,6 +96,7 @@ class Metrics:
                 ),
                 "Name": self.name,
                 "Device": get_device().type,
+                "Platform": platform(),
                 "Dataset": self.dataset,
                 "Epochs": self.stats.number_of_epochs,
                 "Elapsed (s)": time_taken,
@@ -104,9 +106,7 @@ class Metrics:
                 "Training Loss": self.stats.best_training_loss
                 if self.stats.best_training_loss != None
                 else "Not set",
-                "Test Acc %": np.round(
-                    100.0 * self.stats.best_test_accuracy, 2
-                ),
+                "Test Acc %": np.round(100.0 * self.stats.best_test_accuracy, 2),
                 "Test Loss": self.stats.best_test_loss
                 if self.stats.best_test_loss != None
                 else "Not set",
