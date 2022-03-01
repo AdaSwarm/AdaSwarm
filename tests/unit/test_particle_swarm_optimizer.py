@@ -1,7 +1,7 @@
 import unittest
 from numpy.core.fromnumeric import size
 from torch import randint, Tensor
-from adaswarm.rempso import RotatedEMParticleSwarmOptimizer
+from adaswarm.rempso import ParticleSwarmOptimizer
 from adaswarm.particle import AccelerationCoefficients
 from adaswarm.utils.options import get_device
 import numpy as np
@@ -19,7 +19,7 @@ class TestRotatedEMParticleSwarmOptimizer(unittest.TestCase):
             requires_grad=False,
         )
 
-        optimizer = RotatedEMParticleSwarmOptimizer(
+        optimizer = ParticleSwarmOptimizer(
             targets=np.argmax(targets, axis=1),
             dimension=dimension,
             number_of_classes=number_of_classes,

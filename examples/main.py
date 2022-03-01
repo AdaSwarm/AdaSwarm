@@ -8,10 +8,8 @@ import os
 import sys
 
 # pylint: disable=E0611
-from torch import load as torch_load
-from torch import nn, optim
+import torch
 from torch.autograd.grad_mode import no_grad
-from torch import save as torch_save
 from torch.utils.tensorboard.writer import SummaryWriter
 
 dirname = os.path.dirname(os.path.abspath(__file__))
@@ -19,7 +17,7 @@ sys.path.append(os.path.join(dirname, ".."))
 
 
 # pylint: disable=C0411, E0401, C0413
-from adaswarm.nn_utils import CELossWithPSO
+import adaswarm.nn
 from adaswarm.utils import progress_bar, Metrics
 from adaswarm.data import DataLoaderFetcher
 
@@ -73,16 +71,19 @@ def run():
         # Load checkpoint.
         print("==> Resuming from checkpoint..")
         assert os.path.isdir("checkpoint"), "Error: no checkpoint directory found!"
-        checkpoint = torch_load("./checkpoint/ckpt.pth")
+        checkpoint = torch.load("./checkpoint/ckpt.pth")
         model.load_state_dict(checkpoint["net"])
         start_epoch = checkpoint["epoch"]
 
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=args.lr)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
     logging.info("Using %s Optimiser", CHOSEN_LOSS_FUNCTION)
 
-    approx_criterion = CELossWithPSO.apply if is_adaswarm() else nn.CrossEntropyLoss()
+    if is_adaswarm():
+        approx_criterion = adaswarm.nn.CrossEntropyLoss.apply
+    else:
+        torch.nn.CrossEntropyLoss()
 
     # Training
     def train(epoch):
@@ -188,7 +189,7 @@ def run():
         }
         if not os.path.isdir("checkpoint"):
             os.mkdir("checkpoint")
-        torch_save(state, "./checkpoint/ckpt.pth")
+        torch.save(state, "./checkpoint/ckpt.pth")
 
     for epoch in range(start_epoch, number_of_epochs()):
         train(epoch)

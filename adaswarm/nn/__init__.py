@@ -1,14 +1,14 @@
 import torch
 import torch.nn.functional as F
-from adaswarm.rempso import RotatedEMParticleSwarmOptimizer
+from adaswarm.rempso import ParticleSwarmOptimizer
 
 
-class CELossWithPSO(torch.autograd.Function):
+class CrossEntropyLoss(torch.autograd.Function):
     @staticmethod
     def forward(ctx, y, y_pred, swarm_learning_rate=0.1):
         dimension, classes = y.size()
         # TODO: Check the optimum swarm size
-        particle_swarm_optimizer = RotatedEMParticleSwarmOptimizer(
+        particle_swarm_optimizer = ParticleSwarmOptimizer(
             dimension=dimension, swarm_size=10, number_of_classes=classes, targets=y_pred
         )
         sum_cr, gbest = particle_swarm_optimizer.run_iteration(number=5)
