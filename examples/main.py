@@ -83,7 +83,7 @@ def run():
     if is_adaswarm():
         approx_criterion = adaswarm.nn.CrossEntropyLoss.apply
     else:
-        torch.nn.CrossEntropyLoss()
+        approx_criterion = torch.nn.CrossEntropyLoss()
 
     # Training
     def train(epoch):
