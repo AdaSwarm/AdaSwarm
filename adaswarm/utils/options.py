@@ -3,6 +3,8 @@ from torch import cuda
 from torch import device as torch_device
 from adaswarm.utils.strings import str_to_bool
 
+DEVICE = torch_device("cuda:0" if cuda.is_available() else "cpu")
+
 
 def get_device():
     """Obtain the processor type (CPU or GPU)
@@ -10,7 +12,7 @@ def get_device():
     Returns:
         torch.device: Available device
     """
-    return torch_device("cuda:0" if cuda.is_available() else "cpu")
+    return DEVICE
 
 
 def is_adaswarm():

@@ -10,7 +10,7 @@ import numpy as np
 import torch
 
 from adaswarm.utils.matrix import get_phi_matrix, get_rotation_matrix
-
+from adaswarm.utils.options import get_device
 
 class AccelerationCoefficients:
     """Acceleration coefficients for PSO"""
@@ -127,7 +127,7 @@ class ParticleSwarm(list):
         swarm_size: int = 100,
         acceleration_coefficients: AccelerationCoefficients = AccelerationCoefficients(),
         inertial_weight_beta: float = 0.5,
-        device: str = "cuda:0" if torch.cuda.is_available() else "cpu",
+        device: str = get_device(),
     ):
         super().__init__(self)
         self.size = swarm_size
