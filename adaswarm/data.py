@@ -29,7 +29,7 @@ class DataLoaderFetcher:
         if self.name == "Iris":
             return DataLoader(
                 IrisDataSet(),
-                batch_size=2,
+                batch_size=40,
                 shuffle=True,
                 drop_last=False,
             )
@@ -61,7 +61,7 @@ class DataLoaderFetcher:
         if self.name == "Iris":
             return DataLoader(
                 IrisDataSet(train=False),
-                batch_size=2,
+                batch_size=40,
                 shuffle=True,
                 drop_last=False,
             )
@@ -119,7 +119,7 @@ class IrisDataSet(Dataset):
     def __getitem__(self, idx):
         if is_tensor(idx):
             idx = idx.tolist()
-        #TODO: may be repetition of from_numpy here
+        # TODO: may be repetition of from_numpy here
         predictors = from_numpy(self.data[idx, 0:4]).float().to(device)
         species = from_numpy(np.array(self.target[idx])).long().to(device)
         return predictors, species

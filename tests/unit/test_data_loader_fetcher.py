@@ -52,7 +52,11 @@ class DataLoaderTestCase(unittest.TestCase):
             IrisDataSet()
             mock.assert_called()
         predictors, species = IrisDataSet().__getitem__([50])
-        self.assertIsNone(assert_array_almost_equal(np.array(predictors[0]), np.array([5.0, 3.5, 1.6, 0.6])))
+        self.assertIsNone(
+            assert_array_almost_equal(
+                np.array(predictors[0]), np.array([5.0, 3.5, 1.6, 0.6])
+            )
+        )
         self.assertEqual(species, tensor([0]))
 
     def test_load_iris_training_set(self):
@@ -72,7 +76,11 @@ class DataLoaderTestCase(unittest.TestCase):
             IrisDataSet(train=False)
             mock.assert_called()
         predictors, species = IrisDataSet(train=False).__getitem__([5])
-        self.assertIsNone(assert_array_almost_equal( np.array(predictors[0]), np.array([6.0, 3.0, 4.8, 1.8])))
+        self.assertIsNone(
+            assert_array_almost_equal(
+                np.array(predictors[0]), np.array([6.0, 3.0, 4.8, 1.8])
+            )
+        )
         self.assertEqual(species, tensor([2]))
 
     def test_MNIST_model_selection(self):
