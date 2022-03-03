@@ -5,7 +5,7 @@ from adaswarm.particle import ParticleSwarm, AccelerationCoefficients
 from adaswarm.utils.options import get_device
 
 
-class RotatedEMParticleSwarmOptimizer:
+class ParticleSwarmOptimizer:
     def __init__(
         self,
         targets,
