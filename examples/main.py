@@ -81,7 +81,7 @@ def run():
     logging.info("Using %s Optimiser", CHOSEN_LOSS_FUNCTION)
 
     if is_adaswarm():
-        approx_criterion = adaswarm.nn.CrossEntropyLoss.apply
+        approx_criterion = adaswarm.nn.CrossEntropyLoss()
     else:
         approx_criterion = torch.nn.CrossEntropyLoss()
 
