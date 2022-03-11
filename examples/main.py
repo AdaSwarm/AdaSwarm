@@ -43,6 +43,7 @@ CHOSEN_LOSS_FUNCTION = "AdaSwarm" if is_adaswarm() else "Adam"
 epoch_train_losses = []
 epoch_train_accuracies = []
 
+
 def run():
     logging.debug("in run function")
     device = get_device()
@@ -130,7 +131,7 @@ def run():
             )  # loss.item() contains the loss of entire mini-batch, but divided by the batch size.
             # here we are summing up the losses as we go
             batch_losses.append(loss.item())
-            print("Batch : {}| Loss: {}".format(batch_idx, loss.item()))
+            print(f"Batch : {batch_idx}| Loss: {loss.item()}")
 
             if dataset_name() in ["Iris"]:
                 accuracy = (
@@ -148,22 +149,15 @@ def run():
             metrics.update_training_accuracy(accuracy)
             metrics.update_training_loss(training_loss)
 
-
-
-
         epoch_train_losses.append(sum(batch_losses) / num_batches_train)
         epoch_train_accuracies.append(100 * sum(batch_accuracies) / num_batches_train)
 
         if epoch % 1 == 0:
             print(
-                "[{}/{}], loss: {} acc: {}".format(
-                    epoch,
-                    number_of_epochs(),
-                    np.round(sum(batch_losses) / num_batches_train, 3),
-                    100 * np.round(sum(batch_accuracies) / num_batches_train, 3),
-                )
+                f"[{epoch}/{number_of_epochs()}], \
+                loss: {np.round(sum(batch_losses) / num_batches_train, 3)} \
+                    acc: {100 * np.round(sum(batch_accuracies) / num_batches_train, 3)}"
             )
-
 
     def test(epoch):
         model.eval()
@@ -207,7 +201,6 @@ def run():
                     f"""Loss: {test_loss:3f}
                     | Acc: {100.*accuracy}%% ({accuracy})""",
                 )
-
 
         # Save checkpoint.
         acc = 100.0 * accuracy
