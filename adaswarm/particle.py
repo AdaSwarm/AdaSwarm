@@ -10,7 +10,8 @@ import numpy as np
 import torch
 
 from adaswarm.utils.matrix import get_phi_matrix, get_rotation_matrix
-from adaswarm.utils.options import get_device
+from adaswarm.utils.options import dataset_name, get_device
+
 
 class AccelerationCoefficients:
     """Acceleration coefficients for PSO"""
@@ -217,7 +218,10 @@ class ParticleSwarm(list):
             self
         )
 
+
 def _initialize_position(targets, dimensions, number_of_classes):
+    if dataset_name() in ["Iris"]:
+        return torch.rand(dimensions, number_of_classes)
     const = -4
     position = torch.tensor([[const] * number_of_classes] * dimensions)
     for i in range(dimensions):

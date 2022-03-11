@@ -7,7 +7,7 @@ from numpy.testing import assert_array_almost_equal
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
 from torch import tensor
-from torch.nn import Sequential
+from adaswarm.model import Model
 from sklearn import datasets
 
 from adaswarm.data import DataLoaderFetcher, IrisDataSet
@@ -57,7 +57,7 @@ class DataLoaderTestCase(unittest.TestCase):
                 np.array(predictors[0]), np.array([5.0, 3.5, 1.6, 0.6])
             )
         )
-        self.assertEqual(species, tensor([0]))
+        self.assertEqual(species[0][0], tensor([1]))
 
     def test_load_iris_training_set(self):
         fetcher = DataLoaderFetcher(name="Iris")
@@ -81,7 +81,7 @@ class DataLoaderTestCase(unittest.TestCase):
                 np.array(predictors[0]), np.array([6.0, 3.0, 4.8, 1.8])
             )
         )
-        self.assertEqual(species, tensor([2]))
+        self.assertEqual(species[0][0], tensor([0]))
 
     def test_MNIST_model_selection(self):
         fetcher = DataLoaderFetcher(name="MNIST")
@@ -91,4 +91,4 @@ class DataLoaderTestCase(unittest.TestCase):
     def test_iris_model_selection(self):
         fetcher = DataLoaderFetcher(name="Iris")
         chosen_model = fetcher.model()
-        self.assertIsInstance(chosen_model, Sequential)
+        self.assertIsInstance(chosen_model, Model)

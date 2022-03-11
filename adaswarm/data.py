@@ -1,16 +1,15 @@
 from torch.nn.parallel import DataParallel
-from torch import nn
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
-from torch.autograd import Variable
 from torch import is_tensor, from_numpy
-import numpy as np
 from torchvision import transforms
 from torch import cuda
 from torch.backends import cudnn
 
+from adaswarm.utils import to_categorical
 from adaswarm.utils.options import get_device
 from adaswarm.resnet import ResNet18
+from adaswarm.model import Model
 
 from sklearn import datasets as skl_datasets
 from torchvision import datasets as tv_datasets
@@ -29,7 +28,7 @@ class DataLoaderFetcher:
         if self.name == "Iris":
             return DataLoader(
                 IrisDataSet(),
-                batch_size=40,
+                batch_size=50,
                 shuffle=True,
                 drop_last=False,
             )
@@ -61,7 +60,7 @@ class DataLoaderFetcher:
         if self.name == "Iris":
             return DataLoader(
                 IrisDataSet(train=False),
-                batch_size=40,
+                batch_size=50,
                 shuffle=True,
                 drop_last=False,
             )
@@ -83,12 +82,7 @@ class DataLoaderFetcher:
 
     def model(self):
         if self.name == "Iris":
-            model = nn.Sequential(
-                nn.Linear(4, 10),
-                nn.SELU(),
-                nn.Linear(10, 3),
-                nn.Softmax(dim=1),
-            )
+            model = Model(n_features=4, n_neurons=10, n_out=3)
         else:
             model = ResNet18(in_channels=1, num_classes=10)
         model = model.to(device)
@@ -103,6 +97,7 @@ class IrisDataSet(Dataset):
     def __init__(self, train=True):
         iris_data_bundle = skl_datasets.load_iris()
         x, y = iris_data_bundle.data, iris_data_bundle.target
+        y = to_categorical(y)
         x_train_array, x_test_array, y_train_array, y_test_array = train_test_split(
             x, y, test_size=0.2, random_state=123
         )
@@ -121,7 +116,7 @@ class IrisDataSet(Dataset):
             idx = idx.tolist()
         # TODO: may be repetition of from_numpy here
         predictors = from_numpy(self.data[idx, 0:4]).float().to(device)
-        species = from_numpy(np.array(self.target[idx])).long().to(device)
+        species = from_numpy(self.target[idx]).to(device)
         return predictors, species
 
     def __len__(self):

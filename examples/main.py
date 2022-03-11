@@ -7,10 +7,14 @@ import logging
 import os
 import sys
 
+import numpy as np
+
+import matplotlib.pyplot as plt
+
 # pylint: disable=E0611
 import torch
 from torch.autograd.grad_mode import no_grad
-from torch.utils.tensorboard.writer import SummaryWriter
+from torch.autograd import Variable
 
 dirname = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(dirname, ".."))
@@ -23,17 +27,12 @@ from adaswarm.data import DataLoaderFetcher
 
 from adaswarm.utils.options import (
     is_adaswarm,
-    get_tensorboard_log_path,
     number_of_epochs,
-    write_to_tensorboard,
     dataset_name,
     get_device,
     log_level,
 )
 
-# TODO: allow running without tensorboard option
-writer_1 = SummaryWriter(get_tensorboard_log_path("train"))
-writer_2 = SummaryWriter(get_tensorboard_log_path("eval"))
 
 logging.basicConfig(level=log_level())
 
@@ -41,9 +40,11 @@ logging.basicConfig(level=log_level())
 
 CHOSEN_LOSS_FUNCTION = "AdaSwarm" if is_adaswarm() else "Adam"
 
+epoch_train_losses = []
+epoch_train_accuracies = []
 
 def run():
-    print("in run function")
+    logging.debug("in run function")
     device = get_device()
 
     parser = argparse.ArgumentParser(description=f"PyTorch {dataset_name()} Training")
@@ -63,6 +64,8 @@ def run():
     trainloader = fetcher.train_loader()
     testloader = fetcher.test_loader()
 
+    num_batches_train = int(len(trainloader.dataset) / trainloader.batch_size)
+
     # Model
     print("==> Building model..")
     model = fetcher.model()
@@ -81,9 +84,15 @@ def run():
     logging.info("Using %s Optimiser", CHOSEN_LOSS_FUNCTION)
 
     if is_adaswarm():
-        approx_criterion = adaswarm.nn.CrossEntropyLoss()
+        if dataset_name() in ["Iris"]:
+            approx_criterion = adaswarm.nn.BCELoss()
+        else:
+            approx_criterion = adaswarm.nn.CrossEntropyLoss()
     else:
-        approx_criterion = torch.nn.CrossEntropyLoss()
+        if dataset_name() in ["Iris"]:
+            approx_criterion = torch.nn.BCELoss()
+        else:
+            approx_criterion = torch.nn.CrossEntropyLoss()
 
     # Training
     def train(epoch):
@@ -94,46 +103,67 @@ def run():
         correct = 0
         total = 0
 
+        batch_accuracies = []
+        batch_losses = []
+
         for batch_idx, (inputs, targets) in enumerate(trainloader):
             inputs, targets = inputs.to(device), targets.to(device)
             targets.requires_grad = False
-            optimizer.zero_grad()
-            outputs = model(inputs)
+
+            if dataset_name() in ["Iris"]:
+                inputs = Variable(inputs).float()
+                targets = Variable(
+                    targets,
+                ).float()
+                outputs = model(inputs).float()
+            else:
+                outputs = model(inputs)
 
             loss = approx_criterion(outputs, targets)
 
-            loss.backward()
-            optimizer.step()
+            optimizer.zero_grad()  # zero the gradients on each pass before the update
+            loss.backward()  # backpropagate the loss through the model
+            optimizer.step()  # update the gradients w.r.t the loss
 
-            running_loss += loss.item()
-            _, predicted = outputs.max(1)
-            total += targets.size(0)
-            correct += predicted.eq(targets).sum().item()
+            running_loss += (
+                loss.item()
+            )  # loss.item() contains the loss of entire mini-batch, but divided by the batch size.
+            # here we are summing up the losses as we go
+            batch_losses.append(loss.item())
+            print("Batch : {}| Loss: {}".format(batch_idx, loss.item()))
 
-            accuracy = correct / total
+            if dataset_name() in ["Iris"]:
+                accuracy = (
+                    torch.eq(outputs.round(), targets).float().mean().item()
+                )  # accuracy
+            else:
+                _, predicted = outputs.max(1)
+                total += targets.size(0)
+                correct += predicted.eq(targets).sum().item()
+                accuracy = correct / total
+
             training_loss = running_loss / (batch_idx + 1)
 
+            batch_accuracies.append(accuracy)
             metrics.update_training_accuracy(accuracy)
             metrics.update_training_loss(training_loss)
 
-            print_output = f"""Loss: {training_loss:3f}
-                    | Acc: {100.*accuracy}%% ({accuracy})"""
 
-            if write_to_tensorboard(batch_idx):  # every X mini-batches...
 
-                writer_1.add_scalar(
-                    tag="ada_vs_adam/train loss",
-                    scalar_value=training_loss,
-                    global_step=epoch * len(trainloader) + batch_idx + 1,
+
+        epoch_train_losses.append(sum(batch_losses) / num_batches_train)
+        epoch_train_accuracies.append(100 * sum(batch_accuracies) / num_batches_train)
+
+        if epoch % 1 == 0:
+            print(
+                "[{}/{}], loss: {} acc: {}".format(
+                    epoch,
+                    number_of_epochs(),
+                    np.round(sum(batch_losses) / num_batches_train, 3),
+                    100 * np.round(sum(batch_accuracies) / num_batches_train, 3),
                 )
-                writer_1.add_scalar(
-                    tag="ada_vs_adam/train accuracy",
-                    scalar_value=accuracy,
-                    global_step=epoch * len(trainloader) + batch_idx + 1,
-                )
+            )
 
-            print(batch_idx, len(trainloader), print_output)
-            progress_bar(batch_idx, len(trainloader), print_output)
 
     def test(epoch):
         model.eval()
@@ -145,15 +175,27 @@ def run():
         with no_grad():
             for batch_idx, (inputs, targets) in enumerate(testloader):
                 inputs, targets = inputs.to(device), targets.to(device)
-                outputs = model(inputs)
+                if dataset_name() in ["Iris"]:
+                    inputs = Variable(inputs).float()
+                    targets = Variable(
+                        targets,
+                    ).float()
+                    outputs = model(inputs).float()
+                else:
+                    outputs = model(inputs)
                 loss = criterion(outputs, targets)
 
                 running_loss += loss.item()
-                _, predicted = outputs.max(1)
-                total += targets.size(0)
-                correct += predicted.eq(targets).sum().item()
 
-                accuracy = correct / total
+                if dataset_name() in ["Iris"]:
+                    accuracy = (
+                        torch.eq(outputs.round(), targets).float().mean()
+                    )  # accuracy
+                else:
+                    _, predicted = outputs.max(1)
+                    total += targets.size(0)
+                    correct += predicted.eq(targets).sum().item()
+                    accuracy = correct / total
                 test_loss = running_loss / (batch_idx + 1)
 
                 metrics.update_test_accuracy(accuracy)
@@ -165,21 +207,10 @@ def run():
                     f"""Loss: {test_loss:3f}
                     | Acc: {100.*accuracy}%% ({accuracy})""",
                 )
-                if write_to_tensorboard(batch_idx):  # every X mini-batches...
 
-                    writer_2.add_scalar(
-                        tag="ada_vs_adam/test loss",
-                        scalar_value=test_loss,
-                        global_step=epoch * len(testloader) + batch_idx + 1,
-                    )
-                    writer_2.add_scalar(
-                        tag="ada_vs_adam/test accuracy",
-                        scalar_value=accuracy,
-                        global_step=epoch * len(testloader) + batch_idx + 1,
-                    )
 
         # Save checkpoint.
-        acc = 100.0 * correct / total
+        acc = 100.0 * accuracy
 
         print("Saving..")
         state = {
@@ -192,6 +223,7 @@ def run():
         torch.save(state, "./checkpoint/ckpt.pth")
 
     for epoch in range(start_epoch, number_of_epochs()):
+
         train(epoch)
         test(epoch)
 
@@ -201,3 +233,14 @@ def run():
 if __name__ == "__main__":
     with Metrics(name=CHOSEN_LOSS_FUNCTION, dataset=dataset_name()) as metrics:
         run()
+        plt.figure(figsize=(20, 10))
+        plt.title(dataset_name() + " Loss")
+        plt.plot(epoch_train_losses, label=CHOSEN_LOSS_FUNCTION)
+        plt.legend()
+        plt.show()
+
+        plt.figure(figsize=(20, 10))
+        plt.title(dataset_name() + " Accuracy")
+        plt.plot(epoch_train_accuracies, label=CHOSEN_LOSS_FUNCTION)
+        plt.legend()
+        plt.show()
