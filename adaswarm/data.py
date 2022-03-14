@@ -28,7 +28,7 @@ class DataLoaderFetcher:
         if self.name == "Iris":
             return DataLoader(
                 IrisDataSet(),
-                batch_size=50,
+                batch_size=40,
                 shuffle=True,
                 drop_last=False,
             )

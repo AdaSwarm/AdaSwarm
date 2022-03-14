@@ -66,6 +66,7 @@ def run():
     testloader = fetcher.test_loader()
 
     num_batches_train = int(len(trainloader.dataset) / trainloader.batch_size)
+    print(f"Trainloader {len(trainloader.dataset)} dataset")
 
     # Model
     print("==> Building model..")
@@ -131,6 +132,7 @@ def run():
             )  # loss.item() contains the loss of entire mini-batch, but divided by the batch size.
             # here we are summing up the losses as we go
             batch_losses.append(loss.item())
+
             print(f"Batch : {batch_idx}| Loss: {loss.item()}")
 
             if dataset_name() in ["Iris"]:
@@ -149,13 +151,15 @@ def run():
             metrics.update_training_accuracy(accuracy)
             metrics.update_training_loss(training_loss)
 
-        epoch_train_losses.append(sum(batch_losses) / num_batches_train)
+        print(batch_losses)
+        print(num_batches_train)
+        metrics.add_epoch_train_loss(sum(batch_losses)/num_batches_train)
         epoch_train_accuracies.append(100 * sum(batch_accuracies) / num_batches_train)
 
-        if epoch % 1 == 0:
+        if epoch % 5 == 0:
             print(
                 f"[{epoch}/{number_of_epochs()}], \
-                loss: {np.round(sum(batch_losses) / num_batches_train, 3)} \
+                loss: {metrics.current_epoch_loss()} \
                     acc: {100 * np.round(sum(batch_accuracies) / num_batches_train, 3)}"
             )
 
@@ -226,14 +230,9 @@ def run():
 if __name__ == "__main__":
     with Metrics(name=CHOSEN_LOSS_FUNCTION, dataset=dataset_name()) as metrics:
         run()
-        plt.figure(figsize=(20, 10))
-        plt.title(dataset_name() + " Loss")
-        plt.plot(epoch_train_losses, label=CHOSEN_LOSS_FUNCTION)
-        plt.legend()
-        plt.show()
 
-        plt.figure(figsize=(20, 10))
-        plt.title(dataset_name() + " Accuracy")
-        plt.plot(epoch_train_accuracies, label=CHOSEN_LOSS_FUNCTION)
-        plt.legend()
-        plt.show()
+        # plt.figure(figsize=(20, 10))
+        # plt.title(dataset_name() + " Accuracy")
+        # plt.plot(epoch_train_accuracies, label=CHOSEN_LOSS_FUNCTION)
+        # plt.legend()
+        # plt.show()
