@@ -9,8 +9,6 @@ import sys
 
 import numpy as np
 
-import matplotlib.pyplot as plt
-
 # pylint: disable=E0611
 import torch
 from torch.autograd.grad_mode import no_grad
