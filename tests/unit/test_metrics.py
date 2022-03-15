@@ -249,31 +249,23 @@ class TestMetrics(unittest.TestCase):
             platform(),
         )
 
-
-    def test_add_batch_loss(self):
-        with Metrics(md_filepath=MD_OUTPUT_FILENAME,
-            csv_filepath=CSV_OUTPUT_FILENAME, draw_plot=False) as metrics:
-           metrics.add_training_batch_loss(0.5) 
-           metrics.add_training_batch_loss(0.6) 
-
-
     def test_add_epoch_train_loss(self):
         with Metrics(md_filepath=MD_OUTPUT_FILENAME,
             csv_filepath=CSV_OUTPUT_FILENAME, draw_plot=False) as metrics:
-           metrics.add_training_batch_loss(0.5) 
-           metrics.add_training_batch_loss(0.6) 
-           metrics.add_epoch_train_loss(2)
+           metrics.add_epoch_train_loss(0.7)
+           metrics.add_epoch_train_loss(0.6)
+           self.assertEqual(metrics.epoch_train_losses, [0.7, 0.6]) 
 
     def test_epoch_performance(self):
         with Metrics(md_filepath=MD_OUTPUT_FILENAME,
             csv_filepath=CSV_OUTPUT_FILENAME, draw_plot=False) as metrics:
-           metrics.add_training_batch_loss(0.5) 
-           metrics.add_training_batch_loss(0.6) 
-           metrics.add_epoch_train_loss(2)
+           metrics.add_epoch_train_loss(0.7)
+           metrics.add_epoch_train_loss(0.6)
+
                 # f"[{epoch}/{number_of_epochs()}], \
                 # loss: {np.round(sum(batch_losses) / num_batches_train, 3)} \
                 #     acc: {100 * np.round(sum(batch_accuracies) / num_batches_train, 3)}"
-           self.assertEqual(metrics.current_epoch_loss(), 0.55) 
+           self.assertEqual(metrics.current_epoch_loss(), 0.6) 
 
 
 
