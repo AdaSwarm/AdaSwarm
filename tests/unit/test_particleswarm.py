@@ -23,6 +23,8 @@ swarm = ParticleSwarm(
     targets=targets,
     dimension=DIMENSION,
     number_of_classes=NUMBER_OF_CLASSES,
+    acceleration_coefficients=coefficients,
+    inertial_weight_beta=0.9,
 )
 
 class TestParticleSwarm(unittest.TestCase):
@@ -42,10 +44,10 @@ class TestParticleSwarm(unittest.TestCase):
         with patch("torch.rand", return_value=tensor([0.5])):
             swarm.update_velocities(gbest_position)
 
-        self.assertAlmostEqual(swarm[0].c_1_r_1, 0.45)
-        self.assertAlmostEqual(swarm[1].c_1_r_1, 0.45)
-        self.assertAlmostEqual(swarm[0].c_2_r_2, 0.4)
-        self.assertAlmostEqual(swarm[1].c_2_r_2, 0.4)
+        self.assertAlmostEqual(swarm[0].c_1_r_1, 0.35)
+        self.assertAlmostEqual(swarm[1].c_1_r_1, 0.35)
+        self.assertAlmostEqual(swarm[0].c_2_r_2, 0.2)
+        self.assertAlmostEqual(swarm[1].c_2_r_2, 0.2)
 
     def test_update_velocities_moving_position(self):
         axis_rotation_factor = 0.4
@@ -65,7 +67,7 @@ class TestParticleSwarm(unittest.TestCase):
             )
             gbest_position = tensor([[-4] * NUMBER_OF_CLASSES] * DIMENSION)
             swarm.update_velocities(gbest_position)
-            self.assertAlmostEqual(swarm[0].position[0][0].item(), 0.729, places=3)
+            self.assertAlmostEqual(swarm[0].position[0][0].item(), 0.299, places=3)
 
     def test_calculate_swarm_scaled_coeffiecient_average(self):
         gbest_position = Tensor(
@@ -78,7 +80,7 @@ class TestParticleSwarm(unittest.TestCase):
             swarm.update_velocities(gbest_position=gbest_position)
 
         self.assertAlmostEqual(
-            swarm.average_of_scaled_acceleration_coefficients(), 0.85
+            swarm.average_of_scaled_acceleration_coefficients(), 0.55
         )
 
         # self.assertAlmostEqual(swarm.sum_of_c_2_r_2(), 0.8)
