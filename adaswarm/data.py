@@ -19,11 +19,11 @@ device = get_device()
 
 
 class DataLoaderFetcher:
-    def __init__(self, name: str = "MNIST"):
+    def __init__(self, name: str = "Iris"):
         self.name = name
 
     # TODO: Handle error in case user passes an unsupported dataset name
-    def train_loader(self):
+    def train_loader(self) -> DataLoader:
 
         if self.name == "Iris":
             return DataLoader(
@@ -56,7 +56,7 @@ class DataLoaderFetcher:
                 num_workers=2,
             )
 
-    def test_loader(self):
+    def test_loader(self) -> DataLoader:
         if self.name == "Iris":
             return DataLoader(
                 IrisDataSet(train=False),

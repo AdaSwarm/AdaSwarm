@@ -71,7 +71,7 @@ def dataset_name() -> str:
     Returns:
         [str]: Name of dataset
     """
-    return os.environ.get("ADASWARM_DATASET_NAME", "MNIST")
+    return os.environ.get("ADASWARM_DATASET_NAME", "Iris")
 
 
 def log_level() -> str:

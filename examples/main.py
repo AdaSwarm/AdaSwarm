@@ -36,21 +36,21 @@ logging.basicConfig(level=log_level())
 
 # pylint: disable=R0914,R0915,C0116,C0413
 
-CHOSEN_LOSS_FUNCTION = "AdaSwarm" if is_adaswarm() else "Adam"
 
 epoch_train_losses = []
 epoch_train_accuracies = []
 
 
 def run():
-    with Metrics(name=CHOSEN_LOSS_FUNCTION, dataset=dataset_name()) as metrics:
+    chosen_loss_function = "AdaSwarm" if is_adaswarm() else "Adam"
+    with Metrics(name=chosen_loss_function, dataset=dataset_name()) as metrics:
         logging.debug("in run function")
         device = get_device()
 
         parser = argparse.ArgumentParser(
             description=f"PyTorch {dataset_name()} Training"
         )
-        parser.add_argument("--lr", default=0.001, type=float, help="learning rate")
+        parser.add_argument("--lr", default=0.1, type=float, help="learning rate")
         parser.add_argument(
             "--resume", "-r", action="store_true", help="resume from checkpoint"
         )
@@ -84,7 +84,7 @@ def run():
         criterion = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
 
-        logging.info("Using %s Optimiser", CHOSEN_LOSS_FUNCTION)
+        logging.info("Using %s Optimiser", chosen_loss_function)
 
         if is_adaswarm():
             if dataset_name() in ["Iris"]:
@@ -189,7 +189,7 @@ def run():
 
                     if dataset_name() in ["Iris"]:
                         accuracy = (
-                            torch.eq(outputs.round(), targets).float().mean()
+                            torch.eq(outputs.round(), targets).float().mean().item()
                         )  # accuracy
                     else:
                         _, predicted = outputs.max(1)
@@ -232,11 +232,5 @@ def run():
 # TODO: Add a script to run both optimizers and
 # read the csv output to compare both runs
 if __name__ == "__main__":
-
     run()
 
-    # plt.figure(figsize=(20, 10))
-    # plt.title(dataset_name() + " Accuracy")
-    # plt.plot(epoch_train_accuracies, label=CHOSEN_LOSS_FUNCTION)
-    # plt.legend()
-    # plt.show()
