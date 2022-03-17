@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 from adaswarm.rempso import ParticleSwarmOptimizer
+from adaswarm.particle import AccelerationCoefficients
 
 
 def CrossEntropyLoss():
@@ -20,13 +21,19 @@ class CrossEntropyLossCreator:
     ):
         dimension, classes = y.size()
         # TODO: Check the optimum swarm size
+        acceleration_coefficients=AccelerationCoefficients(c_1=0.9, c_2=0.8)
+        inertial_weight_beta =  0.1
+        swarm_size = 10
+
         particle_swarm_optimizer = ParticleSwarmOptimizer(
             dimension=dimension,
-            swarm_size=10,
+            swarm_size=swarm_size,
+            acceleration_coefficients=acceleration_coefficients,
+            inertial_weight_beta=inertial_weight_beta,
             number_of_classes=classes,
             targets=y_pred,
         )
-        sum_cr, gbest = particle_swarm_optimizer.run_iteration(number=5)
+        sum_cr, gbest = particle_swarm_optimizer.run_iteration(number=40)
         ctx.save_for_backward(y, y_pred)
         ctx.sum_cr = sum_cr
         ctx.eta = swarm_learning_rate

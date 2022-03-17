@@ -39,6 +39,3 @@ plt.title("Adam versus Adaswarm loss")
 plt.legend()
 
 plt.savefig(os.path.join("report", f"{options.dataset_name()}-training_loss.png"))
-
-print(f"adam: {adam_epoch_losses}")
-print(f"adaswarm: {adaswarm_epoch_losses}")

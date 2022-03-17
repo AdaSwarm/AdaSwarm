@@ -1,7 +1,7 @@
 import time
 from torch import cuda, Tensor, randint
 from torch.nn import CrossEntropyLoss
-from adaswarm.particle import ParticleSwarm, AccelerationCoefficients
+from adaswarm.particle import ParticleSwarm
 from adaswarm.utils.options import get_device
 
 
@@ -11,9 +11,12 @@ class ParticleSwarmOptimizer:
         targets,
         dimension,
         number_of_classes,
-        swarm_size=100,
-        acceleration_coefficients=AccelerationCoefficients(c_1=0.2, c_2=0.8),
-        inertial_weight_beta: float = 0.9,
+        #TODO: associate swarm_size to dataset
+        swarm_size,
+        #TODO: associate accel coefficients to dataset
+        acceleration_coefficients,
+        #TODO: associate inertial weight to dataset
+        inertial_weight_beta: float,
         max_iterations=100,
         device=get_device(),
     ):

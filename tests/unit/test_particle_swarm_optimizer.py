@@ -25,6 +25,7 @@ class TestRotatedEMParticleSwarmOptimizer(unittest.TestCase):
             number_of_classes=number_of_classes,
             swarm_size=6,
             acceleration_coefficients=AccelerationCoefficients(c_1=0.8, c_2=0.9),
+            inertial_weight_beta=0.9,
         )
 
         c1r1_c2r2_average, gbest = optimizer.run_iteration(number=5)

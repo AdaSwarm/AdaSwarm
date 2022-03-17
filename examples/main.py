@@ -82,7 +82,7 @@ def run():
             start_epoch = checkpoint["epoch"]
 
         criterion = torch.nn.CrossEntropyLoss()
-        optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+        optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
 
         logging.info("Using %s Optimiser", CHOSEN_LOSS_FUNCTION)
 
@@ -130,11 +130,9 @@ def run():
 
                 running_loss += (
                     loss.item()
-                )  # loss.item() contains the loss of entire mini-batch, but divided by the batch size.
+                )  # loss.item() contains the loss of entire mini-batch,
+                # but divided by the batch size.
                 # here we are summing up the losses as we go
-                batch_losses.append(loss.item())
-
-                print(f"Batch : {batch_idx}| Loss: {loss.item()}")
 
                 if dataset_name() in ["Iris"]:
                     accuracy = (
@@ -149,11 +147,12 @@ def run():
                 training_loss = running_loss / (batch_idx + 1)
 
                 batch_accuracies.append(accuracy)
+                batch_losses.append(loss.item())
+                print(f"Batch : {batch_idx}| Loss: {loss.item()}")
+
                 metrics.update_training_accuracy(accuracy)
                 metrics.update_training_loss(training_loss)
 
-            print(batch_losses)
-            print(num_batches_train)
             metrics.add_epoch_train_loss(sum(batch_losses) / num_batches_train)
             epoch_train_accuracies.append(
                 100 * sum(batch_accuracies) / num_batches_train
@@ -226,7 +225,7 @@ def run():
 
             train(epoch)
             test(epoch)
-        
+
         return metrics
 
 
