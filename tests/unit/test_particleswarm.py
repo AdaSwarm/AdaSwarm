@@ -67,7 +67,7 @@ class TestParticleSwarm(unittest.TestCase):
             )
             gbest_position = tensor([[-4] * NUMBER_OF_CLASSES] * DIMENSION)
             swarm.update_velocities(gbest_position)
-            self.assertAlmostEqual(swarm[0].position[0][0].item(), 0.729, places=3)
+            self.assertAlmostEqual(swarm[0].position[0][0].item(), 0.299, places=3)
 
     def test_calculate_swarm_scaled_coeffiecient_average(self):
         gbest_position = Tensor(

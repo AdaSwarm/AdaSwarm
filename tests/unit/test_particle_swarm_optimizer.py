@@ -10,7 +10,7 @@ import numpy as np
 class TestRotatedEMParticleSwarmOptimizer(unittest.TestCase):
     def test_run_iterations(self):
         number_of_classes = 10
-        dimension = 125
+        dimension = 10 
         targets = randint(
             low=0,
             high=number_of_classes,
