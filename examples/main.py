@@ -233,4 +233,3 @@ def run():
 # read the csv output to compare both runs
 if __name__ == "__main__":
     run()
-
