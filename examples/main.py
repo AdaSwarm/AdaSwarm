@@ -6,6 +6,7 @@ import argparse
 import logging
 import os
 import sys
+import time
 
 import numpy as np
 
@@ -111,7 +112,7 @@ def run():
 
             for batch_idx, (inputs, targets) in enumerate(trainloader):
                 inputs, targets = inputs.to(device), targets.to(device)
-
+                tic = time.monotonic()
                 if chosen_loss_function.lower() in ["adaswarm"]:
                     targets.requires_grad = False
 
@@ -149,8 +150,9 @@ def run():
                 training_loss = running_loss / (batch_idx + 1)
 
                 batch_accuracies.append(accuracy)
+                toc = time.monotonic()
                 batch_losses.append(loss.item())
-                print(f"Batch : {batch_idx}| Loss: {loss.item()}")
+                print(f"Batch : {batch_idx}| Loss: {loss.item()} | Time: {toc-tic}")
 
                 metrics.update_training_accuracy(accuracy)
                 metrics.update_training_loss(training_loss)
@@ -227,6 +229,8 @@ def run():
 
             train(epoch)
             test(epoch)
+        
+        print(f"Total time: {sum(epoch_timings)}s")
 
         return metrics
 
