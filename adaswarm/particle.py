@@ -222,7 +222,7 @@ class ParticleSwarm(list):
 def _initialize_position(targets, dimensions, number_of_classes):
     if dataset_name() in ["Iris"]:
         return torch.clamp(
-            targets + (0.1 ** 0.5) * torch.rand(dimensions, number_of_classes), 0, 1
+            targets + (0.1 ** 0.5) * torch.rand(dimensions, number_of_classes, device=get_device()), 0, 1
         )
     const = -4
     position = torch.tensor([[const] * number_of_classes] * dimensions)
