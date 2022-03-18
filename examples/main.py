@@ -229,8 +229,6 @@ def run():
 
             train(epoch)
             test(epoch)
-        
-        print(f"Total time: {sum(epoch_timings)}s")
 
         return metrics
 
