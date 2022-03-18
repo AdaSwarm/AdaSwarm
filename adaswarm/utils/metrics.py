@@ -79,11 +79,9 @@ class Metrics:
     def __init__(
         self,
         name: str = "Default run",
-        md_filepath: str = os.path.join("report", "summary.md"),
         csv_filepath: str = os.path.join("report", "summary.csv"),
         dataset: str = "Not set",
     ):
-        self.md_filepath = md_filepath
         self.csv_filepath = csv_filepath
         self.name = name
         self.stats = Metrics.Stats()
@@ -119,7 +117,6 @@ class Metrics:
             },
             index=[0],
         )
-        os.makedirs(os.path.dirname(self.md_filepath), exist_ok=True)
         os.makedirs(os.path.dirname(self.csv_filepath), exist_ok=True)
 
         if os.path.exists(self.csv_filepath):
@@ -130,9 +127,6 @@ class Metrics:
         this_summary_dataframe = pd.concat(
             [previous_summary_dataframe, this_summary_dataframe], axis=0
         )
-
-        with open(self.md_filepath, mode="w", encoding="utf-8") as file:
-            this_summary_dataframe.to_markdown(buf=file, index=False)
 
         this_summary_dataframe.to_csv(self.csv_filepath, index=False)
 
