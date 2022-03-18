@@ -7,28 +7,10 @@ from freezegun import freeze_time
 from adaswarm.utils.options import get_device
 from platform import platform
 
-MD_OUTPUT_FILENAME = "./tests/unit/output/summary.md"
 CSV_OUTPUT_FILENAME = "./tests/unit/output/summary.csv"
 
 
 class TestMetrics(unittest.TestCase):
-    @staticmethod
-    def read_dataframe_from_markdown():
-        dataframe = (
-            pd.read_table(
-                MD_OUTPUT_FILENAME,
-                sep="|",
-                header=0,
-                index_col=1,
-                skipinitialspace=True,
-            )
-            .dropna(axis=1, how="all")
-            .iloc[1:]
-        )
-
-        dataframe.columns = [col.strip() for col in dataframe.columns]
-        return dataframe
-
     @staticmethod
     def read_dataframe_from_csv():
         dataframe = pd.read_csv(CSV_OUTPUT_FILENAME, index_col=False)
@@ -38,8 +20,6 @@ class TestMetrics(unittest.TestCase):
 
     def tearDown(self):
         try:
-            if os.path.exists(MD_OUTPUT_FILENAME):
-                os.remove(MD_OUTPUT_FILENAME)
             if os.path.exists(CSV_OUTPUT_FILENAME):
                 os.remove(CSV_OUTPUT_FILENAME)
         except OSError as oserr:
@@ -47,7 +27,7 @@ class TestMetrics(unittest.TestCase):
 
     def test_train_accuracy(self):
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+           csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
             metrics.update_training_accuracy(1.5)
             metrics.update_training_accuracy(1.0)
@@ -55,35 +35,15 @@ class TestMetrics(unittest.TestCase):
 
     def test_test_accuracy(self):
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+            csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
             metrics.update_test_accuracy(1.5)
             metrics.update_test_accuracy(1.0)
             self.assertEqual(metrics.best_test_accuracy, 1.5)
 
-    def test_train_accuracy_md_output(self):
-        with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
-        ) as metrics:
-            metrics.update_training_accuracy(0.01523)
-        self.assertEqual(
-            float(self.read_dataframe_from_markdown()["Training Acc %"].values[0]),
-            1.52,
-        )
-
-    def test_test_accuracy_md_output(self):
-        with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
-        ) as metrics:
-            metrics.update_test_accuracy(0.01523)
-        self.assertEqual(
-            float(self.read_dataframe_from_markdown()["Test Acc %"].values[0]),
-            1.52,
-        )
-
     def test_train_accuracy_csv_output(self):
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+            csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
             metrics.update_training_accuracy(0.01523)
         self.assertEqual(
@@ -92,7 +52,7 @@ class TestMetrics(unittest.TestCase):
 
     def test_test_accuracy_csv_output(self):
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+            csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
             metrics.update_test_accuracy(0.01523)
         self.assertEqual(
@@ -102,23 +62,23 @@ class TestMetrics(unittest.TestCase):
     def test_time_taken(self):
         with patch("time.time", return_value=1):
             with Metrics(
-                md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+                csv_filepath=CSV_OUTPUT_FILENAME
             ):
                 self.assertEqual(True, True)
 
             self.assertEqual(
-                int(self.read_dataframe_from_markdown()["Elapsed (s)"].values[0]),
+                int(self.read_dataframe_from_csv()["Elapsed (s)"].values[0]),
                 0,
             )
 
     def test_train_accuracy_csv_output(self):
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+            csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
             metrics.update_training_accuracy(0.01523)
 
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+            csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
             metrics.update_training_accuracy(0.01623)
         self.assertEqual(
@@ -130,12 +90,12 @@ class TestMetrics(unittest.TestCase):
 
     def test_test_accuracy_csv_output(self):
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+            csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
             metrics.update_test_accuracy(0.01523)
 
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+            csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
             metrics.update_test_accuracy(0.01623)
         self.assertEqual(
@@ -149,7 +109,7 @@ class TestMetrics(unittest.TestCase):
     def test_start_time_in_output(self):
 
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+            csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
             metrics.update_training_accuracy(0.01523)
 
@@ -161,7 +121,7 @@ class TestMetrics(unittest.TestCase):
     def test_epoch(self):
 
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+            csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
             metrics.current_epoch(2)
 
@@ -173,7 +133,7 @@ class TestMetrics(unittest.TestCase):
     def test_best_training_loss(self):
 
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+            csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
             metrics.update_training_loss(0.2)
             metrics.update_training_loss(0.1)
@@ -186,7 +146,7 @@ class TestMetrics(unittest.TestCase):
 
     def test_best_test_loss(self):
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+            csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
             metrics.update_test_loss(0.2)
             metrics.update_test_loss(0.1)
@@ -199,7 +159,7 @@ class TestMetrics(unittest.TestCase):
 
     def test_empty_best_training_loss(self):
 
-        with Metrics(md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME):
+        with Metrics(csv_filepath=CSV_OUTPUT_FILENAME):
             pass
 
         self.assertEqual(
@@ -209,7 +169,7 @@ class TestMetrics(unittest.TestCase):
 
     def test_empty_best_test_loss(self):
 
-        with Metrics(md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME):
+        with Metrics(csv_filepath=CSV_OUTPUT_FILENAME):
             pass
 
         self.assertEqual(
@@ -219,7 +179,6 @@ class TestMetrics(unittest.TestCase):
 
     def test_dataset_name(self):
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME,
             csv_filepath=CSV_OUTPUT_FILENAME,
             dataset="Iris",
         ):
@@ -231,7 +190,7 @@ class TestMetrics(unittest.TestCase):
         )
 
     def test_device_name(self):
-        with Metrics(md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME):
+        with Metrics(csv_filepath=CSV_OUTPUT_FILENAME):
             pass
 
         self.assertEqual(
@@ -240,7 +199,7 @@ class TestMetrics(unittest.TestCase):
         )
 
     def test_platform_info(self):
-        with Metrics(md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME):
+        with Metrics(csv_filepath=CSV_OUTPUT_FILENAME):
             pass
 
         self.assertEqual(
@@ -250,7 +209,7 @@ class TestMetrics(unittest.TestCase):
 
     def test_add_epoch_train_loss(self):
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+            csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
             metrics.add_epoch_train_loss(0.7)
             metrics.add_epoch_train_loss(0.6)
@@ -258,7 +217,7 @@ class TestMetrics(unittest.TestCase):
 
     def test_epoch_performance(self):
         with Metrics(
-            md_filepath=MD_OUTPUT_FILENAME, csv_filepath=CSV_OUTPUT_FILENAME
+            csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
             metrics.add_epoch_train_loss(0.7)
             metrics.add_epoch_train_loss(0.6)
