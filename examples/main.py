@@ -111,7 +111,9 @@ def run():
 
             for batch_idx, (inputs, targets) in enumerate(trainloader):
                 inputs, targets = inputs.to(device), targets.to(device)
-                targets.requires_grad = False
+
+                if chosen_loss_function.lower() in ["adaswarm"]:
+                    targets.requires_grad = False
 
                 if dataset_name() in ["Iris"]:
                     inputs = Variable(inputs).float()
