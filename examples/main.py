@@ -38,10 +38,6 @@ logging.basicConfig(level=log_level())
 # pylint: disable=R0914,R0915,C0116,C0413
 
 
-epoch_train_losses = []
-epoch_train_accuracies = []
-
-
 def run():
     chosen_loss_function = "AdaSwarm" if is_adaswarm() else "Adam"
     with Metrics(name=chosen_loss_function, dataset=dataset_name()) as metrics:
@@ -154,11 +150,11 @@ def run():
                 batch_losses.append(loss.item())
                 print(f"Batch : {batch_idx}| Loss: {loss.item()} | Time: {toc-tic}")
 
-                metrics.update_training_accuracy(accuracy)
+                metrics.update_batch_training_accuracy(accuracy)
                 metrics.update_training_loss(training_loss)
 
             metrics.add_epoch_train_loss(sum(batch_losses) / num_batches_train)
-            epoch_train_accuracies.append(
+            metrics.add_epoch_train_accuracy(
                 100 * sum(batch_accuracies) / num_batches_train
             )
 
@@ -166,7 +162,7 @@ def run():
                 print(
                     f"[{epoch}/{number_of_epochs()}], \
                     loss: {metrics.current_epoch_loss()} \
-                        acc: {100 * np.round(sum(batch_accuracies) / num_batches_train, 3)}"
+                        acc: {np.round(metrics.epoch_train_accuracies[-1:], 3)}"
                 )
 
         def test(epoch):
