@@ -215,6 +215,15 @@ class TestMetrics(unittest.TestCase):
             metrics.add_epoch_train_loss(0.6)
             self.assertEqual(metrics.epoch_train_losses, [0.7, 0.6])
 
+    def test_add_epoch_test_loss(self):
+        with Metrics(
+            csv_filepath=CSV_OUTPUT_FILENAME
+        ) as metrics:
+            metrics.add_epoch_test_loss(0.7)
+            metrics.add_epoch_test_loss(0.6)
+            self.assertEqual(metrics.epoch_test_losses, [0.7, 0.6])
+
+
     def test_epoch_performance(self):
         with Metrics(
             csv_filepath=CSV_OUTPUT_FILENAME
@@ -234,3 +243,11 @@ class TestMetrics(unittest.TestCase):
             metrics.add_epoch_train_accuracy(70)
             metrics.add_epoch_train_accuracy(75)
             self.assertEqual(metrics.epoch_train_accuracies, [70, 75])
+
+    def test_epoch_test_accuracy(self):
+        with Metrics(
+            csv_filepath=CSV_OUTPUT_FILENAME
+        ) as metrics:
+            metrics.add_epoch_test_accuracy(70)
+            metrics.add_epoch_test_accuracy(75)
+            self.assertEqual(metrics.epoch_test_accuracies, [70, 75])

@@ -60,7 +60,7 @@ class DataLoaderFetcher:
         if self.name == "Iris":
             return DataLoader(
                 IrisDataSet(train=False),
-                batch_size=50,
+                batch_size=10,
                 shuffle=True,
                 drop_last=False,
             )

@@ -64,8 +64,9 @@ def run():
         testloader = fetcher.test_loader()
 
         num_batches_train = int(len(trainloader.dataset) / trainloader.batch_size)
+        num_batches_test = int(len(testloader.dataset) / testloader.batch_size)
         print(f"Trainloader {len(trainloader.dataset)} dataset")
-
+        print(f"Testloader {len(testloader.dataset)} dataset")
         # Model
         print("==> Building model..")
         model = fetcher.model()
@@ -172,6 +173,9 @@ def run():
             total = 0
             running_loss = 0
 
+            batch_accuracies = []
+            batch_losses = []
+
             with no_grad():
                 for batch_idx, (inputs, targets) in enumerate(testloader):
                     inputs, targets = inputs.to(device), targets.to(device)
@@ -207,7 +211,10 @@ def run():
                         f"""Loss: {test_loss:3f}
                         | Acc: {100.*accuracy}%% ({accuracy})""",
                     )
-
+            metrics.add_epoch_test_loss(sum(batch_losses) / num_batches_test)
+            metrics.add_epoch_test_accuracy(
+                100 * sum(batch_accuracies) / num_batches_test
+            )
             # Save checkpoint.
             acc = 100.0 * accuracy
 
