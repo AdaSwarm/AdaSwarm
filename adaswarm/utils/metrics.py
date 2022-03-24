@@ -30,14 +30,16 @@ class Metrics:
             self.best_test_loss = None
             self.number_of_epochs = 0
             self.epoch_train_losses = []
+            self.epoch_test_losses = []
+            self.epoch_train_accuracies = []
+            self.epoch_test_accuracies = []
 
-        def update_training_accuracy(self, value):
+        def update_batch_training_accuracy(self, value):
             """
             Compare and store the best training accuracy
-            value
+            value during the batch in progress
             """
 
-            # TODO: Store every epoch and accuracy
             # TODO: Take epoch as an argument and store the best accuracy
             # and the epoch when it was achieved
             if value > self.best_training_accuracy:
@@ -73,6 +75,15 @@ class Metrics:
         def add_epoch_train_loss(self, value):
             self.epoch_train_losses.append(value)
 
+        def add_epoch_train_accuracy(self, value):
+            self.epoch_train_accuracies.append(value)
+        
+        def add_epoch_test_loss(self, value):
+            self.epoch_test_losses.append(value)
+
+        def add_epoch_test_accuracy(self, value):
+            self.epoch_test_accuracies.append(value)
+        
         def current_epoch_loss(self):
             return np.round(self.epoch_train_losses[-1:], 3)
 

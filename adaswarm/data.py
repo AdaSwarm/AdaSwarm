@@ -13,7 +13,7 @@ from adaswarm.model import Model
 
 from sklearn import datasets as skl_datasets
 from torchvision import datasets as tv_datasets
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 
 device = get_device()
 
@@ -60,7 +60,7 @@ class DataLoaderFetcher:
         if self.name == "Iris":
             return DataLoader(
                 IrisDataSet(train=False),
-                batch_size=50,
+                batch_size=10,
                 shuffle=True,
                 drop_last=False,
             )
@@ -97,10 +97,17 @@ class IrisDataSet(Dataset):
     def __init__(self, train=True):
         iris_data_bundle = skl_datasets.load_iris()
         x, y = iris_data_bundle.data, iris_data_bundle.target
-        y = to_categorical(y)
-        x_train_array, x_test_array, y_train_array, y_test_array = train_test_split(
-            x, y, test_size=0.2, random_state=123
+        y_categorical = to_categorical(y)
+
+        stratified_shuffle_split = StratifiedShuffleSplit(
+            n_splits=1, test_size=0.2, random_state=123
         )
+
+        for train_index, test_index in stratified_shuffle_split.split(X=x, y=y):
+            x_train_array = x[train_index]
+            x_test_array = x[test_index]
+            y_train_array = y_categorical[train_index]
+            y_test_array = y_categorical[test_index]
 
         if train:
 

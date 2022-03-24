@@ -38,10 +38,6 @@ logging.basicConfig(level=log_level())
 # pylint: disable=R0914,R0915,C0116,C0413
 
 
-epoch_train_losses = []
-epoch_train_accuracies = []
-
-
 def run():
     chosen_loss_function = "AdaSwarm" if is_adaswarm() else "Adam"
     with Metrics(name=chosen_loss_function, dataset=dataset_name()) as metrics:
@@ -68,8 +64,9 @@ def run():
         testloader = fetcher.test_loader()
 
         num_batches_train = int(len(trainloader.dataset) / trainloader.batch_size)
+        num_batches_test = int(len(testloader.dataset) / testloader.batch_size)
         print(f"Trainloader {len(trainloader.dataset)} dataset")
-
+        print(f"Testloader {len(testloader.dataset)} dataset")
         # Model
         print("==> Building model..")
         model = fetcher.model()
@@ -82,19 +79,18 @@ def run():
             model.load_state_dict(checkpoint["net"])
             start_epoch = checkpoint["epoch"]
 
-        criterion = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
 
         logging.info("Using %s Optimiser", chosen_loss_function)
 
-        if is_adaswarm():
-            if dataset_name() in ["Iris"]:
+        if dataset_name() in ["Iris"]:
+            if is_adaswarm():
                 approx_criterion = adaswarm.nn.BCELoss()
             else:
-                approx_criterion = adaswarm.nn.CrossEntropyLoss()
-        else:
-            if dataset_name() in ["Iris"]:
                 approx_criterion = torch.nn.BCELoss()
+        else:
+            if is_adaswarm():
+                approx_criterion = adaswarm.nn.CrossEntropyLoss()
             else:
                 approx_criterion = torch.nn.CrossEntropyLoss()
 
@@ -154,11 +150,11 @@ def run():
                 batch_losses.append(loss.item())
                 print(f"Batch : {batch_idx}| Loss: {loss.item()} | Time: {toc-tic}")
 
-                metrics.update_training_accuracy(accuracy)
+                metrics.update_batch_training_accuracy(accuracy)
                 metrics.update_training_loss(training_loss)
 
             metrics.add_epoch_train_loss(sum(batch_losses) / num_batches_train)
-            epoch_train_accuracies.append(
+            metrics.add_epoch_train_accuracy(
                 100 * sum(batch_accuracies) / num_batches_train
             )
 
@@ -166,7 +162,7 @@ def run():
                 print(
                     f"[{epoch}/{number_of_epochs()}], \
                     loss: {metrics.current_epoch_loss()} \
-                        acc: {100 * np.round(sum(batch_accuracies) / num_batches_train, 3)}"
+                        acc: {np.round(metrics.epoch_train_accuracies[-1:], 3)}"
                 )
 
         def test(epoch):
@@ -175,6 +171,15 @@ def run():
             correct = 0
             total = 0
             running_loss = 0
+
+            batch_accuracies = []
+            batch_losses = []
+
+
+            if dataset_name() in ["Iris"]:
+                criterion = torch.nn.BCELoss()
+            else:
+                criterion = torch.nn.CrossEntropyLoss()
 
             with no_grad():
                 for batch_idx, (inputs, targets) in enumerate(testloader):
@@ -211,7 +216,10 @@ def run():
                         f"""Loss: {test_loss:3f}
                         | Acc: {100.*accuracy}%% ({accuracy})""",
                     )
-
+            metrics.add_epoch_test_loss(sum(batch_losses) / num_batches_test)
+            metrics.add_epoch_test_accuracy(
+                100 * sum(batch_accuracies) / num_batches_test
+            )
             # Save checkpoint.
             acc = 100.0 * accuracy
 

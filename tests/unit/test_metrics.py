@@ -29,8 +29,8 @@ class TestMetrics(unittest.TestCase):
         with Metrics(
            csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
-            metrics.update_training_accuracy(1.5)
-            metrics.update_training_accuracy(1.0)
+            metrics.update_batch_training_accuracy(1.5)
+            metrics.update_batch_training_accuracy(1.0)
             self.assertEqual(metrics.best_training_accuracy, 1.5)
 
     def test_test_accuracy(self):
@@ -45,7 +45,7 @@ class TestMetrics(unittest.TestCase):
         with Metrics(
             csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
-            metrics.update_training_accuracy(0.01523)
+            metrics.update_batch_training_accuracy(0.01523)
         self.assertEqual(
             float(self.read_dataframe_from_csv()["Training Acc %"].values[0]), 1.52
         )
@@ -75,12 +75,12 @@ class TestMetrics(unittest.TestCase):
         with Metrics(
             csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
-            metrics.update_training_accuracy(0.01523)
+            metrics.update_batch_training_accuracy(0.01523)
 
         with Metrics(
             csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
-            metrics.update_training_accuracy(0.01623)
+            metrics.update_batch_training_accuracy(0.01623)
         self.assertEqual(
             float(self.read_dataframe_from_csv()["Training Acc %"].values[0]), 1.52
         )
@@ -111,7 +111,7 @@ class TestMetrics(unittest.TestCase):
         with Metrics(
             csv_filepath=CSV_OUTPUT_FILENAME
         ) as metrics:
-            metrics.update_training_accuracy(0.01523)
+            metrics.update_batch_training_accuracy(0.01523)
 
         self.assertEqual(
             self.read_dataframe_from_csv()["Start time"].values[0],
@@ -215,6 +215,15 @@ class TestMetrics(unittest.TestCase):
             metrics.add_epoch_train_loss(0.6)
             self.assertEqual(metrics.epoch_train_losses, [0.7, 0.6])
 
+    def test_add_epoch_test_loss(self):
+        with Metrics(
+            csv_filepath=CSV_OUTPUT_FILENAME
+        ) as metrics:
+            metrics.add_epoch_test_loss(0.7)
+            metrics.add_epoch_test_loss(0.6)
+            self.assertEqual(metrics.epoch_test_losses, [0.7, 0.6])
+
+
     def test_epoch_performance(self):
         with Metrics(
             csv_filepath=CSV_OUTPUT_FILENAME
@@ -226,3 +235,19 @@ class TestMetrics(unittest.TestCase):
             # loss: {np.round(sum(batch_losses) / num_batches_train, 3)} \
             #     acc: {100 * np.round(sum(batch_accuracies) / num_batches_train, 3)}"
             self.assertEqual(metrics.current_epoch_loss(), 0.6)
+
+    def test_add_epoch_train_accuracy(self):
+        with Metrics(
+            csv_filepath=CSV_OUTPUT_FILENAME
+        ) as metrics:
+            metrics.add_epoch_train_accuracy(70)
+            metrics.add_epoch_train_accuracy(75)
+            self.assertEqual(metrics.epoch_train_accuracies, [70, 75])
+
+    def test_epoch_test_accuracy(self):
+        with Metrics(
+            csv_filepath=CSV_OUTPUT_FILENAME
+        ) as metrics:
+            metrics.add_epoch_test_accuracy(70)
+            metrics.add_epoch_test_accuracy(75)
+            self.assertEqual(metrics.epoch_test_accuracies, [70, 75])
