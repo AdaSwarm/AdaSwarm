@@ -79,19 +79,18 @@ def run():
             model.load_state_dict(checkpoint["net"])
             start_epoch = checkpoint["epoch"]
 
-        criterion = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
 
         logging.info("Using %s Optimiser", chosen_loss_function)
 
-        if is_adaswarm():
-            if dataset_name() in ["Iris"]:
+        if dataset_name() in ["Iris"]:
+            if is_adaswarm():
                 approx_criterion = adaswarm.nn.BCELoss()
             else:
-                approx_criterion = adaswarm.nn.CrossEntropyLoss()
-        else:
-            if dataset_name() in ["Iris"]:
                 approx_criterion = torch.nn.BCELoss()
+        else:
+            if is_adaswarm():
+                approx_criterion = adaswarm.nn.CrossEntropyLoss()
             else:
                 approx_criterion = torch.nn.CrossEntropyLoss()
 
@@ -175,6 +174,12 @@ def run():
 
             batch_accuracies = []
             batch_losses = []
+
+
+            if dataset_name() in ["Iris"]:
+                criterion = torch.nn.BCELoss()
+            else:
+                criterion = torch.nn.CrossEntropyLoss()
 
             with no_grad():
                 for batch_idx, (inputs, targets) in enumerate(testloader):

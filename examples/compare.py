@@ -39,7 +39,7 @@ def plot(adam_data, adaSwarm_data, title):
     plt.plot(adaSwarm_data, label="AdaSwarm")
     plt.title(title)
     plt.legend()
-    filename = "_".join(title.lower().split(" "))
+    filename = "-".join(title.lower().split(" "))
     plt.savefig(os.path.join("report", f"{options.dataset_name()}-{filename}.png"))
 
 
