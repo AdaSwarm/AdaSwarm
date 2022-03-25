@@ -33,10 +33,10 @@ adaswarm_epoch_train_accuracies = metrics.epoch_train_accuracies
 adaswarm_epoch_test_losses = metrics.epoch_test_losses
 adaswarm_epoch_test_accuracies = metrics.epoch_test_accuracies
 
-def plot(adam_data, adaSwarm_data, title):
+def plot(adam_data, adaswarm_data, title):
     plt.figure(figsize=(20, 10))
     plt.plot(adam_data, label="Adam")
-    plt.plot(adaSwarm_data, label="AdaSwarm")
+    plt.plot(adaswarm_data, label="AdaSwarm")
     plt.title(title)
     plt.legend()
     filename = "-".join(title.lower().split(" "))
@@ -45,24 +45,24 @@ def plot(adam_data, adaSwarm_data, title):
 
 plot(
     adam_data=adam_epoch_train_accuracies,
-    adaSwarm_data=adaswarm_epoch_train_accuracies,
+    adaswarm_data=adaswarm_epoch_train_accuracies,
     title="Training Accuracy",
 )
 
 plot(
     adam_data=adam_epoch_train_losses,
-    adaSwarm_data=adaswarm_epoch_train_losses,
+    adaswarm_data=adaswarm_epoch_train_losses,
     title="Training Loss",
 )
 
 plot(
     adam_data=adam_epoch_test_accuracies,
-    adaSwarm_data=adaswarm_epoch_test_accuracies,
+    adaswarm_data=adaswarm_epoch_test_accuracies,
     title="Test Accuracy",
 )
 
 plot(
     adam_data=adam_epoch_test_losses,
-    adaSwarm_data=adaswarm_epoch_test_losses,
+    adaswarm_data=adaswarm_epoch_test_losses,
     title="Test loss",
 )

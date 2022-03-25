@@ -205,7 +205,10 @@ def run():
                         total += targets.size(0)
                         correct += predicted.eq(targets).sum().item()
                         accuracy = correct / total
+                        
                     test_loss = running_loss / (batch_idx + 1)
+                    batch_accuracies.append(accuracy)
+                    batch_losses.append(loss.item())
 
                     metrics.update_test_accuracy(accuracy)
                     metrics.update_test_loss(test_loss)
