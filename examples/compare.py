@@ -16,22 +16,24 @@ import adaswarm.utils.options as options
 
 os.environ["USE_ADASWARM"] = "False"
 
-
 metrics = main.run()
-
-adam_epoch_train_losses = metrics.epoch_train_losses
-adam_epoch_train_accuracies = metrics.epoch_train_accuracies
-adam_epoch_test_losses = metrics.epoch_test_losses
-adam_epoch_test_accuracies = metrics.epoch_test_accuracies
+(
+    adam_epoch_train_losses,
+    adam_epoch_train_accuracies,
+    adam_epoch_test_losses,
+    adam_epoch_test_accuracies,
+) = metrics.run_data()
 
 os.environ["USE_ADASWARM"] = "True"
 
 metrics = main.run()
+(
+    adaswarm_epoch_train_losses,
+    adaswarm_epoch_train_accuracies,
+    adaswarm_epoch_test_losses,
+    adaswarm_epoch_test_accuracies,
+) = metrics.run_data()
 
-adaswarm_epoch_train_losses = metrics.epoch_train_losses
-adaswarm_epoch_train_accuracies = metrics.epoch_train_accuracies
-adaswarm_epoch_test_losses = metrics.epoch_test_losses
-adaswarm_epoch_test_accuracies = metrics.epoch_test_accuracies
 
 def plot(adam_data, adaswarm_data, title):
     plt.figure(figsize=(20, 10))
