@@ -175,7 +175,6 @@ def run():
             batch_accuracies = []
             batch_losses = []
 
-
             if dataset_name() in ["Iris"]:
                 criterion = torch.nn.BCELoss()
             else:
@@ -205,7 +204,6 @@ def run():
                         total += targets.size(0)
                         correct += predicted.eq(targets).sum().item()
                         accuracy = correct / total
-                        
                     test_loss = running_loss / (batch_idx + 1)
                     batch_accuracies.append(accuracy)
                     batch_losses.append(loss.item())
