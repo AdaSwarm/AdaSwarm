@@ -220,6 +220,7 @@ class ParticleSwarm(list):
 
 
 def _initialize_position(targets, dimensions, number_of_classes):
+    #TODO: Not hardcoded ideally
     if dataset_name() in ["Iris"]:
         return torch.clamp(
             input=targets

@@ -13,7 +13,7 @@ from adaswarm.model import Model
 
 from sklearn import datasets as skl_datasets
 from torchvision import datasets as tv_datasets
-from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
+from sklearn.model_selection import StratifiedShuffleSplit
 
 device = get_device()
 
@@ -25,6 +25,7 @@ class DataLoaderFetcher:
     # TODO: Handle error in case user passes an unsupported dataset name
     def train_loader(self) -> DataLoader:
 
+        #TODO: make Iris the default
         if self.name == "Iris":
             return DataLoader(
                 IrisDataSet(),
