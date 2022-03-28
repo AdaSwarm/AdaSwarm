@@ -31,6 +31,7 @@ os.environ["USE_ADASWARM"] = "False"
     pd.DataFrame(),
 )
 
+
 def write_run_to_dataframe(dataframe, dataset, name, run_number):
     this_run_dataframe = pd.DataFrame()
     this_run_dataframe["Epoch"] = range(options.number_of_epochs())
@@ -40,9 +41,10 @@ def write_run_to_dataframe(dataframe, dataset, name, run_number):
     return pd.concat([dataframe, this_run_dataframe]).reset_index(drop=True)
 
 
-
-compare_number_runs = 3
+compare_number_runs = int(os.environ.get("ADASWARM_NUMBER_OF_RUNS", "5"))
 for run_number in range(compare_number_runs):
+
+    os.environ["USE_ADASWARM"] = "False"
 
     metrics = main.run()
     (
@@ -52,67 +54,62 @@ for run_number in range(compare_number_runs):
         adam_epoch_test_accuracies,
     ) = metrics.run_data()
 
-    train_losses_dataframe = write_run_to_dataframe(train_losses_dataframe, adam_epoch_train_losses, "Adam", run_number)
-    train_accuracies_dataframe = write_run_to_dataframe(train_accuracies_dataframe, adam_epoch_train_accuracies, "Adam", run_number)
-    test_losses_dataframe = write_run_to_dataframe(test_losses_dataframe, adam_epoch_test_losses, "Adam", run_number)
-    test_accuracies_dataframe = write_run_to_dataframe(test_accuracies_dataframe, adam_epoch_test_accuracies, "Adam", run_number)
+    train_losses_dataframe = write_run_to_dataframe(
+        train_losses_dataframe, adam_epoch_train_losses, "Adam", run_number
+    )
+    train_accuracies_dataframe = write_run_to_dataframe(
+        train_accuracies_dataframe, adam_epoch_train_accuracies, "Adam", run_number
+    )
+    test_losses_dataframe = write_run_to_dataframe(
+        test_losses_dataframe, adam_epoch_test_losses, "Adam", run_number
+    )
+    test_accuracies_dataframe = write_run_to_dataframe(
+        test_accuracies_dataframe, adam_epoch_test_accuracies, "Adam", run_number
+    )
 
+    os.environ["USE_ADASWARM"] = "True"
 
-print(train_losses_dataframe.head())
-print(train_accuracies_dataframe.head())
-print(test_losses_dataframe.head())
-print(test_accuracies_dataframe.head())
+    metrics = main.run()
+    (
+        adaswarm_epoch_train_losses,
+        adaswarm_epoch_train_accuracies,
+        adaswarm_epoch_test_losses,
+        adaswarm_epoch_test_accuracies,
+    ) = metrics.run_data()
 
-os.environ["USE_ADASWARM"] = "True"
+    train_losses_dataframe = write_run_to_dataframe(
+        train_losses_dataframe, adaswarm_epoch_train_losses, "Adaswarm", run_number
+    )
+    train_accuracies_dataframe = write_run_to_dataframe(
+        train_accuracies_dataframe,
+        adaswarm_epoch_train_accuracies,
+        "Adaswarm",
+        run_number,
+    )
+    test_losses_dataframe = write_run_to_dataframe(
+        test_losses_dataframe, adaswarm_epoch_test_losses, "Adaswarm", run_number
+    )
+    test_accuracies_dataframe = write_run_to_dataframe(
+        test_accuracies_dataframe,
+        adaswarm_epoch_test_accuracies,
+        "Adaswarm",
+        run_number,
+    )
 
-metrics = main.run()
-(
-    adaswarm_epoch_train_losses,
-    adaswarm_epoch_train_accuracies,
-    adaswarm_epoch_test_losses,
-    adaswarm_epoch_test_accuracies,
-) = metrics.run_data()
 
 def plot_aggregate(dataframe, title):
     fig, ax = plt.subplots(figsize=(20, 10))
-    sns.lineplot(data=dataframe, x="Epoch", y="Value", hue="Name", estimator="mean", ax=ax)
+    sns.lineplot(
+        data=dataframe, x="Epoch", y="Value", hue="Name", estimator="mean", ax=ax
+    )
     ax.set_title(title)
     filename = "-".join(title.lower().split(" "))
-    fig.savefig(os.path.join("report", f"{options.dataset_name()}-aggregate-{filename}.png"))
+    fig.savefig(
+        os.path.join("report", f"{options.dataset_name()}-aggregate-{filename}.png")
+    )
 
-
-def plot(adam_data, adaswarm_data, title):
-    plt.figure(figsize=(20, 10))
-    plt.plot(adam_data, label="Adam")
-    plt.plot(adaswarm_data, label="AdaSwarm")
-    plt.title(title)
-    plt.legend()
-    filename = "-".join(title.lower().split(" "))
-    plt.savefig(os.path.join("report", f"{options.dataset_name()}-{filename}.png"))
-
-
-# plot(
-#     adam_data=adam_epoch_train_accuracies,
-#     adaswarm_data=adaswarm_epoch_train_accuracies,
-#     title="Training Accuracy",
-# )
 
 plot_aggregate(dataframe=train_accuracies_dataframe, title="Training Accuracy")
-
-plot(
-    adam_data=adam_epoch_train_losses,
-    adaswarm_data=adaswarm_epoch_train_losses,
-    title="Training Loss",
-)
-
-plot(
-    adam_data=adam_epoch_test_accuracies,
-    adaswarm_data=adaswarm_epoch_test_accuracies,
-    title="Test Accuracy",
-)
-
-plot(
-    adam_data=adam_epoch_test_losses,
-    adaswarm_data=adaswarm_epoch_test_losses,
-    title="Test loss",
-)
+plot_aggregate(dataframe=train_losses_dataframe, title="Training Losses")
+plot_aggregate(dataframe=test_accuracies_dataframe, title="Test Accuracy")
+plot_aggregate(dataframe=test_losses_dataframe, title="Test Losses")
