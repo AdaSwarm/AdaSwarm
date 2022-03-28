@@ -16,3 +16,4 @@ profile*
 tests/unit/output/
 summary.md
 report/
+report*/

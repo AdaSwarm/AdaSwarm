@@ -63,7 +63,7 @@ def number_of_epochs() -> int:
     Returns:
         [int]: Number of epochs
     """
-    return int(os.environ.get("ADASWARM_NUMBER_OF_EPOCHS", "200"))
+    return int(os.environ.get("ADASWARM_NUMBER_OF_EPOCHS", "40"))
 
 
 def dataset_name() -> str:
