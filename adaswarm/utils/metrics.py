@@ -77,15 +77,23 @@ class Metrics:
 
         def add_epoch_train_accuracy(self, value):
             self.epoch_train_accuracies.append(value)
-        
+
         def add_epoch_test_loss(self, value):
             self.epoch_test_losses.append(value)
 
         def add_epoch_test_accuracy(self, value):
             self.epoch_test_accuracies.append(value)
-        
+
         def current_epoch_loss(self):
             return np.round(self.epoch_train_losses[-1:], 3)
+
+        def run_data(self):
+            return (
+                self.epoch_train_losses,
+                self.epoch_train_accuracies,
+                self.epoch_test_losses,
+                self.epoch_test_accuracies,
+            )
 
     def __init__(
         self,
