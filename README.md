@@ -111,13 +111,28 @@ Eqns (4)-(6), (15), (18) and the eqn below for non-differentiable loss and (20)-
 $ git clone https://github.com/AdaSwarm/AdaSwarm.git
 ```
 
-### Running the example
+### Running the example (single method - runs Adaswarm/PSO)
 
 ```
 $ cd AdaSwarm
 $ poetry install
 $ poetry shell
 $ ./examples/main.py
+```
+
+### Running the comparison (Adaswarm/PSO versus Adam Optimiser and torch cross entropy loss)
+
+```
+$ cd AdaSwarm
+$ poetry install
+$ poetry shell
+$ ./examples/compare.py
+```
+
+### Viewing the comparison output
+Comparison reports are available in the `reports` folder. In both graph (PNG) and tabular formats, or tabular alone if running the `main.py`. To view the CSV contents in a nicely formatted style use this command:  
+```
+$ poetry run vd report/summary.csv
 ```
 
 
