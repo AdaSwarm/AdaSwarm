@@ -102,7 +102,7 @@ def plot_aggregate(dataframe, title):
     sns.lineplot(
         data=dataframe, x="Epoch", y="Value", hue="Name", estimator="mean", ax=ax
     )
-    ax.set_title(title)
+    ax.set_title(f"Aggregated {title.lower()} over {compare_number_runs} runs")
     filename = "-".join(title.lower().split(" "))
     fig.savefig(
         os.path.join("report", f"{options.dataset_name()}-aggregate-{filename}.png")
