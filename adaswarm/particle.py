@@ -16,9 +16,10 @@ from adaswarm.utils.options import dataset_name, get_device
 class AccelerationCoefficients:
     """Acceleration coefficients for PSO"""
 
-    def __init__(self, c_1: float = 0.9, c_2: float = 0.8):
-        self.c_1 = c_1
-        self.c_2 = c_2
+    # TODO: Define a framework for setting all these paramters
+    def __init__(self):
+        self.c_1 = 0.2 if dataset_name == "MNIST" else 0.9
+        self.c_2 = 0.8
 
     def sum(self):
         """Sum of the acceleration coefficients"""

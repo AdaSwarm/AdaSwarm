@@ -24,7 +24,7 @@ class TestRotatedEMParticleSwarmOptimizer(unittest.TestCase):
             dimension=dimension,
             number_of_classes=number_of_classes,
             swarm_size=6,
-            acceleration_coefficients=AccelerationCoefficients(c_1=0.8, c_2=0.9),
+            acceleration_coefficients=AccelerationCoefficients(),
             inertial_weight_beta=0.9,
         )
 
