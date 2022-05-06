@@ -25,10 +25,10 @@ class DataLoaderFetcher:
     # TODO: Handle error in case user passes an unsupported dataset name
     def train_loader(self) -> DataLoader:
 
-        #TODO: make Iris the default
+        # TODO: make Iris the default
         if self.name == "Iris":
             return DataLoader(
-                IrisDataSet(),
+                TabularDataSet(train=True, dataset=skl_datasets.load_iris),
                 batch_size=40,
                 shuffle=True,
                 drop_last=False,
@@ -60,7 +60,7 @@ class DataLoaderFetcher:
     def test_loader(self) -> DataLoader:
         if self.name == "Iris":
             return DataLoader(
-                IrisDataSet(train=False),
+                TabularDataSet(train=False, dataset=skl_datasets.load_iris),
                 batch_size=10,
                 shuffle=True,
                 drop_last=False,
@@ -94,10 +94,14 @@ class DataLoaderFetcher:
         return model
 
 
-class IrisDataSet(Dataset):
-    def __init__(self, train=True):
-        iris_data_bundle = skl_datasets.load_iris()
-        x, y = iris_data_bundle.data, iris_data_bundle.target
+class TabularDataSet(Dataset):
+    def __init__(self, train=True, dataset=None):
+        if dataset is None:
+            raise RuntimeError("Dataset not provided")
+
+        data_bundle = dataset()
+
+        x, y = data_bundle.data, data_bundle.target
         y_categorical = to_categorical(y)
 
         stratified_shuffle_split = StratifiedShuffleSplit(
@@ -123,9 +127,9 @@ class IrisDataSet(Dataset):
         if is_tensor(idx):
             idx = idx.tolist()
         # TODO: may be repetition of from_numpy here
-        predictors = from_numpy(self.data[idx, 0:4]).float().to(device)
-        species = from_numpy(self.target[idx]).to(device)
-        return predictors, species
+        predictors = from_numpy(self.data[idx, :]).float().to(device)
+        categories = from_numpy(self.target[idx]).to(device)
+        return predictors, categories
 
     def __len__(self):
         return len(self.data)
