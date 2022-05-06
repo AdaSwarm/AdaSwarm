@@ -10,7 +10,7 @@ from torch import tensor
 from adaswarm.model import Model
 from sklearn import datasets
 
-from adaswarm.data import DataLoaderFetcher, IrisDataSet
+from adaswarm.data import DataLoaderFetcher, TabularDataSet
 from adaswarm.resnet import ResNet
 
 
@@ -49,9 +49,11 @@ class DataLoaderTestCase(unittest.TestCase):
         with patch(
             "sklearn.datasets.load_iris", return_value=datasets.load_iris()
         ) as mock:
-            IrisDataSet()
+            TabularDataSet(train=True, dataset=datasets.load_iris)
             mock.assert_called()
-        predictors, species = IrisDataSet().__getitem__([50])
+        predictors, species = TabularDataSet(
+            train=True, dataset=datasets.load_iris
+        ).__getitem__([50])
         self.assertIsNone(
             assert_array_almost_equal(
                 np.array(predictors[0]), np.array([6.4, 3.2, 4.5, 1.5])
@@ -70,12 +72,10 @@ class DataLoaderTestCase(unittest.TestCase):
         self.assertIsInstance(loader, DataLoader)
 
     def test_load_iris_test_set(self):
-        with patch(
-            "sklearn.datasets.load_iris", return_value=datasets.load_iris()
-        ) as mock:
-            IrisDataSet(train=False)
-            mock.assert_called()
-        predictors, species = IrisDataSet(train=False).__getitem__([5])
+        TabularDataSet(train=False, dataset=datasets.load_iris)
+        predictors, species = TabularDataSet(
+            train=False, dataset=datasets.load_iris
+        ).__getitem__([5])
         self.assertIsNone(
             assert_array_almost_equal(
                 np.array(predictors[0]), np.array([4.7, 3.2, 1.3, 0.2])
@@ -92,3 +92,36 @@ class DataLoaderTestCase(unittest.TestCase):
         fetcher = DataLoaderFetcher(name="Iris")
         chosen_model = fetcher.model()
         self.assertIsInstance(chosen_model, Model)
+
+    def test_wine_data(self):
+        predictors, wine_types = TabularDataSet(
+            train=True, dataset=datasets.load_wine
+        ).__getitem__([50])
+        self.assertIsNone(
+            assert_array_almost_equal(
+                np.array(predictors[0]),
+                np.array(
+                    [
+                        13.56,
+                        1.73,
+                        2.46,
+                        20.5,
+                        116.0,
+                        2.96,
+                        2.78,
+                        0.20,
+                        2.45,
+                        6.25,
+                        0.98,
+                        3.03,
+                        1120,
+                    ]
+                ),
+            )
+        )
+        self.assertEqual(wine_types[0][0], tensor([1]))
+
+    def test_tabular_dataset_empty(self):
+        with self.assertRaises(RuntimeError) as context:
+            TabularDataSet()
+        self.assertTrue("Dataset not provided" in str(context.exception))

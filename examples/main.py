@@ -83,6 +83,7 @@ def run():
 
         logging.info("Using %s Optimiser", chosen_loss_function)
 
+        #TODO: Use a candidate loss function on a case by case basis
         if dataset_name() in ["Iris"]:
             if is_adaswarm():
                 approx_criterion = adaswarm.nn.BCELoss()
