@@ -21,7 +21,7 @@ class CrossEntropyLossCreator:
     ):
         dimension, classes = y.size()
         # TODO: Check the optimum swarm size
-        acceleration_coefficients=AccelerationCoefficients(c_1=0.9, c_2=0.8)
+        acceleration_coefficients=AccelerationCoefficients()
         inertial_weight_beta =  0.1
         swarm_size = 10
 

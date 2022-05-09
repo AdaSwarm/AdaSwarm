@@ -8,7 +8,7 @@ manual_seed(0)
 number_of_classes = 10
 dimension = 125
 beta = 0.5
-coefficients = AccelerationCoefficients(c_1=0.7, c_2=0.4)
+coefficients = AccelerationCoefficients()
 device = get_device()
 targets = randint(
     low=0,
@@ -23,8 +23,8 @@ class TestRotatedEMParticleAttributes(unittest.TestCase):
     def test_particle_scaled_acceleration_coefficients(self):
 
         with patch("torch.rand", return_value=tensor([0.5])):
-            self.assertAlmostEqual(coefficients.random_scale_c_1().item(), 0.35)
-            self.assertAlmostEqual(coefficients.random_scale_c_2().item(), 0.2)
+            self.assertAlmostEqual(coefficients.random_scale_c_1().item(), 0.45)
+            self.assertAlmostEqual(coefficients.random_scale_c_2().item(), 0.4)
 
 
 if __name__ == "__main__":
