@@ -71,6 +71,16 @@ class DataLoaderTestCase(unittest.TestCase):
 
         self.assertIsInstance(loader, DataLoader)
 
+    def test_load_wine_training_set(self):
+        fetcher = DataLoaderFetcher(name="Wine")
+        with patch(
+            "sklearn.datasets.load_wine", return_value=datasets.load_wine()
+        ) as mock:
+            loader = fetcher.train_loader()
+            mock.assert_called()
+
+        self.assertIsInstance(loader, DataLoader)
+
     def test_load_iris_test_set(self):
         TabularDataSet(train=False, dataset=datasets.load_iris)
         predictors, species = TabularDataSet(

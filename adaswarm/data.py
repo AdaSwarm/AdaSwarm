@@ -33,6 +33,13 @@ class DataLoaderFetcher:
                 shuffle=True,
                 drop_last=False,
             )
+        if self.name == "Wine":
+            return DataLoader(
+                TabularDataSet(train=True, dataset=skl_datasets.load_wine),
+                batch_size=40,
+                shuffle=True,
+                drop_last=False,
+            )
 
         else:
             transform_train = transforms.Compose(
