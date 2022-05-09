@@ -18,7 +18,7 @@ class AccelerationCoefficients:
 
     # TODO: Define a framework for setting all these paramters
     def __init__(self):
-        self.c_1 = 0.2 if dataset_name == "MNIST" else 0.9
+        self.c_1 = 0.2 if dataset_name() == "MNIST" else 0.9
         self.c_2 = 0.8
 
     def sum(self):
