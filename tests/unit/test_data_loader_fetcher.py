@@ -82,13 +82,23 @@ class DataLoaderTestCase(unittest.TestCase):
         self.assertIsInstance(loader, DataLoader)
 
     def test_load_iris_test_set(self):
-        TabularDataSet(train=False, dataset=datasets.load_iris)
         predictors, species = TabularDataSet(
             train=False, dataset=datasets.load_iris
         ).__getitem__([5])
         self.assertIsNone(
             assert_array_almost_equal(
                 np.array(predictors[0]), np.array([4.7, 3.2, 1.3, 0.2])
+            )
+        )
+        self.assertEqual(species[0][0], tensor([1]))
+
+    def test_load_wine_test_set(self):
+        predictors, species = TabularDataSet(
+            train=False, dataset=datasets.load_wine
+        ).__getitem__([5])
+        self.assertIsNone(
+            assert_array_almost_equal(
+                np.array(predictors[0][:4]), np.array([14.21, 4.04, 2.44, 18.9])
             )
         )
         self.assertEqual(species[0][0], tensor([1]))
