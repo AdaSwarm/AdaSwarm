@@ -1,3 +1,5 @@
+import numpy as np
+
 from torch.nn.parallel import DataParallel
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
@@ -91,7 +93,9 @@ class DataLoaderFetcher:
     def model(self):
         if self.name == "Iris":
             model = Model(n_features=4, n_neurons=10, n_out=3)
-        else:
+        elif self.name == "Wine":
+            model = Model(n_features=13, n_neurons=10, n_out=3)
+        elif self.name == "MNIST":
             model = ResNet18(in_channels=1, num_classes=10)
         model = model.to(device)
         if cuda.is_available():
@@ -110,6 +114,9 @@ class TabularDataSet(Dataset):
 
         x, y = data_bundle.data, data_bundle.target
         y_categorical = to_categorical(y)
+
+        self._number_of_predictors = np.shape(x)[1]
+        self._number_of_categories = np.shape(y_categorical)[1]
 
         stratified_shuffle_split = StratifiedShuffleSplit(
             n_splits=1, test_size=0.2, random_state=123
@@ -138,5 +145,13 @@ class TabularDataSet(Dataset):
         categories = from_numpy(self.target[idx]).to(device)
         return predictors, categories
 
+    def number_of_predictors(self):
+        return self._number_of_predictors
+
+    def number_of_categories(self):
+        return self._number_of_categories
+
     def __len__(self):
         return len(self.data)
+
+

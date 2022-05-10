@@ -113,6 +113,11 @@ class DataLoaderTestCase(unittest.TestCase):
         chosen_model = fetcher.model()
         self.assertIsInstance(chosen_model, Model)
 
+    def test_wine_model_selection(self):
+        fetcher = DataLoaderFetcher(name="Wine")
+        chosen_model = fetcher.model()
+        self.assertIsInstance(chosen_model, Model)
+
     def test_wine_data(self):
         predictors, wine_types = TabularDataSet(
             train=True, dataset=datasets.load_wine
@@ -145,3 +150,15 @@ class DataLoaderTestCase(unittest.TestCase):
         with self.assertRaises(RuntimeError) as context:
             TabularDataSet()
         self.assertTrue("Dataset not provided" in str(context.exception))
+
+    def test_wine_tabular_dataset_features(self):
+        dataset = TabularDataSet(
+            train=True, dataset=datasets.load_wine
+        )
+        self.assertEqual(dataset.number_of_predictors(), 13)
+
+    def test_wine_tabular_dataset_categories(self):
+        dataset = TabularDataSet(
+            train=True, dataset=datasets.load_wine
+        )
+        self.assertEqual(dataset.number_of_categories(), 3)
