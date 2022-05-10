@@ -30,20 +30,21 @@ class DataLoaderFetcher:
         # TODO: make Iris the default
         if self.name == "Iris":
             return DataLoader(
-                TabularDataSet(train=True, dataset=skl_datasets.load_iris),
-                batch_size=40,
-                shuffle=True,
-                drop_last=False,
-            )
-        if self.name == "Wine":
-            return DataLoader(
-                TabularDataSet(train=True, dataset=skl_datasets.load_wine),
+                self.dataset(train=True),
                 batch_size=40,
                 shuffle=True,
                 drop_last=False,
             )
 
-        else:
+        elif self.name == "Wine":
+            return DataLoader(
+                self.dataset(train=True),
+                batch_size=40,
+                shuffle=True,
+                drop_last=False,
+            )
+
+        elif self.name == "MNIST":
             transform_train = transforms.Compose(
                 [
                     # Image Transformations suitable for MNIST dataset(handwritten digits)
@@ -58,9 +59,7 @@ class DataLoaderFetcher:
                 ]
             )
             return DataLoader(
-                tv_datasets.MNIST(
-                    root="./data", train=True, download=True, transform=transform_train
-                ),
+                self.dataset(train=True, transform=transform_train),
                 batch_size=125,
                 shuffle=True,
                 num_workers=2,
@@ -69,12 +68,21 @@ class DataLoaderFetcher:
     def test_loader(self) -> DataLoader:
         if self.name == "Iris":
             return DataLoader(
-                TabularDataSet(train=False, dataset=skl_datasets.load_iris),
+                self.dataset(train=False),
                 batch_size=10,
                 shuffle=True,
                 drop_last=False,
             )
-        else:
+
+        elif self.name == "Wine":
+            return DataLoader(
+                self.dataset(train=False),
+                batch_size=10,
+                shuffle=True,
+                drop_last=False,
+            )
+
+        elif self.name == "MNIST":
             transform_test = transforms.Compose(
                 [
                     transforms.ToTensor(),
@@ -82,19 +90,35 @@ class DataLoaderFetcher:
                 ]
             )
             return DataLoader(
-                tv_datasets.MNIST(
-                    root="./data", train=False, download=True, transform=transform_test
-                ),
+                self.dataset(train=False, transform=transform_test),
                 batch_size=100,
                 shuffle=False,
                 num_workers=2,
             )
 
+    def dataset(self, train=True, transform=None):
+        if self.name == "Iris":
+            return TabularDataSet(train=train, dataset=skl_datasets.load_iris)
+        elif self.name == "Wine":
+            return TabularDataSet(train=train, dataset=skl_datasets.load_wine)
+        elif self.name == "MNIST":
+            return tv_datasets.MNIST(
+                root="./data", train=train, download=True, transform=transform
+            )
+
     def model(self):
         if self.name == "Iris":
-            model = Model(n_features=4, n_neurons=10, n_out=3)
+            model = Model(
+                n_features=self.dataset().number_of_predictors(),
+                n_neurons=10,
+                n_out=self.dataset().number_of_categories(),
+            )
         elif self.name == "Wine":
-            model = Model(n_features=13, n_neurons=10, n_out=3)
+            model = Model(
+                n_features=self.dataset().number_of_predictors(),
+                n_neurons=10,
+                n_out=self.dataset().number_of_categories(),
+            )
         elif self.name == "MNIST":
             model = ResNet18(in_channels=1, num_classes=10)
         model = model.to(device)
@@ -153,5 +177,3 @@ class TabularDataSet(Dataset):
 
     def __len__(self):
         return len(self.data)
-
-
