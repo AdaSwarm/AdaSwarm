@@ -71,14 +71,34 @@ class DataLoaderTestCase(unittest.TestCase):
 
         self.assertIsInstance(loader, DataLoader)
 
+    def test_load_wine_training_set(self):
+        fetcher = DataLoaderFetcher(name="Wine")
+        with patch(
+            "sklearn.datasets.load_wine", return_value=datasets.load_wine()
+        ) as mock:
+            loader = fetcher.train_loader()
+            mock.assert_called()
+
+        self.assertIsInstance(loader, DataLoader)
+
     def test_load_iris_test_set(self):
-        TabularDataSet(train=False, dataset=datasets.load_iris)
         predictors, species = TabularDataSet(
             train=False, dataset=datasets.load_iris
         ).__getitem__([5])
         self.assertIsNone(
             assert_array_almost_equal(
                 np.array(predictors[0]), np.array([4.7, 3.2, 1.3, 0.2])
+            )
+        )
+        self.assertEqual(species[0][0], tensor([1]))
+
+    def test_load_wine_test_set(self):
+        predictors, species = TabularDataSet(
+            train=False, dataset=datasets.load_wine
+        ).__getitem__([5])
+        self.assertIsNone(
+            assert_array_almost_equal(
+                np.array(predictors[0][:4]), np.array([14.21, 4.04, 2.44, 18.9])
             )
         )
         self.assertEqual(species[0][0], tensor([1]))
@@ -90,6 +110,11 @@ class DataLoaderTestCase(unittest.TestCase):
 
     def test_iris_model_selection(self):
         fetcher = DataLoaderFetcher(name="Iris")
+        chosen_model = fetcher.model()
+        self.assertIsInstance(chosen_model, Model)
+
+    def test_wine_model_selection(self):
+        fetcher = DataLoaderFetcher(name="Wine")
         chosen_model = fetcher.model()
         self.assertIsInstance(chosen_model, Model)
 
@@ -125,3 +150,15 @@ class DataLoaderTestCase(unittest.TestCase):
         with self.assertRaises(RuntimeError) as context:
             TabularDataSet()
         self.assertTrue("Dataset not provided" in str(context.exception))
+
+    def test_wine_tabular_dataset_features(self):
+        dataset = TabularDataSet(
+            train=True, dataset=datasets.load_wine
+        )
+        self.assertEqual(dataset.number_of_predictors(), 13)
+
+    def test_wine_tabular_dataset_categories(self):
+        dataset = TabularDataSet(
+            train=True, dataset=datasets.load_wine
+        )
+        self.assertEqual(dataset.number_of_categories(), 3)
