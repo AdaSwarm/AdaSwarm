@@ -1,5 +1,6 @@
+import numpy as np
 from adaswarm.utils.progressbar import *
-from adaswarm.utils.metrics import *
+
 
 
 # Please refer to Keras: https://github.com/keras-team/keras/blob/14f71177ad28a60a4ea41775b2ac159d3688c792/keras/utils/np_utils.py#L22-L74
