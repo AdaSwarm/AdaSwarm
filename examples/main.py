@@ -8,8 +8,6 @@ import os
 import sys
 import time
 
-import numpy as np
-
 # pylint: disable=E0611
 import torch
 from torch.autograd.grad_mode import no_grad
@@ -62,8 +60,6 @@ def run():
     trainloader = fetcher.train_loader()
     testloader = fetcher.test_loader()
 
-    num_batches_train = int(len(trainloader.dataset) / trainloader.batch_size)
-    num_batches_test = int(len(testloader.dataset) / testloader.batch_size)
     print(f"Trainloader {len(trainloader.dataset)} dataset")
     print(f"Testloader {len(testloader.dataset)} dataset")
     # Model
@@ -141,8 +137,6 @@ def run():
                 total += targets.size(0)
                 correct += predicted.eq(targets).sum().item()
                 accuracy = correct / total
-
-            training_loss = running_loss / (batch_idx + 1)
 
             batch_accuracies.append(accuracy)
             toc = time.monotonic()
