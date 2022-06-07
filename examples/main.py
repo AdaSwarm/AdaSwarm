@@ -23,7 +23,6 @@ from adaswarm.utils import progress_bar
 from adaswarm.data import DataLoaderFetcher
 
 from adaswarm.utils.options import (
-    is_adaswarm,
     number_of_epochs,
     dataset_name,
     get_device,
@@ -37,7 +36,6 @@ logging.basicConfig(level=log_level())
 
 
 def run():
-    chosen_loss_function = "AdaSwarm" if is_adaswarm() else "Adam"
     logging.debug("in run function")
     device = get_device()
 
@@ -76,19 +74,11 @@ def run():
 
     optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
 
-    logging.info("Using %s Optimiser", chosen_loss_function)
-
     #TODO: Use a candidate loss function on a case by case basis
     if dataset_name() in ["Iris"]:
-        if is_adaswarm():
-            approx_criterion = adaswarm.nn.BCELoss()
-        else:
-            approx_criterion = torch.nn.BCELoss()
+        approx_criterion = adaswarm.nn.BCELoss()
     else:
-        if is_adaswarm():
-            approx_criterion = adaswarm.nn.CrossEntropyLoss()
-        else:
-            approx_criterion = torch.nn.CrossEntropyLoss()
+        approx_criterion = adaswarm.nn.CrossEntropyLoss()
 
     # Training
     def train(epoch):
@@ -104,8 +94,7 @@ def run():
         for batch_idx, (inputs, targets) in enumerate(trainloader):
             inputs, targets = inputs.to(device), targets.to(device)
             tic = time.monotonic()
-            if chosen_loss_function.lower() in ["adaswarm"]:
-                targets.requires_grad = False
+            targets.requires_grad = False
 
             if dataset_name() in ["Iris"]:
                 inputs = Variable(inputs).float()
