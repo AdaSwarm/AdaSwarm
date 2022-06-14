@@ -37,7 +37,7 @@ def run():
     logging.debug("in run function")
     device = get_device()
 
-    parser = argparse.ArgumentParser(description=f"PyTorch Iris Training")
+    parser = argparse.ArgumentParser(description="PyTorch Iris Training")
     parser.add_argument("--lr", default=0.1, type=float, help="learning rate")
     parser.add_argument(
         "--resume", "-r", action="store_true", help="resume from checkpoint"
