@@ -6,7 +6,6 @@ import argparse
 import logging
 import os
 import sys
-import time
 
 # pylint: disable=E0611
 import torch
@@ -39,9 +38,7 @@ def run():
     logging.debug("in run function")
     device = get_device()
 
-    parser = argparse.ArgumentParser(
-        description=f"PyTorch {dataset_name()} Training"
-    )
+    parser = argparse.ArgumentParser(description=f"PyTorch {dataset_name()} Training")
     parser.add_argument("--lr", default=0.1, type=float, help="learning rate")
     parser.add_argument(
         "--resume", "-r", action="store_true", help="resume from checkpoint"
@@ -74,7 +71,7 @@ def run():
 
     optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
 
-    #TODO: Use a candidate loss function on a case by case basis
+    # TODO: Use a candidate loss function on a case by case basis
     if dataset_name() in ["Iris"]:
         approx_criterion = adaswarm.nn.BCELoss()
     else:
@@ -93,7 +90,6 @@ def run():
 
         for batch_idx, (inputs, targets) in enumerate(trainloader):
             inputs, targets = inputs.to(device), targets.to(device)
-            tic = time.monotonic()
             targets.requires_grad = False
 
             if dataset_name() in ["Iris"]:
@@ -127,10 +123,16 @@ def run():
                 correct += predicted.eq(targets).sum().item()
                 accuracy = correct / total
 
+            train_loss = running_loss / (batch_idx + 1)
             batch_accuracies.append(accuracy)
-            toc = time.monotonic()
             batch_losses.append(loss.item())
-            print(f"Batch : {batch_idx}| Loss: {loss.item()} | Time: {toc-tic}")
+
+            progress_bar(
+                batch_idx,
+                len(trainloader),
+                f"""Loss: {train_loss:3f}
+                    | Acc: {100.*accuracy}%% ({accuracy})""",
+            )
 
 
     def test(epoch):
