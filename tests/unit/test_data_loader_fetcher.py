@@ -11,7 +11,6 @@ from adaswarm.model import Model
 from sklearn import datasets
 
 from adaswarm.data import DataLoaderFetcher, TabularDataSet
-from adaswarm.resnet import ResNet
 
 
 class CustomDataset(Dataset):
@@ -26,25 +25,6 @@ class CustomDataset(Dataset):
 
 
 class DataLoaderTestCase(unittest.TestCase):
-    def test_load_MNIST_Train_set(self):
-        fetcher = DataLoaderFetcher(name="MNIST")
-        with patch("torchvision.datasets.MNIST", return_value=CustomDataset()) as mock:
-            loader = fetcher.train_loader()
-            mock.assert_called_with(
-                root="./data", train=True, download=True, transform=ANY
-            )
-
-        self.assertIsInstance(loader, DataLoader)
-
-    def test_load_MNIST_test_set(self):
-        fetcher = DataLoaderFetcher(name="MNIST")
-        with patch("torchvision.datasets.MNIST", return_value=CustomDataset()) as mock:
-            loader = fetcher.test_loader()
-            mock.assert_called_with(
-                root="./data", train=False, download=True, transform=ANY
-            )
-        self.assertIsInstance(loader, DataLoader)
-
     def test_iris_data(self):
         with patch(
             "sklearn.datasets.load_iris", return_value=datasets.load_iris()
@@ -71,16 +51,6 @@ class DataLoaderTestCase(unittest.TestCase):
 
         self.assertIsInstance(loader, DataLoader)
 
-    def test_load_wine_training_set(self):
-        fetcher = DataLoaderFetcher(name="Wine")
-        with patch(
-            "sklearn.datasets.load_wine", return_value=datasets.load_wine()
-        ) as mock:
-            loader = fetcher.train_loader()
-            mock.assert_called()
-
-        self.assertIsInstance(loader, DataLoader)
-
     def test_load_iris_test_set(self):
         predictors, species = TabularDataSet(
             train=False, dataset=datasets.load_iris
@@ -92,73 +62,12 @@ class DataLoaderTestCase(unittest.TestCase):
         )
         self.assertEqual(species[0][0], tensor([1]))
 
-    def test_load_wine_test_set(self):
-        predictors, species = TabularDataSet(
-            train=False, dataset=datasets.load_wine
-        ).__getitem__([5])
-        self.assertIsNone(
-            assert_array_almost_equal(
-                np.array(predictors[0][:4]), np.array([14.21, 4.04, 2.44, 18.9])
-            )
-        )
-        self.assertEqual(species[0][0], tensor([1]))
-
-    def test_MNIST_model_selection(self):
-        fetcher = DataLoaderFetcher(name="MNIST")
-        chosen_model = fetcher.model()
-        self.assertIsInstance(chosen_model, ResNet)
-
     def test_iris_model_selection(self):
         fetcher = DataLoaderFetcher(name="Iris")
         chosen_model = fetcher.model()
         self.assertIsInstance(chosen_model, Model)
 
-    def test_wine_model_selection(self):
-        fetcher = DataLoaderFetcher(name="Wine")
-        chosen_model = fetcher.model()
-        self.assertIsInstance(chosen_model, Model)
-
-    def test_wine_data(self):
-        predictors, wine_types = TabularDataSet(
-            train=True, dataset=datasets.load_wine
-        ).__getitem__([50])
-        self.assertIsNone(
-            assert_array_almost_equal(
-                np.array(predictors[0]),
-                np.array(
-                    [
-                        13.56,
-                        1.73,
-                        2.46,
-                        20.5,
-                        116.0,
-                        2.96,
-                        2.78,
-                        0.20,
-                        2.45,
-                        6.25,
-                        0.98,
-                        3.03,
-                        1120,
-                    ]
-                ),
-            )
-        )
-        self.assertEqual(wine_types[0][0], tensor([1]))
-
     def test_tabular_dataset_empty(self):
         with self.assertRaises(RuntimeError) as context:
             TabularDataSet()
         self.assertTrue("Dataset not provided" in str(context.exception))
-
-    def test_wine_tabular_dataset_features(self):
-        dataset = TabularDataSet(
-            train=True, dataset=datasets.load_wine
-        )
-        self.assertEqual(dataset.number_of_predictors(), 13)
-
-    def test_wine_tabular_dataset_categories(self):
-        dataset = TabularDataSet(
-            train=True, dataset=datasets.load_wine
-        )
-        self.assertEqual(dataset.number_of_categories(), 3)

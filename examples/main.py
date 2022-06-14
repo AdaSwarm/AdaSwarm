@@ -23,7 +23,6 @@ from adaswarm.data import DataLoaderFetcher
 
 from adaswarm.utils.options import (
     number_of_epochs,
-    dataset_name,
     get_device,
     log_level,
 )
@@ -38,7 +37,7 @@ def run():
     logging.debug("in run function")
     device = get_device()
 
-    parser = argparse.ArgumentParser(description=f"PyTorch {dataset_name()} Training")
+    parser = argparse.ArgumentParser(description=f"PyTorch Iris Training")
     parser.add_argument("--lr", default=0.1, type=float, help="learning rate")
     parser.add_argument(
         "--resume", "-r", action="store_true", help="resume from checkpoint"
@@ -51,7 +50,7 @@ def run():
     # Data
     print("==> Preparing data..")
 
-    fetcher = DataLoaderFetcher(dataset_name())
+    fetcher = DataLoaderFetcher()
     trainloader = fetcher.train_loader()
     testloader = fetcher.test_loader()
 
@@ -71,19 +70,13 @@ def run():
 
     optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
 
-    # TODO: Use a candidate loss function on a case by case basis
-    if dataset_name() in ["Iris"]:
-        approx_criterion = adaswarm.nn.BCELoss()
-    else:
-        approx_criterion = adaswarm.nn.CrossEntropyLoss()
+    approx_criterion = adaswarm.nn.BCELoss()
 
     # Training
     def train(epoch):
         print(f"\nEpoch: {epoch}")
         model.train()
         running_loss = 0
-        correct = 0
-        total = 0
 
         batch_accuracies = []
         batch_losses = []
@@ -92,14 +85,11 @@ def run():
             inputs, targets = inputs.to(device), targets.to(device)
             targets.requires_grad = False
 
-            if dataset_name() in ["Iris"]:
-                inputs = Variable(inputs).float()
-                targets = Variable(
-                    targets,
-                ).float()
-                outputs = model(inputs).float()
-            else:
-                outputs = model(inputs)
+            inputs = Variable(inputs).float()
+            targets = Variable(
+                targets,
+            ).float()
+            outputs = model(inputs).float()
 
             loss = approx_criterion(outputs, targets)
 
@@ -113,15 +103,9 @@ def run():
             # but divided by the batch size.
             # here we are summing up the losses as we go
 
-            if dataset_name() in ["Iris"]:
-                accuracy = (
-                    torch.eq(outputs.round(), targets).float().mean().item()
-                )  # accuracy
-            else:
-                _, predicted = outputs.max(1)
-                total += targets.size(0)
-                correct += predicted.eq(targets).sum().item()
-                accuracy = correct / total
+            accuracy = (
+                torch.eq(outputs.round(), targets).float().mean().item()
+            )  # accuracy
 
             train_loss = running_loss / (batch_idx + 1)
             batch_accuracies.append(accuracy)
@@ -134,46 +118,33 @@ def run():
                     | Acc: {100.*accuracy}%% ({accuracy})""",
             )
 
-
     def test(epoch):
         model.eval()
         test_loss = 0
-        correct = 0
-        total = 0
         running_loss = 0
 
         batch_accuracies = []
         batch_losses = []
 
-        if dataset_name() in ["Iris"]:
-            criterion = torch.nn.BCELoss()
-        else:
-            criterion = torch.nn.CrossEntropyLoss()
+        criterion = torch.nn.BCELoss()
 
         with no_grad():
             for batch_idx, (inputs, targets) in enumerate(testloader):
                 inputs, targets = inputs.to(device), targets.to(device)
-                if dataset_name() in ["Iris"]:
-                    inputs = Variable(inputs).float()
-                    targets = Variable(
-                        targets,
-                    ).float()
-                    outputs = model(inputs).float()
-                else:
-                    outputs = model(inputs)
+                inputs = Variable(inputs).float()
+                targets = Variable(
+                    targets,
+                ).float()
+                outputs = model(inputs).float()
+
                 loss = criterion(outputs, targets)
 
                 running_loss += loss.item()
 
-                if dataset_name() in ["Iris"]:
-                    accuracy = (
-                        torch.eq(outputs.round(), targets).float().mean().item()
-                    )  # accuracy
-                else:
-                    _, predicted = outputs.max(1)
-                    total += targets.size(0)
-                    correct += predicted.eq(targets).sum().item()
-                    accuracy = correct / total
+                accuracy = (
+                    torch.eq(outputs.round(), targets).float().mean().item()
+                )  # accuracy
+
                 test_loss = running_loss / (batch_idx + 1)
                 batch_accuracies.append(accuracy)
                 batch_losses.append(loss.item())
