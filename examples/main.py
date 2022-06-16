@@ -39,9 +39,6 @@ def run():
 
     parser = argparse.ArgumentParser(description="PyTorch Iris Training")
     parser.add_argument("--lr", default=0.1, type=float, help="learning rate")
-    parser.add_argument(
-        "--resume", "-r", action="store_true", help="resume from checkpoint"
-    )
 
     args = parser.parse_args()
 
@@ -59,14 +56,6 @@ def run():
     # Model
     print("==> Building model..")
     model = fetcher.model()
-
-    if args.resume:
-        # Load checkpoint.
-        print("==> Resuming from checkpoint..")
-        assert os.path.isdir("checkpoint"), "Error: no checkpoint directory found!"
-        checkpoint = torch.load("./checkpoint/ckpt.pth")
-        model.load_state_dict(checkpoint["net"])
-        start_epoch = checkpoint["epoch"]
 
     optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
 
@@ -155,18 +144,6 @@ def run():
                     f"""Loss: {test_loss:3f}
                     | Acc: {100.*accuracy}%% ({accuracy})""",
                 )
-        # Save checkpoint.
-        acc = 100.0 * accuracy
-
-        print("Saving..")
-        state = {
-            "net": model.state_dict(),
-            "acc": acc,
-            "epoch": epoch,
-        }
-        if not os.path.isdir("checkpoint"):
-            os.mkdir("checkpoint")
-        torch.save(state, "./checkpoint/ckpt.pth")
 
     for epoch in range(start_epoch, number_of_epochs()):
 
