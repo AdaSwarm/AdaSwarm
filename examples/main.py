@@ -108,6 +108,7 @@ def run():
             )
 
     def test(epoch):
+        print(f"\nEpoch: {epoch}")
         model.eval()
         test_loss = 0
         running_loss = 0
