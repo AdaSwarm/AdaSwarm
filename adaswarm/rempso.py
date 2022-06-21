@@ -1,21 +1,24 @@
+"""Rotated PSO algorithm."""
 import time
-from torch import cuda, Tensor, randint
+from torch import Tensor
 from torch.nn import CrossEntropyLoss
 from adaswarm.particle import ParticleSwarm
 from adaswarm.utils.options import get_device
 
 
-class ParticleSwarmOptimizer:
+class ParticleSwarmOptimizer:  # pylint: disable=R0902 R0913
+    """Rotated Particle Swarm Optimizer"""
+
     def __init__(
         self,
         targets,
         dimension,
         number_of_classes,
-        #TODO: associate swarm_size to dataset
+        # TODO: associate swarm_size to dataset
         swarm_size,
-        #TODO: associate accel coefficients to dataset
+        # TODO: associate accel coefficients to dataset
         acceleration_coefficients,
-        #TODO: associate inertial weight to dataset
+        # TODO: associate inertial weight to dataset
         inertial_weight_beta: float,
         max_iterations=100,
         device=get_device(),
@@ -57,13 +60,12 @@ class ParticleSwarmOptimizer:
         toc = time.monotonic()
         if verbosity is True:
             print(
-                " >> global best fitness {:.3f}  | iteration time {:.3f}".format(
-                    self.gbest_value, toc - tic
-                )
+                f" >> global best fitness {self.gbest_value:.3f}  | iteration time {toc - tic:.3f}"
             )
         return self.gbest_position
 
     def run_iteration(self, number=1, verbosity=False):
+        """Runs a number of iterations of the algorithm."""
         for _ in range(number):
             gbest = self.__run_one_iteration(verbosity=verbosity)
         return (self.swarm.average_of_scaled_acceleration_coefficients(), gbest)
