@@ -6,9 +6,6 @@ import argparse
 import logging
 import os
 import sys
-import time
-
-import numpy as np
 
 # pylint: disable=E0611
 import torch
@@ -21,13 +18,11 @@ sys.path.append(os.path.join(dirname, ".."))
 
 # pylint: disable=C0411, E0401, C0413
 import adaswarm.nn
-from adaswarm.utils import progress_bar, Metrics
+from adaswarm.utils import progress_bar
 from adaswarm.data import DataLoaderFetcher
 
 from adaswarm.utils.options import (
-    is_adaswarm,
     number_of_epochs,
-    dataset_name,
     get_device,
     log_level,
 )
@@ -39,208 +34,122 @@ logging.basicConfig(level=log_level())
 
 
 def run():
-    chosen_loss_function = "AdaSwarm" if is_adaswarm() else "Adam"
-    with Metrics(name=chosen_loss_function, dataset=dataset_name()) as metrics:
-        logging.debug("in run function")
-        device = get_device()
+    logging.debug("in run function")
+    device = get_device()
 
-        parser = argparse.ArgumentParser(
-            description=f"PyTorch {dataset_name()} Training"
-        )
-        parser.add_argument("--lr", default=0.1, type=float, help="learning rate")
-        parser.add_argument(
-            "--resume", "-r", action="store_true", help="resume from checkpoint"
-        )
+    parser = argparse.ArgumentParser(description="PyTorch Iris Training")
+    parser.add_argument("--lr", default=0.1, type=float, help="learning rate")
 
-        args = parser.parse_args()
+    args = parser.parse_args()
 
-        start_epoch = 0  # start from epoch 0 or last checkpoint epoch
+    start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 
-        # Data
-        print("==> Preparing data..")
+    # Data
+    print("==> Preparing data..")
 
-        fetcher = DataLoaderFetcher(dataset_name())
-        trainloader = fetcher.train_loader()
-        testloader = fetcher.test_loader()
+    fetcher = DataLoaderFetcher()
+    trainloader = fetcher.train_loader()
+    testloader = fetcher.test_loader()
 
-        num_batches_train = int(len(trainloader.dataset) / trainloader.batch_size)
-        num_batches_test = int(len(testloader.dataset) / testloader.batch_size)
-        print(f"Trainloader {len(trainloader.dataset)} dataset")
-        print(f"Testloader {len(testloader.dataset)} dataset")
-        # Model
-        print("==> Building model..")
-        model = fetcher.model()
+    print(f"Trainloader {len(trainloader.dataset)} dataset")
+    print(f"Testloader {len(testloader.dataset)} dataset")
+    # Model
+    print("==> Building model..")
+    model = fetcher.model()
 
-        if args.resume:
-            # Load checkpoint.
-            print("==> Resuming from checkpoint..")
-            assert os.path.isdir("checkpoint"), "Error: no checkpoint directory found!"
-            checkpoint = torch.load("./checkpoint/ckpt.pth")
-            model.load_state_dict(checkpoint["net"])
-            start_epoch = checkpoint["epoch"]
+    optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
 
-        optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
+    approx_criterion = adaswarm.nn.BCELoss()
 
-        logging.info("Using %s Optimiser", chosen_loss_function)
+    # Training
+    def train(epoch):
+        print(f"\nEpoch: {epoch}")
+        model.train()
+        running_loss = 0
 
-        #TODO: Use a candidate loss function on a case by case basis
-        if dataset_name() in ["Iris"]:
-            if is_adaswarm():
-                approx_criterion = adaswarm.nn.BCELoss()
-            else:
-                approx_criterion = torch.nn.BCELoss()
-        else:
-            if is_adaswarm():
-                approx_criterion = adaswarm.nn.CrossEntropyLoss()
-            else:
-                approx_criterion = torch.nn.CrossEntropyLoss()
+        batch_accuracies = []
+        batch_losses = []
 
-        # Training
-        def train(epoch):
-            print(f"\nEpoch: {epoch}")
-            metrics.current_epoch(epoch + 1)
-            model.train()
-            running_loss = 0
-            correct = 0
-            total = 0
+        for batch_idx, (inputs, targets) in enumerate(trainloader):
+            inputs, targets = inputs.to(device), targets.to(device)
+            targets.requires_grad = False
 
-            batch_accuracies = []
-            batch_losses = []
+            inputs = Variable(inputs).float()
+            targets = Variable(
+                targets,
+            ).float()
+            outputs = model(inputs).float()
 
-            for batch_idx, (inputs, targets) in enumerate(trainloader):
-                inputs, targets = inputs.to(device), targets.to(device)
-                tic = time.monotonic()
-                if chosen_loss_function.lower() in ["adaswarm"]:
-                    targets.requires_grad = False
+            loss = approx_criterion(outputs, targets)
 
-                if dataset_name() in ["Iris"]:
-                    inputs = Variable(inputs).float()
-                    targets = Variable(
-                        targets,
-                    ).float()
-                    outputs = model(inputs).float()
-                else:
-                    outputs = model(inputs)
+            optimizer.zero_grad()  # zero the gradients on each pass before the update
+            loss.backward()  # backpropagate the loss through the model
+            optimizer.step()  # update the gradients w.r.t the loss
 
-                loss = approx_criterion(outputs, targets)
+            running_loss += (
+                loss.item()
+            )  # loss.item() contains the loss of entire mini-batch,
+            # but divided by the batch size.
+            # here we are summing up the losses as we go
 
-                optimizer.zero_grad()  # zero the gradients on each pass before the update
-                loss.backward()  # backpropagate the loss through the model
-                optimizer.step()  # update the gradients w.r.t the loss
+            accuracy = (
+                torch.eq(outputs.round(), targets).float().mean().item()
+            )  # accuracy
 
-                running_loss += (
-                    loss.item()
-                )  # loss.item() contains the loss of entire mini-batch,
-                # but divided by the batch size.
-                # here we are summing up the losses as we go
+            train_loss = running_loss / (batch_idx + 1)
+            batch_accuracies.append(accuracy)
+            batch_losses.append(loss.item())
 
-                if dataset_name() in ["Iris"]:
-                    accuracy = (
-                        torch.eq(outputs.round(), targets).float().mean().item()
-                    )  # accuracy
-                else:
-                    _, predicted = outputs.max(1)
-                    total += targets.size(0)
-                    correct += predicted.eq(targets).sum().item()
-                    accuracy = correct / total
-
-                training_loss = running_loss / (batch_idx + 1)
-
-                batch_accuracies.append(accuracy)
-                toc = time.monotonic()
-                batch_losses.append(loss.item())
-                print(f"Batch : {batch_idx}| Loss: {loss.item()} | Time: {toc-tic}")
-
-                metrics.update_batch_training_accuracy(accuracy)
-                metrics.update_training_loss(training_loss)
-
-            metrics.add_epoch_train_loss(sum(batch_losses) / num_batches_train)
-            metrics.add_epoch_train_accuracy(
-                100 * sum(batch_accuracies) / num_batches_train
+            progress_bar(
+                batch_idx,
+                len(trainloader),
+                f"""Loss: {train_loss:3f}
+                    | Acc: {100.*accuracy}%% ({accuracy})""",
             )
 
-            if epoch % 5 == 0:
-                print(
-                    f"[{epoch}/{number_of_epochs()}], \
-                    loss: {metrics.current_epoch_loss()} \
-                        acc: {np.round(metrics.epoch_train_accuracies[-1:], 3)}"
+    def test(epoch):
+        print(f"\nEpoch: {epoch}")
+        model.eval()
+        test_loss = 0
+        running_loss = 0
+
+        batch_accuracies = []
+        batch_losses = []
+
+        criterion = torch.nn.BCELoss()
+
+        with no_grad():
+            for batch_idx, (inputs, targets) in enumerate(testloader):
+                inputs, targets = inputs.to(device), targets.to(device)
+                inputs = Variable(inputs).float()
+                targets = Variable(
+                    targets,
+                ).float()
+                outputs = model(inputs).float()
+
+                loss = criterion(outputs, targets)
+
+                running_loss += loss.item()
+
+                accuracy = (
+                    torch.eq(outputs.round(), targets).float().mean().item()
+                )  # accuracy
+
+                test_loss = running_loss / (batch_idx + 1)
+                batch_accuracies.append(accuracy)
+                batch_losses.append(loss.item())
+
+                progress_bar(
+                    batch_idx,
+                    len(testloader),
+                    f"""Loss: {test_loss:3f}
+                    | Acc: {100.*accuracy}%% ({accuracy})""",
                 )
 
-        def test(epoch):
-            model.eval()
-            test_loss = 0
-            correct = 0
-            total = 0
-            running_loss = 0
+    for epoch in range(start_epoch, number_of_epochs()):
 
-            batch_accuracies = []
-            batch_losses = []
-
-            if dataset_name() in ["Iris"]:
-                criterion = torch.nn.BCELoss()
-            else:
-                criterion = torch.nn.CrossEntropyLoss()
-
-            with no_grad():
-                for batch_idx, (inputs, targets) in enumerate(testloader):
-                    inputs, targets = inputs.to(device), targets.to(device)
-                    if dataset_name() in ["Iris"]:
-                        inputs = Variable(inputs).float()
-                        targets = Variable(
-                            targets,
-                        ).float()
-                        outputs = model(inputs).float()
-                    else:
-                        outputs = model(inputs)
-                    loss = criterion(outputs, targets)
-
-                    running_loss += loss.item()
-
-                    if dataset_name() in ["Iris"]:
-                        accuracy = (
-                            torch.eq(outputs.round(), targets).float().mean().item()
-                        )  # accuracy
-                    else:
-                        _, predicted = outputs.max(1)
-                        total += targets.size(0)
-                        correct += predicted.eq(targets).sum().item()
-                        accuracy = correct / total
-                    test_loss = running_loss / (batch_idx + 1)
-                    batch_accuracies.append(accuracy)
-                    batch_losses.append(loss.item())
-
-                    metrics.update_test_accuracy(accuracy)
-                    metrics.update_test_loss(test_loss)
-
-                    progress_bar(
-                        batch_idx,
-                        len(testloader),
-                        f"""Loss: {test_loss:3f}
-                        | Acc: {100.*accuracy}%% ({accuracy})""",
-                    )
-            metrics.add_epoch_test_loss(sum(batch_losses) / num_batches_test)
-            metrics.add_epoch_test_accuracy(
-                100 * sum(batch_accuracies) / num_batches_test
-            )
-            # Save checkpoint.
-            acc = 100.0 * accuracy
-
-            print("Saving..")
-            state = {
-                "net": model.state_dict(),
-                "acc": acc,
-                "epoch": epoch,
-            }
-            if not os.path.isdir("checkpoint"):
-                os.mkdir("checkpoint")
-            torch.save(state, "./checkpoint/ckpt.pth")
-
-        for epoch in range(start_epoch, number_of_epochs()):
-
-            train(epoch)
-            test(epoch)
-
-        return metrics
+        train(epoch)
+        test(epoch)
 
 
 # TODO: Add a script to run both optimizers and
