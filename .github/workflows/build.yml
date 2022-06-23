@@ -21,10 +21,10 @@ jobs:
 
         - name: Lint and verify python code
           run: |
-            poetry run pylint -d duplicate-code examples/main.py adaswarm/particle.py
+            make lint
           shell: bash
 
         - name: Run unit tests
           run: |
-            poetry run python -m unittest tests/unit/test*
+            make test
           shell: bash

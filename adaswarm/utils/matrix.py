@@ -1,9 +1,15 @@
+"""
+Utility for matrix operations
+"""
+import random
 import torch
 import numpy as np
-import random
 
 
 def get_rotation_matrix(dimensions, theta, axis_rotation_factor):
+    """
+    Get the rotation matrix
+    """
     matrix = np.zeros((dimensions, dimensions))
     cos_theta = np.cos(theta)
     sin_theta = np.sin(theta)
@@ -21,13 +27,14 @@ def get_rotation_matrix(dimensions, theta, axis_rotation_factor):
         matrix[idx - 1][next_idx - 1] = -sin_theta
         matrix[next_idx - 1][idx - 1] = sin_theta
         matrix[next_idx - 1][next_idx - 1] = cos_theta
-    for i in range(0, len(non_selected)):
-        idx = non_selected[i]
+    for idx in non_selected:
         matrix[idx - 1][idx - 1] = 1
     return torch.from_numpy(matrix)
 
 
 def get_phi_matrix(dimensions, c_times_r):
+    """ Returns a matrix of size dimensions x
+    dimensions with values in [0, 1] """
     matrix = np.zeros((dimensions, dimensions))
     for i in range(dimensions):
         matrix[i][i] = c_times_r
