@@ -1,8 +1,24 @@
 [tool.poetry]
 name = "adaswarm"
-version = "0.1.0"
-description = ""
-authors = ["swhustla <fdkelly@gmail.com>"]
+version = "0.0.1"
+description = "An implementation of particle swarm optimisation loss function for PyTorch"
+authors = ["Frank Kelly", "Zabil CM"]
+maintainers= ["Frank Kelly", "Zabil CM"]
+license = "MIT"
+readme = "README.md"
+homepage = ""
+repository = "https://github.com/AdaSwarm/AdaSwarm"
+documentation = ""
+keywords = [
+    "PyTorch",
+    "PSO",
+    "swarm",
+    "Adam",
+    "Optimizer",
+    "Cross Entropy",
+    "Computer vision"
+]
+
 
 [tool.poetry.dependencies]
 python = ">=3.9.0, <3.11"
@@ -26,3 +42,6 @@ freezegun = "^1.1.0"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.urls]
+issues = "https://github.com/AdaSwarm/AdaSwarm/issues"

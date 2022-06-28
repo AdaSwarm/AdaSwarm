@@ -29,7 +29,7 @@ def get_rotation_matrix(dimensions, theta, axis_rotation_factor):
         matrix[next_idx - 1][next_idx - 1] = cos_theta
     for idx in non_selected:
         matrix[idx - 1][idx - 1] = 1
-    return torch.from_numpy(matrix)
+    return torch.from_numpy(matrix) # pylint: disable=E1101
 
 
 def get_phi_matrix(dimensions, c_times_r):
@@ -38,4 +38,4 @@ def get_phi_matrix(dimensions, c_times_r):
     matrix = np.zeros((dimensions, dimensions))
     for i in range(dimensions):
         matrix[i][i] = c_times_r
-    return torch.from_numpy(matrix)
+    return torch.from_numpy(matrix) # pylint: disable=E1101

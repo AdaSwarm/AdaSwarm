@@ -3,7 +3,7 @@ import os
 import torch
 from torch import cuda
 
-DEVICE = torch.device("cuda:0" if cuda.is_available() else "cpu")
+DEVICE = torch.device("cuda:0" if cuda.is_available() else "cpu") # pylint: disable=E1101
 
 
 def get_device():
