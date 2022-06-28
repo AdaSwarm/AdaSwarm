@@ -35,7 +35,6 @@ class CrossEntropyLossCreator:
         Apply forward propagation to learning weights
         """
         dimension, classes = y_targets.size()
-        # TODO: Check the optimum swarm size
         acceleration_coefficients=AccelerationCoefficients()
         inertial_weight_beta =  0.1
         swarm_size = 10
@@ -63,7 +62,7 @@ class CrossEntropyLossCreator:
         y_predicted_label, _ = ctx.saved_tensors
         sum_cr = ctx.sum_cr
         eta_learning_rate = ctx.eta_learning_rate
-        grad_input = torch.neg((sum_cr / eta_learning_rate) * (ctx.gbest - y_predicted_label))
+        grad_input = torch.neg((sum_cr / eta_learning_rate) * (ctx.gbest - y_predicted_label)) # pylint: disable=E1101
         return grad_input, grad_output, None, None, None
 
     # pylint: disable=W0223
