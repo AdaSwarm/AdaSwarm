@@ -69,7 +69,7 @@ Therefore, in order to better understand, and develop the theory and tools for c
 
 ## Adaswarm Equivalence of Gradients: Why is it happening?
 
-The equivalences are driven by the fllowing equations in the main text (cf. docs/papers folder): 
+The equivalences are driven by the following equations in the main text (cf. docs/papers folder): 
 
 Eqns (4)-(6), (15), (18) and the eqn below for non-differentiable loss and (20)-(24)
 
@@ -102,10 +102,10 @@ Eqns (4)-(6), (15), (18) and the eqn below for non-differentiable loss and (20)-
 
 ### Pre-requisites
 
-* Python 3.8+
+* Python 3.9+
 * [Poetry](https://python-poetry.org/)
 
-### Setup
+### Get the source 
 
 ```
 $ git clone https://github.com/AdaSwarm/AdaSwarm.git
@@ -115,26 +115,23 @@ $ git clone https://github.com/AdaSwarm/AdaSwarm.git
 
 ```
 $ cd AdaSwarm
-$ poetry install
-$ poetry shell
-$ ./examples/main.py
+$ make run
 ```
 
-### Running the comparison (Adaswarm/PSO versus Adam Optimiser and torch cross entropy loss)
-
+### Running tests
 ```
-$ cd AdaSwarm
-$ poetry install
-$ poetry shell
-$ ./examples/compare.py
+$ make test
 ```
 
-### Viewing the comparison output
-Comparison reports are available in the `reports` folder. In both graph (PNG) and tabular formats, or tabular alone if running the `main.py`. To view the CSV contents in a nicely formatted style use this command:  
+### Using in your own project
+
+If you use poetry you can add AdaSwarm as a dependency
+
 ```
-$ poetry run vd report/summary.csv
+$ poetry add adaswarm
 ```
 
+See `.example/main.py` for usage.
 
 ## Contributing:
 
