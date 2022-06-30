@@ -8,6 +8,6 @@ run: install
 	poetry run examples/main.py
 build:
 	poetry build
-publish:
+publish: build
 	poetry publish
 	

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaswarm"
-version = "0.0.1"
+version = "0.0.2"
 description = "An implementation of particle swarm optimisation loss function for PyTorch"
 authors = ["Frank Kelly", "Zabil CM"]
 maintainers= ["Frank Kelly", "Zabil CM"]
