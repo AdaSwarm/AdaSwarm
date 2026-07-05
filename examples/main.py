@@ -1,22 +1,13 @@
 #!/usr/bin/env python3
 
-"""An example that uses AdaSwarm on MNIST dataset"""
+"""An example that uses AdaSwarm on the Iris dataset"""
 
 import argparse
 import logging
-import os
-import sys
 
-# pylint: disable=E0611
 import torch
 from torch.autograd.grad_mode import no_grad
-from torch.autograd import Variable
 
-dirname = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(dirname, ".."))
-
-
-# pylint: disable=C0411, E0401, C0413
 import adaswarm.nn
 from adaswarm.utils import progress_bar
 from adaswarm.data import DataLoaderFetcher
@@ -74,10 +65,8 @@ def run():
             inputs, targets = inputs.to(device), targets.to(device)
             targets.requires_grad = False
 
-            inputs = Variable(inputs).float()
-            targets = Variable(
-                targets,
-            ).float()
+            inputs = inputs.float()
+            targets = targets.float()
             outputs = model(inputs).float()
 
             loss = approx_criterion(outputs, targets)
@@ -121,10 +110,8 @@ def run():
         with no_grad():
             for batch_idx, (inputs, targets) in enumerate(testloader):
                 inputs, targets = inputs.to(device), targets.to(device)
-                inputs = Variable(inputs).float()
-                targets = Variable(
-                    targets,
-                ).float()
+                inputs = inputs.float()
+                targets = targets.float()
                 outputs = model(inputs).float()
 
                 loss = criterion(outputs, targets)

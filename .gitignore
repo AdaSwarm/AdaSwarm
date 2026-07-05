@@ -1,20 +1,47 @@
+# --- OS ---
 .DS_Store
 
-
-# data folder
-data/*
-notebooks/.ipynb_checkpoints/*ipynb
-*.code-workspace
-*.pyc
-__pycache__/
+# --- Editors ---
 .vscode
+.idea
+*.code-workspace
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/*
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Environments ---
 venv
-runs
+.venv
+.venv-*
+.python-version
+
+# --- Notebooks ---
+notebooks/.ipynb_checkpoints/*ipynb
+**/.ipynb_checkpoints/
+
+# --- Data & model artifacts ---
+data/*
 checkpoint/*.pth
+runs
 mnist_performance*/*
+lightning_logs/
+
+# --- Profiling & reports ---
 profile*
-tests/unit/output/
-summary.md
 report/
 report*/
-dist/*
+summary.md
+tests/unit/output/
+
+# --- Local tool state ---
+.claude/

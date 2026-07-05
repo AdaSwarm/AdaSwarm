@@ -1,5 +1,4 @@
 import unittest
-from numpy.core.fromnumeric import size
 from torch import randint, Tensor
 from adaswarm.rempso import ParticleSwarmOptimizer
 from adaswarm.particle import AccelerationCoefficients
