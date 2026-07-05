@@ -1,7 +1,9 @@
 """Rotated PSO algorithm."""
 import time
+
 from torch import Tensor
 from torch.nn import CrossEntropyLoss
+
 from adaswarm.particle import ParticleSwarm
 from adaswarm.utils.options import get_device
 

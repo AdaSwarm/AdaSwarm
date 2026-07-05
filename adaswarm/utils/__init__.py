@@ -2,8 +2,10 @@
 Utility for importing keras functions
 """
 import numpy as np
-from adaswarm.utils.progressbar import *
 
+from adaswarm.utils.progressbar import format_time, progress_bar
+
+__all__ = ["to_categorical", "format_time", "progress_bar"]
 
 # pylint: disable=C0301
 # Please refer to Keras: https://github.com/keras-team/keras/blob/14f71177ad28a60a4ea41775b2ac159d3688c792/keras/utils/np_utils.py#L22-L74

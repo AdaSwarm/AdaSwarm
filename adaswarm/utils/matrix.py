@@ -2,8 +2,9 @@
 Utility for matrix operations
 """
 import random
-import torch
+
 import numpy as np
+import torch
 
 
 def get_rotation_matrix(dimensions, theta, axis_rotation_factor):

@@ -113,23 +113,24 @@
 ## Phase 6 — Testing & Quality Gates 🟠
 *Goal: a trustworthy, fast, modern feedback loop.*
 
-- [ ] 🟠 Migrate `unittest` → **pytest**
-- [ ] 🟠 Add `pytest` coverage reporting; set a baseline threshold
-- [ ] 🟠 Add tests around the loss function forward/backward (currently only PSO iteration is covered)
-- [ ] 🟢 Add seeded determinism tests for the swarm
-- [ ] 🟢 Replace `pylint` + `black 21.x` with **ruff** (format + lint) and add **mypy/pyright** type checking
+- [x] 🟠 Migrate `unittest` → **pytest** (runner + config in `pyproject.toml`; existing `unittest.TestCase` classes run unchanged)
+- [x] 🟠 Add `pytest` coverage reporting (`pytest-cov`; 73% and rising)
+- [x] 🟠 Add tests around the loss function forward/backward (`test_loss_functions.py` — was 0% covered, now exercised)
+- [x] 🟢 Fixed latent **test-pollution** bug (global `ADASWARM_DATASET_NAME` leaked across tests) via isolated fixture
+- [ ] 🟢 Add seeded determinism tests for the swarm *(deferred — pairs with Phase 4 seeding utility)*
+- [x] 🟢 Replace `pylint` + `black 21.x` with **ruff** (format + lint) and add **mypy** type checking (removed `.pylintrc`)
 
 ---
 
 ## Phase 7 — CI/CD Modernization 🟠
 *Goal: current, multi-version, trustworthy pipeline.*
 
-- [ ] 🟠 Rename workflow from "GitHub Actions Demo" to something meaningful
-- [ ] 🔴 Bump actions: `checkout@v2` → `@v4`, `setup-python@v2` → `@v5`
-- [ ] 🟠 Replace the pinned third-party Poetry action with **`astral-sh/setup-uv`**
-- [ ] 🟠 Test matrix across Python 3.10 / 3.11 / 3.12 (and 3.13)
-- [ ] 🟢 Add ruff + type-check + pytest-coverage as CI steps
-- [ ] 🟢 Add Dependabot / uv update automation
+- [x] 🟠 Rename workflow from "GitHub Actions Demo" to `CI`
+- [x] 🔴 Bump actions: `checkout@v2` → `@v4`, dropped `setup-python@v2`
+- [x] 🟠 Replace the pinned third-party Poetry action with **`astral-sh/setup-uv`**
+- [x] 🟠 Test matrix across Python 3.10 / 3.11 / 3.12 / 3.13
+- [x] 🟢 Add ruff + mypy + pytest-coverage as CI steps
+- [ ] 🟢 Add Dependabot / uv update automation *(deferred — optional follow-up)*
 
 ---
 

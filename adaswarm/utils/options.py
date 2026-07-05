@@ -1,5 +1,6 @@
 """Parameters for the model training"""
 import os
+
 import torch
 from torch import cuda
 

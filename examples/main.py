@@ -9,15 +9,13 @@ import torch
 from torch.autograd.grad_mode import no_grad
 
 import adaswarm.nn
-from adaswarm.utils import progress_bar
 from adaswarm.data import DataLoaderFetcher
-
+from adaswarm.utils import progress_bar
 from adaswarm.utils.options import (
-    number_of_epochs,
     get_device,
     log_level,
+    number_of_epochs,
 )
-
 
 logging.basicConfig(level=log_level())
 

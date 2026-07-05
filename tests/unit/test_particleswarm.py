@@ -1,9 +1,10 @@
 import unittest
-from torch import randint, Tensor, tensor, manual_seed
-from adaswarm.particle import ParticleSwarm, RotatedEMParticle, AccelerationCoefficients
-from adaswarm.utils.options import get_device
 from unittest.mock import patch
 
+from torch import Tensor, manual_seed, randint, tensor
+
+from adaswarm.particle import AccelerationCoefficients, ParticleSwarm, RotatedEMParticle
+from adaswarm.utils.options import get_device
 
 manual_seed(0)
 NUMBER_OF_CLASSES = 10

@@ -1,8 +1,10 @@
 import os
 import unittest
-import torch
-from adaswarm.particle import AccelerationCoefficients
 from unittest.mock import patch
+
+import torch
+
+from adaswarm.particle import AccelerationCoefficients
 
 
 class TestAccelerationCoefficients(unittest.TestCase):

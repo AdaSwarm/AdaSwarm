@@ -45,7 +45,7 @@ def train_and_evaluate(use_adaswarm: bool, epochs: int = 40, seed: int = 0) -> f
     optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
 
     # 4. Loss — this is the whole point. Swap the criterion, nothing else.
-    if use_adaswarm:
+    if use_adaswarm:  # noqa: SIM108 (kept explicit for teaching clarity)
         criterion = adaswarm.nn.BCELoss()      # <-- swarm-intelligence loss
     else:
         criterion = torch.nn.BCELoss()         # <-- ordinary PyTorch loss

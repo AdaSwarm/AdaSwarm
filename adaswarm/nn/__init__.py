@@ -3,8 +3,9 @@ Utilities for creating the loss function
 """
 import torch
 import torch.nn.functional as F
-from adaswarm.rempso import ParticleSwarmOptimizer
+
 from adaswarm.particle import AccelerationCoefficients
+from adaswarm.rempso import ParticleSwarmOptimizer
 
 
 def CrossEntropyLoss(): # pylint: disable=C0103
