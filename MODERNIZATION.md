@@ -71,42 +71,42 @@
 ## Phase 4 — Architecture & Design 🟠
 *Goal: reduce coupling, kill duplication, improve testability.*
 
-- [ ] 🟠 De-duplicate the velocity-update logic — it exists **twice**: `RotatedEMParticle.update_velocity` and `ParticleSwarm.update_velocities` (single source of truth)
-- [ ] 🟠 Replace global env-var config (`options.py`) with an injectable, typed config object (`pydantic-settings` / dataclass) — removes hidden `dataset_name()` coupling in `particle.py`
-- [ ] 🟠 Reconsider `class ParticleSwarm(list)` — favor composition over subclassing `list`
-- [ ] 🟢 Address the standing `# TODO: Vectorize this operation` — batch the per-particle loop with tensor ops
-- [ ] 🟢 Pull hardcoded hyperparameters (`swarm_size=10`, `beta=0.1`, `run_iteration(number=40)`) into config
-- [ ] 🟢 Add reproducibility: centralized seeding for `torch` / `numpy` / `random`
+- [x] 🟠 De-duplicate the velocity-update logic — was implemented **twice** (verbatim) in `RotatedEMParticle.update_velocity` and `ParticleSwarm.update_velocities`; swarm now delegates to the particle method (single source of truth)
+- [ ] 🟠 Replace global env-var config (`options.py`) with an injectable, typed config object *(deferred — API-changing; needs maintainer sign-off)*
+- [ ] 🟠 Reconsider `class ParticleSwarm(list)` — favor composition *(deferred — API-changing)*
+- [ ] 🟢 Address the standing `# TODO: Vectorize this operation` — batch the per-particle loop *(deferred — perf work, needs benchmark harness)*
+- [ ] 🟢 Pull hardcoded hyperparameters (`swarm_size=10`, `beta=0.1`, `run_iteration(number=40)`) into config *(pairs with config-object work)*
+- [ ] 🟢 Add reproducibility: centralized seeding for `torch` / `numpy` / `random` *(deferred to Phase 6 test utilities)*
 
 ---
 
 ## Phase 5 — API & Documentation Alignment 🔗 #46
 *Goal: make the README match reality, or make reality match the README.*
 
-- [ ] 🔴 🔗 #46 Resolve the headline mismatch: README promises `optim.AdaSwarm()` (drop-in optimizer); actual API is a **loss function** (`adaswarm.nn.BCELoss()`) used with `torch.optim.Adam`
-  - [ ] Either: document the true loss-function API clearly, **or**
-  - [ ] Provide a real `optim.AdaSwarm` optimizer wrapper to honor the promised API
-- [ ] 🟠 Rewrite the "How to run" section for the new toolchain (uv)
-- [ ] 🟠 Fix citation typos in README bibtex ("daSwarm", "201")
-- [ ] 🟢 Add a minimal, copy-pasteable usage example that runs standalone (addresses the #46 confusion about global `dataset` vars)
-- [ ] 🟢 Populate the empty root `adaswarm/__init__.py` with public exports + `__version__`
+- [x] 🔴 🔗 #46 Resolve the headline mismatch: README promises `optim.AdaSwarm()` (drop-in optimizer); actual API is a **loss function** (`adaswarm.nn.BCELoss()`) used with `torch.optim.Adam`
+  - [x] Documented the true loss-function API clearly (TL;DR + FAQ + mental-model diagram)
+  - [ ] *(Future)* provide a real `optim.AdaSwarm` optimizer wrapper to honor the originally promised API
+- [x] 🟠 Rewrite the "How to run" section for the new toolchain (uv)
+- [x] 🟠 Fix citation typos in README bibtex ("daSwarm", "201")
+- [x] 🟢 Add a minimal, copy-pasteable usage example that runs standalone (addresses the #46 confusion about global `dataset` vars)
+- [x] 🟢 Populate the empty root `adaswarm/__init__.py` with public exports + `__version__`
 
 ---
 
 ## Phase 5.5 — Developer Experience & Onboarding 🟢🔴
 *Goal: a stranger to the project is productive in < 5 minutes. This is the North Star.*
 
-- [ ] 🔴 **60-second Quickstart** at the top of the README: install → import → train a model in one copy-paste block that actually runs
-- [ ] 🔴 **Runnable Jupyter notebook** (`examples/quickstart.ipynb`) — narrated end-to-end: load data → build model → train with AdaSwarm loss → plot loss/accuracy vs. plain Adam
-  - [ ] "Open in Colab" badge with a single-cell `pip install` so no local setup is needed
-  - [ ] Self-contained: no reliance on hidden env vars or global `dataset_name()` state
-- [ ] 🟠 **Standalone script example** (`examples/quickstart.py`) mirroring the notebook for non-notebook users
-- [ ] 🟠 Clear, task-oriented example set: (1) tabular/Iris, (2) image/MNIST, (3) "bring your own model & data"
-- [ ] 🟠 Document the mental model up front: *AdaSwarm is a drop-in **loss function** used with a standard optimizer* — with a diagram of where it plugs into the training loop
-- [ ] 🟠 `uv run` / `uvx` one-liners so users can try it without cloning
-- [ ] 🟢 Troubleshooting/FAQ section seeded from real issues (#46, #80) — "it installed but how do I use it?"
-- [ ] 🟢 Inline, well-commented example code (explain *why*, not just *what*)
-- [ ] 🟢 Add a short animated/gif or plotted result showing AdaSwarm vs Adam convergence
+- [x] 🔴 **60-second Quickstart** at the top of the README: install → import → train a model in one copy-paste block that actually runs
+- [x] 🔴 **Runnable Jupyter notebook** (`examples/quickstart.ipynb`) — narrated end-to-end: load data → build model → train with AdaSwarm loss → plot loss/accuracy vs. plain Adam *(executed clean, plot renders)*
+  - [x] "Open in Colab" badge with a single-cell `pip install` so no local setup is needed
+  - [x] Self-contained: no reliance on hidden env vars or global `dataset_name()` state
+- [x] 🟠 **Standalone script example** (`examples/quickstart.py`) mirroring the notebook for non-notebook users
+- [ ] 🟠 Clear, task-oriented example set: (1) tabular/Iris ✅, (2) image/MNIST, (3) "bring your own model & data" *(Iris done; MNIST/BYO deferred)*
+- [x] 🟠 Document the mental model up front: *AdaSwarm is a drop-in **loss function** used with a standard optimizer* — with a diagram of where it plugs into the training loop
+- [x] 🟠 `uv run` one-liners so users can try it without cloning
+- [x] 🟢 Troubleshooting/FAQ section seeded from real issues (#46, #80) — "it installed but how do I use it?"
+- [x] 🟢 Inline, well-commented example code (explain *why*, not just *what*)
+- [x] 🟢 Add a plotted result showing AdaSwarm vs Adam convergence *(in the notebook)*
 
 ---
 

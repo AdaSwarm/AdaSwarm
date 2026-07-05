@@ -18,6 +18,66 @@ This repo purportedly implements *AdaSwarm*, an optimizer, that combines Gradien
 
 *AdaSwarm* is based on "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence, _Rohan Mohapatra, Snehanshu Saha, Carlos A. Coello Coello, Anwesh Bhattacharya Soma S. Dhavala, and Sriparna Saha_", to appear in IEEE Transactions on Emerging Topics in Computational Intelligence. An arXiv version can be found [here](https://arxiv.org/abs/2006.09875). [This](https://github.com/rohanmohapatra/pytorch-cifar) repo contains implementation used the paper.
 
+---
+
+## ⚡ TL;DR
+
+**AdaSwarm is a drop-in _loss function_.** You keep your normal optimiser (e.g. `Adam`) and your
+normal training loop — you only swap the criterion.
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AdaSwarm/AdaSwarm/blob/main/examples/quickstart.ipynb)
+
+```python
+import torch
+import adaswarm.nn
+
+criterion = adaswarm.nn.BCELoss()                        # swarm-based loss (or CrossEntropyLoss)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.1) # your usual optimiser
+
+for inputs, targets in loader:
+    optimizer.zero_grad()
+    loss = criterion(model(inputs), targets)             # <-- the only change vs standard training
+    loss.backward()
+    optimizer.step()
+```
+
+- Use `adaswarm.nn.BCELoss()` for binary / one-hot targets (tabular problems).
+- Use `adaswarm.nn.CrossEntropyLoss()` for multi-class classification (e.g. images).
+
+## 🚀 Quickstart (60 seconds)
+
+```bash
+# 1. Get the code and install (uses uv: https://docs.astral.sh/uv/)
+git clone https://github.com/AdaSwarm/AdaSwarm.git
+cd AdaSwarm
+uv sync --extra examples
+
+# 2. Run the self-contained example (trains Iris with AdaSwarm vs a standard loss)
+uv run python examples/quickstart.py
+```
+
+Prefer a narrated, visual walkthrough with a convergence plot? Open
+[`examples/quickstart.ipynb`](examples/quickstart.ipynb) locally or
+[in Colab](https://colab.research.google.com/github/AdaSwarm/AdaSwarm/blob/main/examples/quickstart.ipynb).
+
+## 🧠 Mental model: where AdaSwarm plugs in
+
+```mermaid
+flowchart LR
+    A[inputs] --> M[your model]
+    M -->|outputs| L[AdaSwarm loss<br/>criterion]
+    T[targets] --> L
+    L -->|"loss.backward()"| M
+    L -.swarm approximates gradient of loss.-> L
+    M -->|"optimizer.step()"| O[Adam / SGD / ...]
+```
+
+AdaSwarm runs an internal particle swarm over the loss to approximate its gradient, then hands control
+straight back to your standard optimiser via `loss.backward()`. Nothing else in your loop changes.
+
+---
+
+
 
 ## Why *AdaSwarm*:
 Said  et  al.  [[1]](#1)  postulated  that  swarms behavior is similar to  that of classical  and  quantum  particles.  In  fact, their analogy is so striking that one may think that the social and  individual  intelligence  components  in  Swarms  are,  after  all, nice useful metaphors, and that there is a neat underlying dynamical system at play. This dynamical system perspective was indeed useful in unifying two almost parallel streams, namely, optimization  and  Markov  Chain  Monte  Carlo  sampling. 
@@ -102,36 +162,60 @@ Eqns (4)-(6), (15), (18) and the eqn below for non-differentiable loss and (20)-
 
 ### Pre-requisites
 
-* Python 3.9+
-* [Poetry](https://python-poetry.org/)
+* Python 3.10+
+* [uv](https://docs.astral.sh/uv/) (recommended) — a fast Python package/-project manager
 
-### Get the source 
+### Get the source
 
-```
-$ git clone https://github.com/AdaSwarm/AdaSwarm.git
-```
-
-### Running the example (single method - runs Adaswarm/PSO)
-
-```
-$ cd AdaSwarm
-$ make run
+```bash
+git clone https://github.com/AdaSwarm/AdaSwarm.git
+cd AdaSwarm
 ```
 
-### Running tests
+### Install
+
+```bash
+uv sync                 # core library only
+uv sync --extra examples   # + torchvision/matplotlib/jupyter for the examples & notebook
 ```
-$ make test
+
+### Run the example
+
+```bash
+uv run python examples/quickstart.py
+```
+
+### Run the tests
+
+```bash
+uv run pytest
 ```
 
 ### Using in your own project
 
-If you use poetry you can add AdaSwarm as a dependency
+Install directly from GitHub (PyPI release pending):
 
-```
-$ poetry add adaswarm
+```bash
+uv pip install "adaswarm @ git+https://github.com/AdaSwarm/AdaSwarm.git"
 ```
 
-See `.example/main.py` for usage.
+Then use it exactly like the [TL;DR](#-tldr) above. See
+[`examples/quickstart.py`](examples/quickstart.py) for a complete, runnable script.
+
+## ❓ FAQ / Troubleshooting
+
+**"I expected `optim.AdaSwarm()` — where is the optimizer?"**
+AdaSwarm is currently exposed as a **loss function** (`adaswarm.nn.BCELoss()` /
+`adaswarm.nn.CrossEntropyLoss()`) used together with a standard optimiser such as `torch.optim.Adam`.
+There is no `optim.AdaSwarm()` class yet. See the [TL;DR](#-tldr).
+
+**Install fails with a `torch`/`torchvision` version conflict.**
+This was caused by old, over-tight version pins and is fixed on the current `main`. Make sure you are
+installing the latest version (which requires Python ≥ 3.10 and `torch` ≥ 2.2).
+
+**Which loss do I use?**
+`BCELoss()` for binary/one-hot tabular targets; `CrossEntropyLoss()` for multi-class problems.
+
 
 ## Contributing:
 
@@ -166,14 +250,11 @@ J.  Spall, Introduction  to  stochastic  search  and  optimization. Wiley-Inters
 *AdaSwarm* will be appearing in the [paper](https://arxiv.org/abs/2006.09875) you can cite:
 ```bibtex
 @inproceedings{adaswarm,
-    title = "daSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence",
-    author = "Rohan Mohapatra, Snehanshu Saha, Carlos A. Coello Coello, Anwesh Bhattacharya Soma S. Dhavala, and Sriparna Saha",
-    booktitle = "IEEE Transaction on Emerging Topics in Computational Intelligence",
-    month = tbd,
+    title = "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence",
+    author = "Rohan Mohapatra and Snehanshu Saha and Carlos A. Coello Coello and Anwesh Bhattacharya and Soma S. Dhavala and Sriparna Saha",
+    booktitle = "IEEE Transactions on Emerging Topics in Computational Intelligence",
     year = "2021",
-    address = "Online",
     publisher = "IEEE",
-    url = "https://arxiv.org/abs/2006.09875",
-    pages = tbd
+    url = "https://arxiv.org/abs/2006.09875"
 }
 ```

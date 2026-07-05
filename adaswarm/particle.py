@@ -159,59 +159,9 @@ class ParticleSwarm(list):
             float values for the entire swarm (these are acceleration coefficients c1
             and c2 scaled by a random number; r1 and r2 respectively).
         """
-
-        def update_velocity(particle):
-            """Velocity is the mechanism used to move (evolve) the position of
-            a particle to search for optimal solutions.
-
-            Args:
-                gbest_position (float): global best position of the swarm
-
-            Returns:
-                [Tuple]: Updated acceleration coefficients
-            """
-            scaled_c_1_tensor = particle.acceleration_coefficients.random_scale_c_1()
-            scaled_c_2_tensor = particle.acceleration_coefficients.random_scale_c_2()
-            momentum_t = (
-                particle.beta * particle.momentum
-                + (1 - particle.beta) * particle.velocity
-            )
-            a_matrix = get_rotation_matrix(particle.dimensions, np.pi / 5, 0.4)
-            a_inverse_matrix = torch.inverse(a_matrix)
-            # TODO: check paper
-            # TODO: x = a_inverse_matrix * get_phi_matrix(self.dimensions, self.c1, r1) * a_matrix
-            particle.velocity = (
-                momentum_t
-                + torch.matmul(
-                    (
-                        a_inverse_matrix
-                        * get_phi_matrix(particle.dimensions, scaled_c_1_tensor)
-                        * a_matrix
-                    )
-                    .float()
-                    .to(particle.device),
-                    (particle.pbest_position - particle.position)
-                    .float()
-                    .to(particle.device),
-                )
-                + torch.matmul(
-                    (
-                        a_inverse_matrix
-                        * get_phi_matrix(particle.dimensions, scaled_c_2_tensor)
-                        * a_matrix
-                    )
-                    .float()
-                    .to(particle.device),
-                    (gbest_position - particle.position).float().to(particle.device),
-                )
-            )
-            particle.move()
-            particle.c_1_r_1 = scaled_c_1_tensor.item()
-            particle.c_2_r_2 = scaled_c_2_tensor.item()
-
         # TODO: Vectorize this operation
         for particle in self:
-            update_velocity(particle)
+            particle.update_velocity(gbest_position)
 
     def average_of_scaled_acceleration_coefficients(self):
         """Compute average of scaled coefficients"""
