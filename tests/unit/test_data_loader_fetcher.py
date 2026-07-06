@@ -1,16 +1,15 @@
 import unittest
-from unittest.mock import patch, ANY
+from unittest.mock import patch
 
 import numpy as np
 from numpy.testing import assert_array_almost_equal
-
+from sklearn import datasets
+from torch import tensor
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
-from torch import tensor
-from adaswarm.model import Model
-from sklearn import datasets
 
 from adaswarm.data import DataLoaderFetcher, TabularDataSet
+from adaswarm.model import Model
 
 
 class CustomDataset(Dataset):

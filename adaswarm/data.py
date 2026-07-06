@@ -1,18 +1,16 @@
 """Data to supply the AdaSwarm example - using Iris dataset"""
 
 import numpy as np
-
 import torch
-from torch.utils.data import DataLoader
-from torch.utils.data.dataset import Dataset
-from torch import is_tensor
-
 from sklearn import datasets as skl_datasets
 from sklearn.model_selection import StratifiedShuffleSplit
+from torch import is_tensor
+from torch.utils.data import DataLoader
+from torch.utils.data.dataset import Dataset
 
+from adaswarm.model import Model
 from adaswarm.utils import to_categorical
 from adaswarm.utils.options import get_device
-from adaswarm.model import Model
 
 device = get_device()
 

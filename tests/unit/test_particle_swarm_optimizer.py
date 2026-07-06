@@ -1,10 +1,11 @@
 import unittest
-from numpy.core.fromnumeric import size
-from torch import randint, Tensor
-from adaswarm.rempso import ParticleSwarmOptimizer
-from adaswarm.particle import AccelerationCoefficients
-from adaswarm.utils.options import get_device
+
 import numpy as np
+from torch import Tensor, randint
+
+from adaswarm.particle import AccelerationCoefficients
+from adaswarm.rempso import ParticleSwarmOptimizer
+from adaswarm.utils.options import get_device
 
 
 class TestRotatedEMParticleSwarmOptimizer(unittest.TestCase):

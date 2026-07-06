@@ -1,13 +1,16 @@
 install:
-	poetry install
+	uv sync --extra examples
 test:
-	poetry run python -m unittest tests/unit/test_* 
+	uv run pytest
 lint:
-	poetry run pylint -d duplicate-code adaswarm/**/*.py
+	uv run ruff check adaswarm examples tests
+format:
+	uv run ruff format adaswarm examples tests
+typecheck:
+	uv run mypy adaswarm
 run: install
-	poetry run examples/main.py
+	uv run python examples/quickstart.py
 build:
-	poetry build
+	uv build
 publish: build
-	poetry publish
-	
+	uv publish
