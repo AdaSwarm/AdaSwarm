@@ -14,6 +14,10 @@ limitations under the License.
 
 # AdaSwarm
 
+[![CI](https://github.com/AdaSwarm/AdaSwarm/actions/workflows/build.yml/badge.svg)](https://github.com/AdaSwarm/AdaSwarm/actions/workflows/build.yml)
+[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](https://github.com/AdaSwarm/AdaSwarm)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 This repo purportedly implements *AdaSwarm*, an optimizer, that combines Gradient Descent and Particle Swarms. 
 
 *AdaSwarm* is based on "AdaSwarm: Augmenting Gradient-Based optimizers in Deep Learning with Swarm Intelligence, _Rohan Mohapatra, Snehanshu Saha, Carlos A. Coello Coello, Anwesh Bhattacharya Soma S. Dhavala, and Sriparna Saha_", to appear in IEEE Transactions on Emerging Topics in Computational Intelligence. An arXiv version can be found [here](https://arxiv.org/abs/2006.09875). [This](https://github.com/rohanmohapatra/pytorch-cifar) repo contains implementation used the paper.
