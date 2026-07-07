@@ -1,0 +1,32 @@
+name: Publish to PyPI
+
+# Publishes to PyPI via Trusted Publishing (OIDC) whenever a GitHub Release is
+# published. No API token is stored — authentication uses a short-lived OIDC
+# credential. Requires a matching "pending publisher" configured on PyPI:
+#   https://pypi.org/manage/account/publishing/
+#     Owner: AdaSwarm | Repo: AdaSwarm | Workflow: release.yml | Environment: pypi
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  pypi-publish:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write        # required for OIDC Trusted Publishing
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Build distributions
+        run: uv build
+
+      - name: Publish to PyPI
+        run: uv publish --trusted-publishing always
