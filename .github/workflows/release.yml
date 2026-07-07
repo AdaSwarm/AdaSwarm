@@ -9,6 +9,7 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
+  workflow_dispatch:   # allow manual runs (e.g. to re-publish a tagged release)
 
 jobs:
   pypi-publish:
