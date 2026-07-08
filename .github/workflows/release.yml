@@ -15,7 +15,6 @@ jobs:
   pypi-publish:
     name: Build and publish
     runs-on: ubuntu-latest
-    environment: pypi
     permissions:
       id-token: write        # required for OIDC Trusted Publishing
     steps:
