@@ -15,6 +15,7 @@ limitations under the License.
 # AdaSwarm
 
 [![CI](https://github.com/AdaSwarm/AdaSwarm/actions/workflows/build.yml/badge.svg)](https://github.com/AdaSwarm/AdaSwarm/actions/workflows/build.yml)
+[![PyPI](https://img.shields.io/pypi/v/adaswarm)](https://pypi.org/project/adaswarm/)
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](https://github.com/AdaSwarm/AdaSwarm)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -197,10 +198,10 @@ uv run pytest
 
 ### Using in your own project
 
-Install directly from GitHub (PyPI release pending):
-
 ```bash
-uv pip install "adaswarm @ git+https://github.com/AdaSwarm/AdaSwarm.git"
+pip install adaswarm
+# or with uv:
+uv add adaswarm
 ```
 
 Then use it exactly like the [TL;DR](#-tldr) above. See
