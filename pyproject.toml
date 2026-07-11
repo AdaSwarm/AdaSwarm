@@ -90,6 +90,10 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 # Removing it is tracked as a Phase 4 config-object refactor in MODERNIZATION.md.
 ignore = ["B008"]
 
+[tool.ruff.lint.per-file-ignores]
+# Notebooks use the compact `plt...; plt...; plt.show()` plotting idiom.
+"*.ipynb" = ["E702"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
