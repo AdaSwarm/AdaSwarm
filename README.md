@@ -48,6 +48,7 @@ for inputs, targets in loader:
 
 - Use `adaswarm.nn.BCELoss()` for binary / one-hot targets (tabular problems).
 - Use `adaswarm.nn.CrossEntropyLoss()` for multi-class classification (e.g. images).
+- Use `adaswarm.nn.SwarmLoss(loss_fn)` for **any** custom / non-convex / non-differentiable loss (see [When is AdaSwarm actually better?](#-when-is-adaswarm-actually-better-and-when-it-isnt)).
 
 ## 🚀 Quickstart (60 seconds)
 
@@ -82,7 +83,40 @@ straight back to your standard optimiser via `loss.backward()`. Nothing else in 
 
 ---
 
+## 🎯 When is AdaSwarm actually better? (and when it isn't)
 
+AdaSwarm is a **niche tool, not a general Adam replacement.** Because it optimises via a swarm over
+candidate outputs — only ever *evaluating* the loss, never differentiating it — it wins in exactly two
+situations, and loses (on cost) everywhere else.
+
+| Output loss | Standard Adam | AdaSwarm | Use AdaSwarm? |
+|---|---|---|---|
+| Smooth & convex (MSE, cross-entropy, BCE) | ✅ optimal & cheap | ~parity, slower | ❌ no |
+| Convex but non-smooth (MAE, pinball, hinge) | ✅ subgradient works | ~parity | ❌ not needed |
+| **Non-convex / multi-modal** (deceptive local minima) | ❌ gets stuck | ✅ escapes | ✅ **yes** |
+| **Non-differentiable / black-box** (zero-gradient, discrete metrics) | ❌ can't train | ✅ trains | ✅ **yes** |
+
+The general-purpose entry point is **`adaswarm.nn.SwarmLoss(loss_fn)`**, which accepts any elementwise loss:
+
+```python
+import adaswarm.nn
+criterion = adaswarm.nn.SwarmLoss(my_elementwise_loss)  # loss_fn(pred, target) -> per-element tensor
+loss = criterion(model(x), y)
+loss.backward()   # standard optimiser step from here
+```
+
+See [`examples/why_adaswarm.ipynb`](examples/why_adaswarm.ipynb) for a head-to-head demo where, on
+identical model/data/init, Adam stalls (local minimum / zero gradient) and AdaSwarm reaches the target.
+
+**Where this shows up in the real world:** phase retrieval & phase unwrapping, audio pitch (octave
+errors), direction-of-arrival & pose/rotation losses (periodic → multi-modal); directly optimising
+discrete metrics (F1, AUC, IoU, WER), simulator-in-the-loop training, quantised-output fitting
+(non-differentiable); and multi-modal scientific fitting (spectral peaks, stiff-PDE residuals in PINNs).
+
+**Cost caveat:** each step runs a swarm over the output space, so it scales with output dimension ×
+swarm size × iterations — best for low-dimensional per-sample outputs, not large softmaxes.
+
+---
 
 ## Why *AdaSwarm*:
 Said  et  al.  [[1]](#1)  postulated  that  swarms behavior is similar to  that of classical  and  quantum  particles.  In  fact, their analogy is so striking that one may think that the social and  individual  intelligence  components  in  Swarms  are,  after  all, nice useful metaphors, and that there is a neat underlying dynamical system at play. This dynamical system perspective was indeed useful in unifying two almost parallel streams, namely, optimization  and  Markov  Chain  Monte  Carlo  sampling. 
