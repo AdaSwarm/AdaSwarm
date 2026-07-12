@@ -58,13 +58,20 @@ git clone https://github.com/AdaSwarm/AdaSwarm.git
 cd AdaSwarm
 uv sync --extra examples
 
-# 2. Run the self-contained example (trains Iris with AdaSwarm vs a standard loss)
-uv run python examples/quickstart.py
+# 2. See the two things AdaSwarm can do that plain gradient descent cannot
+uv run python examples/why_adaswarm.py
 ```
 
-Prefer a narrated, visual walkthrough with a convergence plot? Open
-[`examples/quickstart.ipynb`](examples/quickstart.ipynb) locally or
-[in Colab](https://colab.research.google.com/github/AdaSwarm/AdaSwarm/blob/main/examples/quickstart.ipynb).
+This runs a head-to-head against plain Adam on identical model/data/init and shows AdaSwarm
+(1) escaping a deceptive local minimum, and (2) training through a **non-differentiable** loss where
+Adam cannot move. Prefer a narrated, visual walkthrough with plots? Open
+[`examples/why_adaswarm.ipynb`](examples/why_adaswarm.ipynb) locally or
+[in Colab](https://colab.research.google.com/github/AdaSwarm/AdaSwarm/blob/main/examples/why_adaswarm.ipynb).
+
+> **Just want the basic API on a classic dataset?** See the Iris basic-usage example
+> ([`examples/quickstart.py`](examples/quickstart.py) /
+> [notebook](examples/quickstart.ipynb) /
+> [Colab](https://colab.research.google.com/github/AdaSwarm/AdaSwarm/blob/main/examples/quickstart.ipynb)).
 
 ## 🧠 Mental model: where AdaSwarm plugs in
 
@@ -219,10 +226,11 @@ uv sync                 # core library only
 uv sync --extra examples   # + torchvision/matplotlib/jupyter for the examples & notebook
 ```
 
-### Run the example
+### Run the examples
 
 ```bash
-uv run python examples/quickstart.py
+uv run python examples/why_adaswarm.py   # the "why it works" showcase
+uv run python examples/quickstart.py     # basic API on the Iris dataset
 ```
 
 ### Run the tests
