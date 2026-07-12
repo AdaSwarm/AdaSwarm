@@ -96,3 +96,40 @@ def test_escapes_local_minimum_where_gradient_descent_stalls():
     adaswarm_mse = train("adaswarm")
     # AdaSwarm should be at least 2x better (in practice ~10-100x on this loss).
     assert adaswarm_mse < standard_mse * 0.5
+
+
+# --- per-sample (independent) swarm -------------------------------------------
+
+
+def test_per_sample_forward_and_backward():
+    """per_sample=True still returns a scalar loss and an output-shaped gradient."""
+    criterion = adaswarm.nn.SwarmLoss(mse_elem, seed=0, per_sample=True)
+    output = torch.rand(8, 1, requires_grad=True)
+    target = torch.rand(8, 1)
+    loss = criterion(output, target)
+    loss.backward()
+    assert loss.dim() == 0
+    assert output.grad.shape == output.shape
+
+
+def test_per_sample_finds_independent_targets():
+    """Each sample's gbest is optimised independently.
+
+    Two samples with very different optimal outputs: a per-sample swarm should pull
+    each output toward its own target, which a single shared gbest cannot do as well.
+    """
+
+    def multiwell(p, y):
+        r = p - y
+        return 0.1 * r**2 + (1 - torch.cos(3 * r))
+
+    # fixed model output far from both targets; one optimisation step direction check
+    targets = torch.tensor([[-4.0], [4.0]])
+    output = torch.zeros(2, 1, requires_grad=True)
+    adaswarm.nn.SwarmLoss(multiwell, seed=0, per_sample=True, span=8.0)(output, targets).backward()
+    grad = output.grad
+    # gradient descent moves output opposite to grad; sample 0 should move negative,
+    # sample 1 positive (each toward its own target).
+    assert grad[0].item() > 0  # -grad -> negative, toward -4
+    assert grad[1].item() < 0  # -grad -> positive, toward +4
+

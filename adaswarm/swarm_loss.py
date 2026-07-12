@@ -43,36 +43,51 @@ def _swarm_best(
     inertia: float,
     c_1: float,
     c_2: float,
+    per_sample: bool,
     generator: torch.Generator | None,
     device: torch.device,
 ) -> torch.Tensor:
     """Vectorised PSO over candidate outputs. Returns ``gbest`` (same shape as ``target``).
 
-    Each particle holds a full candidate output tensor; fitness is the mean loss of
-    that candidate against ``target``.
+    With ``per_sample=False`` (default) each particle holds a full candidate output
+    tensor and fitness is the mean loss of that candidate — one shared global best.
+    With ``per_sample=True`` every element is optimised independently: the global best
+    is chosen per element, which is far better for per-pixel / per-sample problems.
     """
     base_shape = target.shape
     reduce_dims = tuple(range(1, target.dim() + 1))  # everything except the particle axis
 
-    def spread() -> torch.Tensor:
-        noise = torch.rand(swarm_size, *base_shape, device=device, generator=generator)
-        return (noise - 0.5) * 2.0 * span + target.unsqueeze(0)
-
-    positions = spread()
+    noise = torch.rand(swarm_size, *base_shape, device=device, generator=generator)
+    positions = (noise - 0.5) * 2.0 * span + target.unsqueeze(0)
     velocities = torch.zeros_like(positions)
     targets_b = target.unsqueeze(0).expand_as(positions)
 
-    def fitness(pos: torch.Tensor) -> torch.Tensor:
-        per_element = loss_fn(pos, targets_b)  # (swarm, *shape)
-        if reduce_dims:
-            return per_element.mean(dim=reduce_dims)  # (swarm,)
-        return per_element
+    def elementwise(pos: torch.Tensor) -> torch.Tensor:
+        return loss_fn(pos, targets_b)  # (swarm, *shape)
 
-    pbest = positions.clone()
-    pbest_val = fitness(positions)
-    gbest = pbest[int(pbest_val.argmin())].clone()
+    if per_sample:
+
+        def fitness(pos: torch.Tensor) -> torch.Tensor:
+            return elementwise(pos)  # (swarm, *shape)
+
+        def select_gbest(pbest_: torch.Tensor, pbest_val_: torch.Tensor) -> torch.Tensor:
+            idx = pbest_val_.argmin(dim=0, keepdim=True)  # (1, *shape)
+            return torch.gather(pbest_, 0, idx).squeeze(0)  # (*shape)
+
+    else:
+
+        def fitness(pos: torch.Tensor) -> torch.Tensor:
+            per_element = elementwise(pos)
+            return per_element.mean(dim=reduce_dims) if reduce_dims else per_element  # (swarm,)
+
+        def select_gbest(pbest_: torch.Tensor, pbest_val_: torch.Tensor) -> torch.Tensor:
+            return pbest_[int(pbest_val_.argmin())].clone()
 
     view = (swarm_size, *([1] * target.dim()))
+    pbest = positions.clone()
+    pbest_val = fitness(positions)
+    gbest = select_gbest(pbest, pbest_val)
+
     for _ in range(iterations):
         r_1 = torch.rand(positions.shape, device=device, generator=generator)
         r_2 = torch.rand(positions.shape, device=device, generator=generator)
@@ -83,10 +98,15 @@ def _swarm_best(
         )
         positions = positions + velocities
         val = fitness(positions)
-        improved = val < pbest_val
-        pbest = torch.where(improved.view(view), positions, pbest)
-        pbest_val = torch.where(improved, val, pbest_val)
-        gbest = pbest[int(pbest_val.argmin())].clone()
+        if per_sample:
+            improved = val < pbest_val  # (swarm, *shape)
+            pbest = torch.where(improved, positions, pbest)
+            pbest_val = torch.where(improved, val, pbest_val)
+        else:
+            improved = val < pbest_val  # (swarm,)
+            pbest = torch.where(improved.view(view), positions, pbest)
+            pbest_val = torch.where(improved, val, pbest_val)
+        gbest = select_gbest(pbest, pbest_val)
 
     return gbest.detach()
 
@@ -117,6 +137,7 @@ def SwarmLoss(  # noqa: N802 (factory mirrors torch.nn loss naming)
     inertia: float = 0.7,
     c_1: float = 1.5,
     c_2: float = 1.5,
+    per_sample: bool = False,
     seed: int | None = None,
     device: torch.device | None = None,
 ) -> Callable[[torch.Tensor, torch.Tensor], torch.Tensor]:
@@ -128,6 +149,9 @@ def SwarmLoss(  # noqa: N802 (factory mirrors torch.nn loss naming)
         iterations: Swarm iterations per forward pass.
         span: Half-width of the initial particle spread around the target.
         inertia, c_1, c_2: PSO inertia and acceleration coefficients.
+        per_sample: If ``True``, optimise each output element with its own independent
+            global best. Much better for per-pixel / per-sample problems (e.g. multi-
+            frequency phase unwrapping); ``False`` (default) uses one shared global best.
         seed: Optional seed for reproducible swarms.
         device: Torch device (defaults to :func:`adaswarm.utils.options.get_device`).
 
@@ -148,6 +172,7 @@ def SwarmLoss(  # noqa: N802 (factory mirrors torch.nn loss naming)
         "inertia": inertia,
         "c_1": c_1,
         "c_2": c_2,
+        "per_sample": per_sample,
         "generator": generator,
         "device": resolved_device,
     }

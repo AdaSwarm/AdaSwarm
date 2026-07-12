@@ -91,8 +91,9 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 ignore = ["B008"]
 
 [tool.ruff.lint.per-file-ignores]
-# Notebooks use the compact `plt...; plt...; plt.show()` plotting idiom.
-"*.ipynb" = ["E702"]
+# Notebooks favour compact, illustrative code: allow the plotting idiom, long
+# lines, and short lambdas that would be noise to refactor in a demo.
+"*.ipynb" = ["E702", "E501", "E731"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
