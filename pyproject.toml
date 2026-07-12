@@ -1,6 +1,6 @@
 [project]
 name = "adaswarm"
-version = "0.1.0"
+version = "0.2.0"
 description = "A PyTorch particle-swarm-optimisation loss function that augments gradient-based optimisers with swarm intelligence."
 readme = "README.md"
 license = { text = "MIT" }
