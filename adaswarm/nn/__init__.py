@@ -6,6 +6,9 @@ import torch.nn.functional as F
 
 from adaswarm.particle import AccelerationCoefficients
 from adaswarm.rempso import ParticleSwarmOptimizer
+from adaswarm.swarm_loss import SwarmLoss
+
+__all__ = ["CrossEntropyLoss", "BCELoss", "SwarmLoss"]
 
 
 def CrossEntropyLoss(): # pylint: disable=C0103
