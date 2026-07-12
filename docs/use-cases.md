@@ -36,12 +36,16 @@ crystallography, coherent diffraction imaging, holography.
 - **How SwarmLoss helps:** the swarm explores multiple phase hypotheses per step instead of committing
   to the nearest local basin.
 
-### A2. Phase unwrapping / interferometry 🧪
+### A2. Phase unwrapping / interferometry ✅ (multi-frequency) · 🧪 (single-frequency)
 Recover absolute phase from values wrapped into `(−π, π]` — InSAR (satellite ground deformation),
 optical metrology, MRI phase.
 - **Why GD struggles:** `2π` ambiguities create a periodic, multi-modal objective.
-- **How SwarmLoss helps:** a wrap-aware elementwise loss (e.g. `1 − cos(pred − target)`) is exactly the
-  multi-well case AdaSwarm handles.
+- **How SwarmLoss helps:** with **two wavelengths** the per-pixel objective is globally identifiable
+  (Chinese-remainder-style disambiguation) but riddled with alias local minima —
+  `SwarmLoss(..., per_sample=True)` recovers the deformation where Adam gets trapped (>100× lower error).
+  **Demonstrated** in [`examples/insar_phase_unwrapping.ipynb`](../examples/insar_phase_unwrapping.ipynb).
+- **Caveat:** dense *single-frequency* unwrapping needs a spatial-smoothness prior; a per-pixel swarm
+  alone will not solve it.
 
 ### A3. Audio pitch / fundamental-frequency estimation 🧪
 Predict F0 for music/speech.
