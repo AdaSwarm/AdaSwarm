@@ -112,6 +112,7 @@ identical model/data/init, Adam stalls (local minimum / zero gradient) and AdaSw
 errors), direction-of-arrival & pose/rotation losses (periodic → multi-modal); directly optimising
 discrete metrics (F1, AUC, IoU, WER), simulator-in-the-loop training, quantised-output fitting
 (non-differentiable); and multi-modal scientific fitting (spectral peaks, stiff-PDE residuals in PINNs).
+See [**docs/use-cases.md**](docs/use-cases.md) for the full catalogue with per-domain detail.
 
 **Cost caveat:** each step runs a swarm over the output space, so it scales with output dimension ×
 swarm size × iterations — best for low-dimensional per-sample outputs, not large softmaxes.
