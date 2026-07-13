@@ -63,6 +63,14 @@ Regress orientations (robotics, AR, structure-from-motion).
 - **Why GD struggles:** geodesic/angular losses are periodic and multi-modal (gimbal-like ambiguity).
 - **How SwarmLoss helps:** treats the periodic output loss globally.
 
+### A6. Multi-frequency Time-of-Flight (ToF) depth cameras ✅
+Recover per-pixel depth from the phase of modulated light, measured at several frequencies.
+- **Why GD struggles:** each frequency's phase wraps, so the per-pixel objective is multi-modal;
+  gradient descent leaves alias artifacts across the depth image.
+- **How SwarmLoss helps:** two frequencies make each pixel globally identifiable;
+  `SwarmLoss(..., per_sample=True)` recovers the full depth map (~150× lower error than Adam).
+  **Demonstrated** in [`examples/tof_depth_unwrapping.ipynb`](../examples/tof_depth_unwrapping.ipynb).
+
 ---
 
 ## B. Non-differentiable / black-box losses
