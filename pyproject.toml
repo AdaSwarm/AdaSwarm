@@ -92,8 +92,9 @@ ignore = ["B008"]
 
 [tool.ruff.lint.per-file-ignores]
 # Notebooks favour compact, illustrative code: allow the plotting idiom, long
-# lines, and short lambdas that would be noise to refactor in a demo.
-"*.ipynb" = ["E702", "E501", "E731"]
+# lines, short lambdas, one-line loops and relaxed zip() that would be noise to
+# refactor in a demo.
+"*.ipynb" = ["E702", "E501", "E731", "E701", "B905"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
