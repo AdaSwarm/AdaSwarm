@@ -86,12 +86,14 @@ at k, AUC, IoU/Dice, word-error-rate, BLEU, exact-match**.
 - **How SwarmLoss helps:** pass the metric itself as an elementwise loss; the swarm optimises it directly.
   The demo's Act 2 (a piecewise-constant step loss where Adam cannot move) is a minimal proof of this.
 
-### B2. Simulator-in-the-loop training 🧪
+### B2. Simulator-in-the-loop training ✅
 The "loss" is the output of a non-differentiable simulator — physics engines, SPICE circuit
 simulators, ray/renderer pipelines, climate or market simulators.
 - **Why GD struggles:** you cannot backprop through the simulator.
 - **How SwarmLoss helps:** differentiate the *network*, not the simulator — the swarm only needs to
-  evaluate the simulator on candidate outputs.
+  evaluate the simulator on candidate outputs. **Demonstrated** in
+  [`examples/simulator_in_the_loop.ipynb`](../examples/simulator_in_the_loop.ipynb): training against a
+  true non-differentiable actuator beats the standard smooth-surrogate approach ~20× on true error.
 
 ### B3. Quantised / discrete-output fitting ✅
 Targets live on discrete levels (codebooks, symbol constellations, quantisation-aware training).
