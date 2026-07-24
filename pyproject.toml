@@ -42,11 +42,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# Extras for running the bundled examples/notebooks (MNIST + plotting).
+# Extras for running the bundled examples/notebooks (MNIST + plotting + audio).
 examples = [
     "torchvision>=0.17",
     "matplotlib>=3.8",
     "jupyter>=1.0",
+    "librosa>=0.10",
 ]
 
 [project.urls]

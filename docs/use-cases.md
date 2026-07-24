@@ -47,11 +47,17 @@ optical metrology, MRI phase.
 - **Caveat:** dense *single-frequency* unwrapping needs a spatial-smoothness prior; a per-pixel swarm
   alone will not solve it.
 
-### A3. Audio pitch / fundamental-frequency estimation 🧪
+### A3. Audio pitch / fundamental-frequency estimation ✅
 Predict F0 for music/speech.
 - **Why GD struggles:** *octave errors* — half/double-frequency give strong local minima.
 - **How SwarmLoss helps:** the swarm can "jump octaves" to the global best rather than settling on a
-  harmonic.
+  harmonic. `SwarmLoss(..., per_sample=True)` removes the octave errors that sink naive Adam and
+  **matches the specialised pYIN tracker** (RPA and octave-error rate) with no pitch-specific
+  engineering. **Demonstrated** in [`examples/f0_pitch_estimation.ipynb`](../examples/f0_pitch_estimation.ipynb),
+  which also reports the **compute/memory cost** (the swarm runs `swarm_size × iterations` extra loss
+  evaluations per step).
+- **Caveat:** pYIN/CREPE remain the production tools (voicing, streaming, far cheaper); the value here
+  is *generality*, not beating a specialist.
 
 ### A4. Direction-of-arrival / beamforming 🧪
 Estimate source angles from sensor arrays.
