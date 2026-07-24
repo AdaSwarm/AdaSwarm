@@ -47,7 +47,9 @@ examples = [
     "torchvision>=0.17",
     "matplotlib>=3.8",
     "jupyter>=1.0",
-    "librosa>=0.10",
+    "librosa>=0.11",
+    # librosa pulls in numba/llvmlite; pin a modern floor so it builds on 3.13.
+    "numba>=0.61",
 ]
 
 [project.urls]
